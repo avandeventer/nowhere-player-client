@@ -27,12 +27,14 @@ export class GameSessionService {
   }
   
   updateGameSession(data) {
+    console.log("Updating...");
+    console.log(data.payload.doc.id);
+    console.log(data.payload.doc.data());
     return new Promise<any> ((resolve, reject) => {
       this.firestore
       .collection("gameSessions")
-      // .doc(data.payload.doc.id)
-      .doc(data.payload.doc.data().gameSession.code)
-      .set({ players: data.payload.doc.data().gameSession.players[0] });
+      .doc(data.payload.doc.id)
+      .set(data.payload.doc.data());
     })
   }
 

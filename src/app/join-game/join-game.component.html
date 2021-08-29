@@ -9,7 +9,7 @@
 <button (click)="joinGame(player.name, gameCode)">Join Game</button>
 
 <tr *ngFor="let session of gameSessions">
-    <td>{{ session.payload.doc.data().code }}</td>
+    <!-- <td>{{ session.payload.doc.data().gameSession.code }}</td> -->
     <!-- <td>{{ order.payload.doc.data().customerName }}</td> -->
     <!-- <td><span 
          *ngFor="let coffee of order.payload.doc.data().coffeeOrder">

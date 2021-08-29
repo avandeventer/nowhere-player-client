@@ -19,6 +19,7 @@ export class JoinGameComponent implements OnInit {
 
   ngOnInit() {
     this.getGameSessions();
+    // console.log(this.gameSessions);
     // console.log(this.gameSessions[0]);
     // console.log(this.gameSessions[1]);
     // console.log(this.gameSessions[2]);
@@ -37,14 +38,20 @@ export class JoinGameComponent implements OnInit {
   getGameSessions = () =>
     this.gameSessionService
     .getGameSession()
-    .subscribe(res =>(this.gameSessions = res));
+    .subscribe(res =>{
+      console.log("Data arriving!")
+      console.log(res[0].payload)
+      this.gameSessions = res;
+    });
 
   joinGame(playerName: string, inputCode: string) {
     this.gameSessions.filter(session => {
-      // console.log(session.payload.doc.data().gameSession.code);  
+      // console.log(session.payload.doc.data().gameSession.code);
+      console.log("Foreach: "); 
+      console.log(this.gameSessions);
+      console.log(session.payload.doc.data().gameSession);
       if( session.payload.doc.data().gameSession.code === this.gameCode ) {
         console.log("A match!");
-        console.log(session.payload.doc.data().gameSession.code);
         session.payload.doc.data().gameSession.players.push(this.player);
         this.gameSessionService.updateGameSession(session);
       }
