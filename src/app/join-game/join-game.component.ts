@@ -12,48 +12,49 @@ export class JoinGameComponent implements OnInit {
 
   constructor(private gameSessionService: GameSessionService) { }
 
-  player: Player = new Player();
+  player: Player = {} as Player;
   gameCode: string;
   gameSession: GameSession;
-  gameSessions;//: GameSession[];
+  gameSessions;
 
   ngOnInit() {
     this.getGameSessions();
-    // console.log(this.gameSessions);
-    // console.log(this.gameSessions[0]);
-    // console.log(this.gameSessions[1]);
-    // console.log(this.gameSessions[2]);
   }
 
   setGameCode(gameCode: string) {
     this.gameCode = gameCode;
-    console.log("Here it is! " + this.gameCode);
   }
 
   setPlayerName(playerName: string) {
     this.player.name = playerName;
-    console.log("Your name! " + this.player.name);
   }
 
   getGameSessions = () =>
     this.gameSessionService
     .getGameSession()
     .subscribe(res =>{
-      console.log("Data arriving!")
       console.log(res[0].payload)
       this.gameSessions = res;
     });
 
   joinGame(playerName: string, inputCode: string) {
     this.gameSessions.filter(session => {
-      // console.log(session.payload.doc.data().gameSession.code);
-      console.log("Foreach: "); 
-      console.log(this.gameSessions);
-      console.log(session.payload.doc.data().gameSession);
       if( session.payload.doc.data().gameSession.code === this.gameCode ) {
+        // const sessionObject = session.payload.doc.data().gameSession;
+        // const gameSession = new GameSession(sessionObject.id, sessionObject.code, sessionObject.players);  
         console.log("A match!");
-        session.payload.doc.data().gameSession.players.push(this.player);
-        this.gameSessionService.updateGameSession(session);
+        console.log(this.player);
+        console.log("Players " + session.payload.doc.data().gameSession.players);
+        // session.payload.doc.data().gameSession.players = [];
+        // const players: Player[] = session.payload.doc.data().gameSession.players;
+        const gameSession: GameSession = session.payload.doc.data().gameSession;
+        gameSession.id = session.payload.doc.data().gameSession.id;
+        // session.payload.doc.data().gameSession.players.push(playerName);
+        gameSession.players.push(new Player(playerName));
+        console.log("Game session after push " + JSON.stringify(gameSession));
+        // session.payload.doc.data().gameSession.players = players;
+        // console.log("Players after assignment " + JSON.stringify(gameSession.players));
+        this.gameSessionService.updateGameSession(gameSession, session.payload.doc.id);
       }
     })   
   }

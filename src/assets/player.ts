@@ -8,8 +8,8 @@ export class Player {
   wealth: number;
   playerNamed: boolean;
 
-  constructor(){
-    this.name = "";
+  constructor(name: string){
+    this.name = name;
     this.strength = 0;
     this.intellect = 0;
     this.charisma = 0;

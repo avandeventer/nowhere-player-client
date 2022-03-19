@@ -4,6 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { GameSession } from 'src/assets/GameSession';
 import { Observable } from 'rxjs';
 import { resolve } from 'url';
+import { FieldValue } from 'firebase-admin/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -26,16 +27,24 @@ export class GameSessionService {
     return this.firestore.collection("gameSessions").snapshotChanges();
   }
   
-  updateGameSession(data) {
+  async updateGameSession(gameSession, documentId) {
     console.log("Updating...");
-    console.log(data.payload.doc.id);
-    console.log(data.payload.doc.data());
-    return new Promise<any> ((resolve, reject) => {
-      this.firestore
-      .collection("gameSessions")
-      .doc(data.payload.doc.id)
-      .set(data.payload.doc.data());
-    })
+    console.log(documentId);
+    // ...
+    const gameSessionRef = this.firestore.collection('gameSessions').doc(documentId);
+
+    // Atomically add a new region to the "regions" array field.
+    const object = Object.assign({},gameSession.players);
+    console.log(JSON.stringify(object));
+    return await gameSessionRef.update({
+      players: FieldValue.arrayUnion(object)
+    });
+    // return new Promise<any> ((resolve, reject) => {
+    //   this.firestore
+    //   .collection("gameSessions")
+    //   .doc(documentId)
+    //   .set(object);
+    // })
   }
 
   createGameSession(data) {
