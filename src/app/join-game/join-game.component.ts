@@ -37,7 +37,7 @@ export class JoinGameComponent implements OnInit {
       this.gameSessions = res;
     });
 
-  joinGame(playerName: string, inputCode: string) {
+  async joinGame(playerName: string, inputCode: string) {
     this.gameSessions.filter(session => {
       if( session.payload.doc.data().gameSession.code === this.gameCode ) {
         // const sessionObject = session.payload.doc.data().gameSession;
@@ -54,7 +54,7 @@ export class JoinGameComponent implements OnInit {
         console.log("Game session after push " + JSON.stringify(gameSession));
         // session.payload.doc.data().gameSession.players = players;
         // console.log("Players after assignment " + JSON.stringify(gameSession.players));
-        this.gameSessionService.updateGameSession(gameSession, session.payload.doc.id);
+        return await this.gameSessionService.updateGameSession(gameSession, session.payload.doc.id);
       }
     })   
   }

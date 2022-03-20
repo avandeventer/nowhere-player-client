@@ -36,15 +36,15 @@ export class GameSessionService {
     // Atomically add a new region to the "regions" array field.
     const object = Object.assign({},gameSession.players);
     console.log(JSON.stringify(object));
-    return await gameSessionRef.update({
-      players: FieldValue.arrayUnion(object)
-    });
-    // return new Promise<any> ((resolve, reject) => {
-    //   this.firestore
-    //   .collection("gameSessions")
-    //   .doc(documentId)
-    //   .set(object);
-    // })
+    // return await gameSessionRef.update({
+    //   players: FieldValue.arrayUnion(object)
+    // });
+    return new Promise<any> ((resolve, reject) => {
+      this.firestore
+      .collection("gameSessions")
+      .doc(documentId)
+      .set(object);
+    })
   }
 
   createGameSession(data) {
