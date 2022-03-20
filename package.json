@@ -22,7 +22,7 @@
     "angular": "^1.8.2",
     "firebase-admin": "^10.0.2",
     "rxjs": "~6.4.0",
-    "tslib": "^1.10.0",
+    "tslib": "^1.14.1",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
