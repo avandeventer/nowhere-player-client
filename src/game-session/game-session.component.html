@@ -1,0 +1,11 @@
+<h2>Welcome to Nowhere!</h2>
+
+@if(!gameSessionCreated) {
+<div>Game Code</div>
+<input #gameCode (keyup)="setGameCode(gameCode.value)" />
+<div>Username</div>
+<input #gameCode (keyup)="setGameCode(gameCode.value)" />
+<button (click)="joinGame()">Join game!</button>
+} @else {
+<div>You're in! {{ gameCode }}</div>
+}
