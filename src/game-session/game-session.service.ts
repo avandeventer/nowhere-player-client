@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentChangeAction } from '@angular/fire/compat/firestore';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: Firestore) {}
 
   // Listen to the gameState of a specific game by its gameCode
   listenForGameStateChanges(gameCode: string): Observable<string | null> {
-    return this.firestore
-      .doc(`games/${gameCode}`)  // Path to the specific game document
-      .snapshotChanges()         // Listen for real-time changes to the document
-      .pipe(
-        map((action) => {
-          const data = action.payload.data() as any;
-          return data ? data.gameState : null;  // Return the gameState or null if not found
-        })
-      );
+    const gameDocRef = doc(this.firestore, `gameSessions/${gameCode}`);
+
+    // docData listens for real-time updates to the document
+    return docData(gameDocRef).pipe(
+      map((data: any) => data?.gameState ?? null) // Safe access for gameState, or return null
+    );
   }
 }
