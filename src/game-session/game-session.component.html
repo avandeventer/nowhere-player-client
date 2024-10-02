@@ -7,6 +7,5 @@
     <input (keyup)="setUserName($event)" />
     <button (click)="joinGame()">Join game!</button>
 } @else {
-    <div>You're in! {{ gameCode }}</div>
-    <game-state-listener [gameCode]="gameCode"></game-state-listener>
+    <game-state-manager [gameCode]="gameCode"></game-state-manager>
 }

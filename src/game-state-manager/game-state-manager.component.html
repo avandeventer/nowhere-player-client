@@ -1,0 +1,12 @@
+@if (gameState) {
+    <p>Game state has changed: {{ gameState }}</p>
+}
+
+@if (isGameInitialized()) {
+    <p>If all players have joined, click below!</p>
+    <button (click)="startGame()">Start game?</button>
+}
+
+@if (isGameStarted()) {
+    <write-prompt></write-prompt>
+}

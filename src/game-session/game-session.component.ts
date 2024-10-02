@@ -1,15 +1,14 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GameSession } from 'src/assets/game-session';
-import { Player } from 'src/assets/player';
-import { GameStateListenerComponent } from './game-state-manager.component';
+import { GameStateManagerComponent } from '../game-state-manager/game-state-manager.component';
+import { GameState } from 'src/assets/game-state';
 
 @Component({
   selector: 'game-session',
   styles: `.btn { padding: 5px; }`,
   templateUrl: './game-session.component.html',
   standalone: true,
-  imports: [GameStateListenerComponent]
+  imports: [GameStateManagerComponent]
 })
 export class GameSessionComponent {
   constructor(private http: HttpClient) {
@@ -27,14 +26,10 @@ export class GameSessionComponent {
 
   setGameCode(gameCode: any) {
     this.gameCode = gameCode.target.value;
-    console.log("Your gamecode input " + gameCode);
-    console.log("Your gamecode " + this.gameCode);
   }
 
   setUserName(userName: any) {
     this.userName = userName.target.value;
-    console.log("Your username input " + userName);
-    console.log("Your username " + this.userName);
   }
 
   joinGame() {
@@ -48,7 +43,6 @@ export class GameSessionComponent {
       .subscribe({
         next: (response) => {
           console.log('Game created!', response);
-          // this.gameCode = response['gameCode'] || null;  // assuming 'gameCode' is in the response
           this.gameSessionCreated = true;
         },
         error: (error) => {
@@ -58,7 +52,6 @@ export class GameSessionComponent {
   }
 
   getPlayers(gameCode: string) {
-    // this.player.name = playerName;
     console.log('Your game code! ' + gameCode);
   }
 }
