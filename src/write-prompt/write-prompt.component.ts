@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Stat } from 'src/assets/stat';
 
 @Component({
   selector: 'write-prompt',
@@ -8,6 +9,8 @@ import { Component, Input, OnInit } from '@angular/core';
 export class WritePromptComponent implements OnInit {
   @Input() gameState: string = "";
   prompt: string = "";
+  optionOne: Stat = this.randomStat();
+  optionTwo: Stat = this.randomStat();
 
   constructor() {}
 
@@ -19,4 +22,9 @@ export class WritePromptComponent implements OnInit {
     console.log(this.prompt);
   }
 
+  randomStat() {
+    const values = Object.keys(Stat) as Array<keyof typeof Stat>;  
+    const enumKey = values[Math.floor(Math.random() * values.length)];
+    return Stat[enumKey];
+  }
 }
