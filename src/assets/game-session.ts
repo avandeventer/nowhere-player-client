@@ -3,7 +3,7 @@ import { Player } from './player';
 export class GameSession {
   id: number;
   code: String;
-  players: Player[];
+  players: any = [];
 
   constructor(id: number, code: String, players: Player[]) {
     this.id = id;

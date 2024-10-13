@@ -8,5 +8,5 @@
 }
 
 @if (isGameStarted()) {
-    <write-prompt></write-prompt>
+    <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player"></write-prompt>
 }

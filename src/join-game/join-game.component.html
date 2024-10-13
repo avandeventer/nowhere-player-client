@@ -1,0 +1,11 @@
+<h2>Welcome to Nowhere!</h2>
+
+@if(!gameSessionCreated) {
+    <div>Game Code</div>
+    <input (keyup)="setGameCode($event)" />
+    <div>Username</div>
+    <input (keyup)="setUserName($event)" />
+    <button (click)="joinGame()">Join game!</button>
+} @else {
+    <game-state-manager [gameCode]="gameCode" [player]="player"></game-state-manager>
+}

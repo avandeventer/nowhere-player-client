@@ -3,6 +3,7 @@ import { GameService } from '../services/game-session.service';
 import { HttpClient } from '@angular/common/http';
 import { GameState } from 'src/assets/game-state';
 import { WritePromptComponent } from 'src/write-prompt/write-prompt.component';
+import { Player } from 'src/assets/player';
 
 @Component({
   selector: 'game-state-manager',
@@ -12,6 +13,7 @@ import { WritePromptComponent } from 'src/write-prompt/write-prompt.component';
 })
 export class GameStateManagerComponent implements OnInit {
   @Input() gameCode: string = "";
+  @Input() player: Player = new Player();
   gameState: GameState = GameState.INIT;
 
   constructor(
@@ -52,6 +54,6 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isGameStarted() {
-    return this.gameState === GameState.START;
+    return this.gameState === GameState.WRITE_PROMPTS;
   }
 }
