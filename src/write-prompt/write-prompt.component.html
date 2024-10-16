@@ -1,6 +1,9 @@
-@if(playerStories && playerStories.length > 0) {
+@if(currentStoryIndex >= playerStories.length) {
+    <p>All stories have been submitted!</p>
+} 
+@else {
     <div>Create a one to two sentence prompt for a story</div>
-    <textarea (keyup)="setPrompt($event)"></textarea>
+    <textarea id="prompt" [formControl]="prompt" (keyup)="setPrompt($event)"></textarea>
 
     <div>
         To succeed in this story you'll need to have a lot of either:
@@ -8,20 +11,16 @@
     <br>
     <div>
         {{playerStories[this.currentStoryIndex].options[0].statRequirement}}
-        <input type="text" (keyup)="setOptionOne($event)" placeholder="Option One" />
+        <input type="text" id="optionOne" [formControl]="optionOne" (keyup)="setOptionOne($event)" placeholder="Option One" />
         <br>
         or
         <br>
         {{playerStories[this.currentStoryIndex].options[1].statRequirement}}
-        <input type="text" (keyup)="setOptionTwo($event)" placeholder="Option Two" />
+        <input type="text" id="optionTwo" [formControl]="optionTwo" (keyup)="setOptionTwo($event)" placeholder="Option Two" />
     </div>
 
     <div></div>
 
     <br>
     <button (click)="submitPrompt()">Submit</button>
-  
-    @if(currentStoryIndex >= playerStories.length) {
-        <p>All stories have been submitted!</p>
-    }
 }

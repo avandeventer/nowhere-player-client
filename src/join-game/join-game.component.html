@@ -2,10 +2,10 @@
 
 @if(!gameSessionCreated) {
     <div>Game Code</div>
-    <input (keyup)="setGameCode($event)" />
+    <input [formControl]="gameCode" (keyup)="setGameCode()" />
     <div>Username</div>
-    <input (keyup)="setUserName($event)" />
+    <input [formControl]="userName" />
     <button (click)="joinGame()">Join game!</button>
 } @else {
-    <game-state-manager [gameCode]="gameCode" [player]="player"></game-state-manager>
+    <game-state-manager [gameCode]="gameCodeValue" [player]="player"></game-state-manager>
 }

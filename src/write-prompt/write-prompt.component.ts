@@ -5,11 +5,13 @@ import { Player } from 'src/assets/player';
 import { ResponseObject } from 'src/assets/response-object';
 import { Stat } from 'src/assets/stat';
 import { Story } from 'src/assets/story';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'write-prompt',
   templateUrl: './write-prompt.component.html',
-  standalone: true
+  standalone: true,
+  imports: [ReactiveFormsModule]
 })
 export class WritePromptComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_PROMPTS;
@@ -18,9 +20,14 @@ export class WritePromptComponent implements OnInit {
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
 
-  prompt: string = "";
+  prompt = new FormControl('');
+  optionOne = new FormControl('');
+  optionTwo = new FormControl('');
+
+  promptText: string = "";
   optionOneText: string = "";
   optionTwoText: string = "";
+
 
   constructor(private http: HttpClient) {}
 
@@ -29,8 +36,8 @@ export class WritePromptComponent implements OnInit {
   }
 
   setPrompt(promptEvent: any) {
-    this.prompt = promptEvent.target.value;
-    console.log(this.prompt);
+    this.promptText = this.prompt.value == null ? "" : this.prompt.value;
+    console.log(this.promptText);
   }
 
   setOptionOne(optionEvent: any) {
@@ -52,7 +59,7 @@ export class WritePromptComponent implements OnInit {
   getPlayerStories(authorId: string) {
     const params = {
       gameCode: this.gameCode,
-      authorId: authorId//"184b844f-c6b8-40ea-b6a1-374c107a53fd",
+      authorId: authorId,
     };
 
     console.log(params);
@@ -75,16 +82,16 @@ export class WritePromptComponent implements OnInit {
   submitPrompt() {
       const requestBody = {
         gameCode: this.gameCode,
-        prompt: this.prompt,
+        prompt: this.prompt.value,
         storyId: this.playerStories[this.currentStoryIndex].storyId,
         options: [
           {
             optionId: this.playerStories[this.currentStoryIndex].options[0].optionId,
-            optionText: this.optionOneText
+            optionText: this.optionOne.value
           }, 
           {
             optionId: this.playerStories[this.currentStoryIndex].options[1].optionId,
-            optionText: this.optionTwoText
+            optionText: this.optionTwo.value
           }
         ]
       };
@@ -94,15 +101,19 @@ export class WritePromptComponent implements OnInit {
         .subscribe({
           next: (response) => {
             console.log('Story updated!', response);
+            this.setNextStoryPrompt();
           },
           error: (error) => {
             console.error('Error updating story', error);
           },
         });
-      this.prompt = "";
-      this.optionOneText = "";
-      this.optionTwoText = "";
-      this.currentStoryIndex++;
-      console.log(this.currentStoryIndex);
+  }
+
+  private setNextStoryPrompt() {
+    this.prompt.reset('');
+    this.optionOne.reset('');
+    this.optionTwo.reset('');
+    this.currentStoryIndex++;
+    console.log(this.currentStoryIndex);
   }
 }

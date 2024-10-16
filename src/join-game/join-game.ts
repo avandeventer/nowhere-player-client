@@ -1,22 +1,24 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GameStateManagerComponent } from '../game-state-manager/game-state-manager.component';
 import { Player } from 'src/assets/player';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'join-game',
   styles: `.btn { padding: 5px; }`,
   templateUrl: './join-game.component.html',
   standalone: true,
-  imports: [GameStateManagerComponent]
+  imports: [GameStateManagerComponent, ReactiveFormsModule]
 })
 export class JoinGameComponent {
   constructor(private http: HttpClient) {
     console.log('GoinGameComponent initialized');
   }
 
-  gameCode: string = '';
-  userName: string = '';
+  gameCode = new FormControl('');
+  gameCodeValue: string = '';
+  userName = new FormControl('');
   gameSessionCreated: boolean = false;
   player: Player = new Player();
 
@@ -24,18 +26,15 @@ export class JoinGameComponent {
     console.log(this.gameSessionCreated);
   }
 
-  setGameCode(gameCode: any) {
-    this.gameCode = gameCode.target.value;
-  }
-
-  setUserName(userName: any) {
-    this.userName = userName.target.value;
+  setGameCode() {
+    console.log(this.gameCode.value);
+    this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value;
   }
 
   joinGame() {
     const requestBody = {
-      gameCode: this.gameCode,
-      userName: this.userName,
+      gameCode: this.gameCode.value,
+      userName: this.userName.value,
     };
 
     this.http
