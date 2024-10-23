@@ -4,12 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { GameState } from 'src/assets/game-state';
 import { WritePromptComponent } from 'src/write-prompt/write-prompt.component';
 import { Player } from 'src/assets/player';
+import { WriteOutcomesComponent } from 'src/write-options/write-outcomes.component';
 
 @Component({
   selector: 'game-state-manager',
   templateUrl: './game-state-manager.component.html',
   standalone: true,
-  imports: [WritePromptComponent]
+  imports: [WritePromptComponent, WriteOutcomesComponent]
 })
 export class GameStateManagerComponent implements OnInit {
   @Input() gameCode: string = "";
@@ -55,5 +56,9 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameStarted() {
     return this.gameState === GameState.WRITE_PROMPTS;
+  }
+
+  isGameInWriteOutcomesPhase() {
+    return this.gameState === GameState.WRITE_OPTIONS;
   }
 }

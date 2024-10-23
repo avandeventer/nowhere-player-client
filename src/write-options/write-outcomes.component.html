@@ -1,0 +1,40 @@
+@if(currentStoryIndex >= playerStories.length) {
+    <p>All stories have been submitted!</p>
+} 
+@else {
+    <div>Someone else has written the prompt for this one so you just write the potential outcomes!</div>
+    {{playerStories[this.currentStoryIndex].prompt}}
+
+    <div>
+        The player who gets this story will have these options
+    </div>
+    <br>
+    <div>
+        {{playerStories[this.currentStoryIndex].options[0].statRequirement}}
+        {{playerStories[this.currentStoryIndex].options[0].optionText}}
+        <br>
+        What happens when they succeed?
+        <input type="text" id="optionOneSuccess" [formControl]="optionOneSuccess" placeholder="Option One Success" />
+        <br>
+        What happens when they fail?
+        <input type="text" id="optionOneFailure" [formControl]="optionOneFailure" placeholder="Option One Failure" />
+
+        <br>
+        or
+        <br><br>
+
+        {{playerStories[this.currentStoryIndex].options[1].statRequirement}}
+        {{playerStories[this.currentStoryIndex].options[1].optionText}}
+        <br>
+        What happens when they succeed?
+        <input type="text" id="optionTwoSuccess" [formControl]="optionTwoSuccess" placeholder="Option Two Success" />
+        <br>
+        What happens when they fail?
+        <input type="text" id="optionTwoFailure" [formControl]="optionTwoFailure" placeholder="Option Two Failure" />
+    </div>
+
+    <div></div>
+
+    <br>
+    <button (click)="submitOutcomes()">Submit</button>
+}

@@ -10,3 +10,7 @@
 @if (isGameStarted()) {
     <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player"></write-prompt>
 }
+
+@if (isGameInWriteOutcomesPhase()) {
+    <write-outcomes [gameCode]="gameCode" [gameState]="gameState" [player]="player"></write-outcomes>
+}

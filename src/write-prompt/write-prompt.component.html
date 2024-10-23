@@ -3,7 +3,7 @@
 } 
 @else {
     <div>Create a one to two sentence prompt for a story</div>
-    <textarea id="prompt" [formControl]="prompt" (keyup)="setPrompt($event)"></textarea>
+    <textarea id="prompt" [formControl]="prompt"></textarea>
 
     <div>
         To succeed in this story you'll need to have a lot of either:
@@ -11,12 +11,12 @@
     <br>
     <div>
         {{playerStories[this.currentStoryIndex].options[0].statRequirement}}
-        <input type="text" id="optionOne" [formControl]="optionOne" (keyup)="setOptionOne($event)" placeholder="Option One" />
+        <input type="text" id="optionOne" [formControl]="optionOne" placeholder="Option One" />
         <br>
         or
         <br>
         {{playerStories[this.currentStoryIndex].options[1].statRequirement}}
-        <input type="text" id="optionTwo" [formControl]="optionTwo" (keyup)="setOptionTwo($event)" placeholder="Option Two" />
+        <input type="text" id="optionTwo" [formControl]="optionTwo" placeholder="Option Two" />
     </div>
 
     <div></div>
