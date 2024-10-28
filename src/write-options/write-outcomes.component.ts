@@ -3,7 +3,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
 import { ResponseObject } from 'src/assets/response-object';
-import { Stat } from 'src/assets/stat';
 import { Story } from 'src/assets/story';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -92,5 +91,20 @@ export class WriteOutcomesComponent implements OnInit {
     this.optionTwoFailure.reset('');
     this.currentStoryIndex++;
     console.log(this.currentStoryIndex);
+  }
+
+  public statDCDifficulty(promptIndex: number) {
+    let statDC: number = this.playerStories[this.currentStoryIndex].options[promptIndex].statDC;
+    if(statDC >= 7) {
+      return "HARD";
+    }
+
+    else if(statDC < 7 && statDC >= 4) {
+      return "NORMAL";
+    }
+
+    else {
+      return "EASY";
+    }
   }
 }

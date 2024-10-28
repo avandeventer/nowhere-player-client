@@ -5,17 +5,20 @@ import { GameState } from 'src/assets/game-state';
 import { WritePromptComponent } from 'src/write-prompt/write-prompt.component';
 import { Player } from 'src/assets/player';
 import { WriteOutcomesComponent } from 'src/write-options/write-outcomes.component';
+import { ActivePlayerSession } from 'src/assets/active-player-session';
+import { AdventureComponent } from 'src/adventure/adventure.component';
 
 @Component({
   selector: 'game-state-manager',
   templateUrl: './game-state-manager.component.html',
   standalone: true,
-  imports: [WritePromptComponent, WriteOutcomesComponent]
+  imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent]
 })
 export class GameStateManagerComponent implements OnInit {
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
   gameState: GameState = GameState.INIT;
+  activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
 
   constructor(
     private gameService: GameService,
@@ -24,7 +27,8 @@ export class GameStateManagerComponent implements OnInit {
 
   ngOnInit() {
     this.gameService.listenForGameStateChanges(this.gameCode).subscribe((newState) => {
-      this.gameState = newState as unknown as GameState;
+      this.gameState = newState.gameState as unknown as GameState;
+      this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
       
       console.log('New gameState:', this.gameState);
     });
@@ -60,5 +64,9 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameInWriteOutcomesPhase() {
     return this.gameState === GameState.WRITE_OPTIONS;
+  }
+
+  isGameInAdventurePhase() {
+    return this.gameState === GameState.ROUND1;
   }
 }

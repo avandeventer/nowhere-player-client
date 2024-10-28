@@ -10,7 +10,8 @@
     </div>
     <br>
     <div>
-        {{playerStories[this.currentStoryIndex].options[0].statRequirement}}
+        {{playerStories[this.currentStoryIndex].options[0].statRequirement}}[{{statDCDifficulty(0)}}]
+
         {{playerStories[this.currentStoryIndex].options[0].optionText}}
         <br>
         What happens when they succeed?
@@ -23,7 +24,7 @@
         or
         <br><br>
 
-        {{playerStories[this.currentStoryIndex].options[1].statRequirement}}
+        {{playerStories[this.currentStoryIndex].options[1].statRequirement}}[{{statDCDifficulty(1)}}]
         {{playerStories[this.currentStoryIndex].options[1].optionText}}
         <br>
         What happens when they succeed?

@@ -7,6 +7,7 @@ export const environment = {
       projectId: "nowhere-af065",
       storageBucket: "nowhere-af065.appspot.com",
       messagingSenderId: "556057816518",
-      appId: "1:556057816518:web:1838e2dfb510f6b3"    }
+      appId: "1:556057816518:web:1838e2dfb510f6b3"    },
+    nowhereBackendUrl: "https://nowhere-556057816518.us-east5.run.app"
   };
   

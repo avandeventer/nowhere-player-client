@@ -14,3 +14,7 @@
 @if (isGameInWriteOutcomesPhase()) {
     <write-outcomes [gameCode]="gameCode" [gameState]="gameState" [player]="player"></write-outcomes>
 }
+
+@if (isGameInAdventurePhase()) {
+    <adventure [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession"></adventure>
+}

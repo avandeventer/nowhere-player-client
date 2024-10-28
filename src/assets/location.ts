@@ -1,6 +1,6 @@
 export class Location {
     locationId: number;
-    locationName: string;
+    locationName: String;
 
     constructor () {
         this.locationId = 0;

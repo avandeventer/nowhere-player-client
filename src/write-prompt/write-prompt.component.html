@@ -2,7 +2,7 @@
     <p>All stories have been submitted!</p>
 } 
 @else {
-    <div>Create a one to two sentence prompt for a story</div>
+    <div>Create a one to two sentence prompt for a story in the {{playerStories[this.currentStoryIndex].location.locationName}}</div>
     <textarea id="prompt" [formControl]="prompt"></textarea>
 
     <div>
@@ -11,11 +11,13 @@
     <br>
     <div>
         {{playerStories[this.currentStoryIndex].options[0].statRequirement}}
+        [{{statDCDifficulty(0)}}]
         <input type="text" id="optionOne" [formControl]="optionOne" placeholder="Option One" />
         <br>
         or
         <br>
         {{playerStories[this.currentStoryIndex].options[1].statRequirement}}
+        [{{statDCDifficulty(1)}}]
         <input type="text" id="optionTwo" [formControl]="optionTwo" placeholder="Option Two" />
     </div>
 

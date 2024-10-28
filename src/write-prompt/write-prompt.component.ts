@@ -105,4 +105,19 @@ export class WritePromptComponent implements OnInit {
     this.currentStoryIndex++;
     console.log(this.currentStoryIndex);
   }
+
+  public statDCDifficulty(promptIndex: number) {
+    let statDC: number = this.playerStories[this.currentStoryIndex].options[promptIndex].statDC;
+    if(statDC >= 7) {
+      return "HARD";
+    }
+
+    else if(statDC < 7 && statDC >= 4) {
+      return "NORMAL";
+    }
+
+    else {
+      return "EASY";
+    }
+  }
 }
