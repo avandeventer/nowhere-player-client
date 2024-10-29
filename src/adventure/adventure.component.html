@@ -1,23 +1,27 @@
-@for (location of locations; track location.locationId) {
-    <button (click)="getStory(location)">{{ location.locationName }}</button><br>
-}
+@if(playerTurn) {
+    @for (location of locations; track location.locationId) {
+        <button (click)="getStory(location)">{{ location.locationName }}</button><br>
+    }
 
-@if(playerStory.storyId != "") {
-    <br>
-    You travel to the {{selectedLocation.locationName}}
-    <br>
-    {{playerStory.prompt}}<br>
-    {{playerStory.options[0].optionText}}
-    <button (click)="pickOption(0)">Option 1</button><br>
-    <br>
-    {{playerStory.options[1].optionText}}
-    <button (click)="pickOption(1)">Option 2</button><br>
-}
+    @if(playerStory.storyId != "") {
+        <br>
+        You travel to the {{selectedLocation.locationName}}
+        <br>
+        {{playerStory.prompt}}<br>
+        {{playerStory.options[0].optionText}}
+        <button (click)="pickOption(0)">Option 1</button><br>
+        <br>
+        {{playerStory.options[1].optionText}}
+        <button (click)="pickOption(1)">Option 2</button><br>
+    }
 
-@for (outcome of outcomeDisplay; track outcome) {
-    <div>{{outcome}}</div><br>
-}
+    @for (outcome of outcomeDisplay; track outcome) {
+        <div>{{outcome}}</div><br>
+    }
 
-@if (outcomeDisplay.length > 0) {
-    <button (click)="nextPlayerTurn()">Continue</button>
+    @if (outcomeDisplay.length > 0) {
+        <button (click)="nextPlayerTurn()">Continue</button>
+    }
+} @else {
+    It's another player's turn right now! Hold your horses
 }

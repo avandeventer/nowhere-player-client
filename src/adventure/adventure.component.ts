@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, SimpleChange, SimpleChanges } from "@angular/core";
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { GameState } from "src/assets/game-state";
 import { Player } from "src/assets/player";
@@ -28,12 +28,20 @@ export class AdventureComponent implements OnInit {
     playerStory: Story = new Story();
     selectedOption: Option = new Option();
     outcomeDisplay: String[] = [];
+    playerTurn: boolean = false;
 
     constructor(private http:HttpClient) {}
 
     ngOnInit(): void {
       console.log("Adventure Loaded!" + this.activePlayerSession);
       this.getLocations(this.gameCode);
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+      if (changes['activePlayerSession'] 
+      && changes['activePlayerSession'].currentValue?.playerId === this.player.authorId) {
+        this.playerTurn = true;
+      }
     }
 
     getLocations(gameCode: string) {
@@ -178,5 +186,6 @@ export class AdventureComponent implements OnInit {
       this.outcomeDisplay,
       true
     );
+    this.playerTurn = false;
   }
 }
