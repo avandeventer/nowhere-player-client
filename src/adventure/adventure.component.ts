@@ -82,7 +82,7 @@ export class AdventureComponent implements OnInit {
             next: (response) => {
               console.log('Story retrieved!', response);
               this.playerStory = response;
-              this.updateActivePlayerSession(this.playerStory, "", [], false);
+              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
               console.log('Player Story', this.playerStory);
             },
             error: (error) => {
@@ -93,6 +93,7 @@ export class AdventureComponent implements OnInit {
       }
 
   private updateActivePlayerSession(
+    playerId: String,
     playerStory: Story,
     selectedOptionId: String,
     outcomeDisplay: String[],
@@ -102,7 +103,7 @@ export class AdventureComponent implements OnInit {
     const newActivePlayerSession: ActivePlayerSession = new ActivePlayerSession();
     newActivePlayerSession.gameCode = this.gameCode;
     newActivePlayerSession.story = playerStory;
-    newActivePlayerSession.playerId = this.player.authorId;
+    newActivePlayerSession.playerId = playerId;
     newActivePlayerSession.playerChoiceOptionId = selectedOptionId;
     newActivePlayerSession.outcomeDisplay = outcomeDisplay;
     newActivePlayerSession.setNextPlayerTurn = nextPlayerTurn;
@@ -152,6 +153,7 @@ export class AdventureComponent implements OnInit {
     this.updatePlayer();
 
     this.updateActivePlayerSession(
+      this.player.authorId,
       this.playerStory, 
       this.selectedOption.optionId, 
       this.outcomeDisplay,
@@ -183,6 +185,7 @@ export class AdventureComponent implements OnInit {
 
   nextPlayerTurn() {
     this.updateActivePlayerSession(
+      "",
       new Story(), 
       "", 
       [],
