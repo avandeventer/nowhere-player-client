@@ -99,14 +99,16 @@ export class AdventureComponent implements OnInit {
     nextPlayerTurn: boolean
   ) {
     console.log("Your player session", this.activePlayerSession);
-    this.activePlayerSession.gameCode = this.gameCode;
-    this.activePlayerSession.story = playerStory;
-    this.activePlayerSession.playerChoiceOptionId = selectedOptionId;
-    this.activePlayerSession.outcomeDisplay = outcomeDisplay;
-    this.activePlayerSession.setNextPlayerTurn = nextPlayerTurn;
+    const newActivePlayerSession: ActivePlayerSession = new ActivePlayerSession();
+    newActivePlayerSession.gameCode = this.gameCode;
+    newActivePlayerSession.story = playerStory;
+    newActivePlayerSession.playerId = this.player.authorId;
+    newActivePlayerSession.playerChoiceOptionId = selectedOptionId;
+    newActivePlayerSession.outcomeDisplay = outcomeDisplay;
+    newActivePlayerSession.setNextPlayerTurn = nextPlayerTurn;
 
     this.http
-      .put<ActivePlayerSession>(environment.nowhereBackendUrl + HttpConstants.ACTIVE_PLAYER_SESSION_PATH, this.activePlayerSession)
+      .put<ActivePlayerSession>(environment.nowhereBackendUrl + HttpConstants.ACTIVE_PLAYER_SESSION_PATH, newActivePlayerSession)
       .subscribe({
         next: (response) => {
           console.log('Active player session updated!', response);
@@ -181,9 +183,9 @@ export class AdventureComponent implements OnInit {
 
   nextPlayerTurn() {
     this.updateActivePlayerSession(
-      this.playerStory, 
-      this.selectedOption.optionId, 
-      this.outcomeDisplay,
+      new Story(), 
+      "", 
+      [],
       true
     );
     this.playerTurn = false;
