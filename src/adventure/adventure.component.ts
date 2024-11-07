@@ -41,6 +41,12 @@ export class AdventureComponent implements OnInit {
       if (changes['activePlayerSession'] 
       && changes['activePlayerSession'].currentValue?.playerId === this.player.authorId) {
         this.playerTurn = true;
+      } else {
+        this.selectedLocation = new Location();
+        this.playerTurn = false;
+        this.outcomeDisplay = [];
+        this.selectedOption = new Option();
+        this.selectedLocationOption = new Option();
       }
     }
 
