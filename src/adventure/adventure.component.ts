@@ -9,7 +9,6 @@ import { Option } from 'src/assets/option';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 import { Stat } from 'src/assets/stat';
-import { OutcomeStat } from 'src/assets/outcome-stat';
 
 @Component({
     selector: 'adventure',
@@ -24,6 +23,7 @@ export class AdventureComponent implements OnInit {
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
 
     locations: Location[] = [];
+    selectedLocationOption: Option = new Option();
     selectedLocation: Location = new Location();
     playerStory: Story = new Story();
     selectedOption: Option = new Option();
@@ -65,9 +65,11 @@ export class AdventureComponent implements OnInit {
           });
       }
       
-      getStory(selectedLocation: Location) {
+      getLocationTasks(selectedLocation: Location) {
         this.selectedLocation = selectedLocation;
+      }
 
+      getStory(selectedLocation: Location) {
         const params = {
           gameCode: this.gameCode,
           playerId: this.player.authorId,
@@ -140,17 +142,21 @@ export class AdventureComponent implements OnInit {
         (this.player[playerOutcomeStatKey] as number) += outcomeStat.statChange;
       });
     } else {
-      this.outcomeDisplay.push(this.selectedOption.successText);
+      this.outcomeDisplay.push(this.selectedOption.failureText);
       this.selectedOption.failureResults.forEach(outcomeStat => {
         const statResult: String = "You lose " + outcomeStat.statChange + " " + outcomeStat.impactedStat.toLowerCase();
         this.outcomeDisplay.push(statResult)
 
         const playerOutcomeStatKey = outcomeStat.impactedStat.toLowerCase() as keyof Player;
         (this.player[playerOutcomeStatKey] as number) -= outcomeStat.statChange;
+        if ((this.player[playerOutcomeStatKey] as number) <= 0) {
+          (this.player[playerOutcomeStatKey] as number) = 0;
+        }
       });
     }
 
     this.updatePlayer();
+    this.updateStory(playerSucceeded, this.player.authorId, this.selectedOption.optionId);
 
     this.updateActivePlayerSession(
       this.player.authorId,
@@ -166,6 +172,7 @@ export class AdventureComponent implements OnInit {
   rollForSuccess(playerStat: number, dcToBeat: number): boolean {
     const diceRoll: number = Math.floor((Math.random() * 10) + 1);
     const playerTotal = diceRoll + playerStat;
+    console.log("Dice roll: ", playerTotal, diceRoll);
     return playerTotal >= dcToBeat;
   }
 
@@ -183,6 +190,24 @@ export class AdventureComponent implements OnInit {
       });
   }
 
+  updateStory(playerSucceeded: boolean, playerId: string, selectedOptionId: string) {
+    this.playerStory.playerSucceeded = playerSucceeded;
+    this.playerStory.playerId = playerId;
+    this.playerStory.selectedOptionId = selectedOptionId;
+
+    console.log('Updating story', this.playerStory);
+    this.http
+      .put<Story>(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, this.playerStory)
+      .subscribe({
+        next: (response) => {
+          console.log('Player story updated!', response);
+        },
+        error: (error) => {
+          console.error('Error creating game', error);
+        },
+      });
+  }
+
   nextPlayerTurn() {
     this.updateActivePlayerSession(
       "",
@@ -192,5 +217,17 @@ export class AdventureComponent implements OnInit {
       true
     );
     this.playerTurn = false;
+  }
+
+  selectLocationOption(locationOptionIndex: number) {
+    this.selectedLocationOption = this.selectedLocation.options[locationOptionIndex];
+
+    this.selectedLocationOption.successResults.forEach(outcomeStat => {
+      const playerOutcomeStatKey = outcomeStat.impactedStat.toLowerCase() as keyof Player;
+      (this.player[playerOutcomeStatKey] as number) += outcomeStat.statChange;
+    });
+
+    this.updatePlayer();
+    this.getStory(this.selectedLocation);
   }
 }

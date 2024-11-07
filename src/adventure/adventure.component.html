@@ -1,12 +1,25 @@
 @if(playerTurn) {
-    @for (location of locations; track location.locationId) {
-        <button (click)="getStory(location)">{{ location.locationName }}</button><br>
-    }
-
-    @if(playerStory.storyId != "") {
+    @if(selectedLocation.locationName === "") {
+        @for (location of locations; track location.locationId) {
+            <button (click)="getLocationTasks(location)">{{ location.locationName }}</button><br>
+        }
+    } @else {
         <br>
         You travel to the {{selectedLocation.locationName}}
         <br>
+        <button (click)="selectLocationOption(0)">{{ selectedLocation.options[0].optionText }}</button>
+        <br>
+        <button (click)="selectLocationOption(1)">{{ selectedLocation.options[1].optionText }}</button>
+        <br>
+        @if (selectedLocationOption.successResults.length != 0) {
+            {{selectedLocationOption.attemptText}}
+            @for (outcome of selectedLocationOption.successResults; track outcome) {
+                <div>You gain {{outcome.statChange}} {{outcome.impactedStat}} </div>
+            }
+        }
+    }
+
+    @if(playerStory.storyId != "") {
         {{playerStory.prompt}}<br>
         {{playerStory.options[0].optionText}}
         <button (click)="pickOption(0)">Option 1</button><br>

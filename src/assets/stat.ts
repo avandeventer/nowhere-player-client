@@ -4,5 +4,6 @@ export enum Stat {
     CHARISMA = "CHARISMA",
     INTELLECT = "INTELLECT",
     WEALTH = "WEALTH",
-    MAGIC = "MAGIC"
+    MAGIC = "MAGIC",
+    FAVOR = "FAVOR"
   }  

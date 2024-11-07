@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
 import { ResponseObject } from 'src/assets/response-object';
@@ -29,6 +29,18 @@ export class WriteOutcomesComponent implements OnInit {
 
   ngOnInit() {
     this.getPlayerStoryOptions(this.player.authorId);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
+      const currentState = changes['gameState'].currentValue;
+
+      if ((currentState === GameState.ROUND1 || currentState === GameState.ROUND2)
+          && !(this.currentStoryIndex >= this.playerStories.length)
+      ) {
+        this.submitOutcomes();
+      }
+    }
   }
 
   getPlayerStoryOptions(authorId: string) {

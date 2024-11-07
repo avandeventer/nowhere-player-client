@@ -8,6 +8,7 @@ export class Option {
     statRequirement: Stat;
     statDC: number;
     successText: string;
+    failureText: string;
     successResults: OutcomeStat[];
     failureResults: OutcomeStat[];
 
@@ -18,6 +19,7 @@ export class Option {
         this.statRequirement = Stat.CHARISMA;
         this.statDC = 0;
         this.successText = "";
+        this.failureText = "";
         this.successResults = [];
         this.failureResults = [];
     }
