@@ -47,6 +47,7 @@ export class AdventureComponent implements OnInit {
         this.outcomeDisplay = [];
         this.selectedOption = new Option();
         this.selectedLocationOption = new Option();
+        this.playerStory = new Story();
       }
     }
 
