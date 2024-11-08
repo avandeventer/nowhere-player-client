@@ -25,14 +25,15 @@ export class WritePromptComponent implements OnInit {
   currentStoryIndex: number = 0;
   outcomeDisplay: string[] = [];
 
-  prompt = new FormControl('');
-  optionOne = new FormControl('');
-  optionTwo = new FormControl('');
+  prompt = new FormControl();
+  optionOne = new FormControl();
+  optionTwo = new FormControl();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   ngOnInit() {
-    this.getPlayerStories(this.player.authorId);
+    this.getPlayerStories(this.player.authorId); 
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -44,12 +45,6 @@ export class WritePromptComponent implements OnInit {
         this.submitPrompt();
       }
     }
-  }
-
-  randomStat() {
-    const values = Object.keys(Stat) as Array<keyof typeof Stat>;  
-    const enumKey = values[Math.floor(Math.random() * values.length)];
-    return Stat[enumKey];
   }
 
   getPlayerStories(authorId: string) {
@@ -143,6 +138,8 @@ export class WritePromptComponent implements OnInit {
           }
         ]
       };
+
+      console.log("Submitting story update", requestBody, this.prompt.value, this.optionOne.value, this.optionTwo.value);
   
       this.http
         .put('https://nowhere-556057816518.us-east5.run.app/story', requestBody)
@@ -158,6 +155,7 @@ export class WritePromptComponent implements OnInit {
   }
 
   private setNextStoryPrompt() {
+    console.log("set next story prompt triggered");
     this.prompt.reset('');
     this.optionOne.reset('');
     this.optionTwo.reset('');

@@ -2,40 +2,40 @@
     <p>All stories have been submitted!</p>
 } 
 @else {
-    <div>Create a one to two sentence prompt for a story in the {{playerStories[this.currentStoryIndex].location.locationName}}</div>
+    <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.locationName}}</div>
 
-    @if(playerStories[this.currentStoryIndex].prequelOutcomeDisplay.length > 0) {
-        <div>Write this one as a sequel to the story below:</div>
-
-        <div>
-        @for (outcome of playerStories[this.currentStoryIndex].prequelOutcomeDisplay; track outcome) {
-            <div>{{outcome}}</div><br>
-        }
-        </div>
-    }
-
-    @if(isAGodFavorStory(playerStories[this.currentStoryIndex])) {
-        <div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div>
-    }
-
-    <textarea id="prompt" [formControl]="prompt"></textarea>
+    <textarea [formControl]="prompt"></textarea>
 
     <div>
         To succeed in this story you'll need to have a lot of either:
     </div>
     <br>
     <div>
-        {{playerStories[this.currentStoryIndex].options[0].statRequirement}}
+        {{playerStories[currentStoryIndex].options[0].statRequirement}}
         [{{statDCDifficulty(0)}}]
         <input type="text" id="optionOne" [formControl]="optionOne" placeholder="Option One" />
         <br>
         or
         <br>
-        {{playerStories[this.currentStoryIndex].options[1].statRequirement}}
+        {{playerStories[currentStoryIndex].options[1].statRequirement}}
         [{{statDCDifficulty(1)}}]
         <input type="text" id="optionTwo" [formControl]="optionTwo" placeholder="Option Two" />
     </div>
 
     <br>
     <button (click)="submitPrompt()">Submit</button>
+}
+
+@if(playerStories[currentStoryIndex].prequelOutcomeDisplay != null && playerStories[currentStoryIndex].prequelOutcomeDisplay.length > 0) {
+    <div>Write this one as a sequel to the story below:</div>
+
+    <div>
+    @for (outcome of playerStories[currentStoryIndex].prequelOutcomeDisplay; track outcome) {
+        <div>{{outcome}}</div><br>
+    }
+    </div>
+}
+
+@if(isAGodFavorStory(playerStories[currentStoryIndex])) {
+    <br><div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div>
 }
