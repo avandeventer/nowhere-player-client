@@ -93,9 +93,10 @@ export class AdventureComponent implements OnInit {
               console.log('Story retrieved!', response);
               this.playerStories = response;
               this.playerStory = this.playerStories[0];
+              console.log('Player Story', this.playerStory);
               this.storyRetrieved = true;
               this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
-              console.log('Player Story', this.playerStories);
+              console.log('Player Stories', this.playerStories);
             },
             error: (error) => {
               console.error('Error retrieving stories', error);
@@ -135,6 +136,8 @@ export class AdventureComponent implements OnInit {
   pickOption(optionPicked: number) {
     console.log(optionPicked);
     this.selectedOption = this.playerStory.options[optionPicked];
+    console.log("Player story at option select", this.playerStory);
+    console.log("Selected Option", this.selectedOption);
     const statRequirement: Stat = this.selectedOption.statRequirement;
     const playerDCStatKey = statRequirement.toLowerCase() as keyof Player;
     const playerDCStatValue: number = +this.player[playerDCStatKey];
@@ -231,7 +234,8 @@ export class AdventureComponent implements OnInit {
   }
 
   selectLocationOption(locationOptionIndex: number) {
-    this.selectedLocationOption = this.playerStory.options[locationOptionIndex];
+    this.selectedLocationOption = this.playerStory.location.options[locationOptionIndex];
+    console.log("Selected location", this.selectedLocationOption, locationOptionIndex);
 
     this.selectedLocationOption.successResults.forEach(outcomeStat => {
       const playerOutcomeStatKey = outcomeStat.impactedStat.toLowerCase() as keyof Player;
