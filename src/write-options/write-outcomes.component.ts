@@ -82,6 +82,7 @@ export class WriteOutcomesComponent implements OnInit {
         options: [
           {
             optionId: this.playerOption.optionId,
+            outcomeAuthorId: this.player.authorId,
             successText: this.optionSuccess.value,
             failureText: this.optionFailure.value
           }
