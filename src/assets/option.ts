@@ -11,6 +11,7 @@ export class Option {
     failureText: string;
     successResults: OutcomeStat[];
     failureResults: OutcomeStat[];
+    outcomeAuthorId: string;
 
     constructor () {
         this.optionId = "";
@@ -22,5 +23,6 @@ export class Option {
         this.failureText = "";
         this.successResults = [];
         this.failureResults = [];
+        this.outcomeAuthorId = "";
     }
 }

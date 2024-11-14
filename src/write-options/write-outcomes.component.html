@@ -6,46 +6,28 @@
     {{playerStories[this.currentStoryIndex].prompt}}
 
     <div>
-        The player who gets this story will have two choices with a success and failure outcome each. Type out what happens!
+        The player who gets this story will have two choices with a success and failure outcome each. Type out what happens when they succeed or fail for the below option!
     </div>
     <br>
     <div>
-        {{playerStories[this.currentStoryIndex].options[0].statRequirement}}[{{statDCDifficulty(0)}}]<br>
+        {{playerOption.statRequirement}}[{{statDCDifficulty()}}]<br>
 
-        {{playerStories[this.currentStoryIndex].options[0].optionText}}
+        {{playerOption.optionText}}
         <br>
         If they succeed, they gain: <br>
-        @for (outcome of playerStories[this.currentStoryIndex].options[0].successResults; track outcome) {
+        @for (outcome of playerOption.successResults; track outcome) {
             <div>{{outcome.impactedStat}}</div>
         }
     
-        <input type="text" id="optionOneSuccess" [formControl]="optionOneSuccess" placeholder="Option One Success" />
+        <input type="text" id="optionSuccess" [formControl]="optionSuccess" placeholder="Option Success" />
         <br>
         If they fail, they lose: <br>
-        @for (outcome of playerStories[this.currentStoryIndex].options[0].failureResults; track outcome) {
+        @for (outcome of playerOption.failureResults; track outcome) {
             <div>{{outcome.impactedStat}}</div>
         }
-        <input type="text" id="optionOneFailure" [formControl]="optionOneFailure" placeholder="Option One Failure" />
+        <input type="text" id="optionFailure" [formControl]="optionFailure" placeholder="Option Failure" />
 
         <br>
-        or
-        <br><br>
-
-        {{playerStories[this.currentStoryIndex].options[1].statRequirement}}[{{statDCDifficulty(1)}}]<br>
-        {{playerStories[this.currentStoryIndex].options[1].optionText}}
-        <br>
-        If they succeed, they gain: <br>
-        @for (outcome of playerStories[this.currentStoryIndex].options[1].successResults; track outcome) {
-            <div>{{outcome.impactedStat}}</div>
-        }        
-        <input type="text" id="optionTwoSuccess" [formControl]="optionTwoSuccess" placeholder="Option Two Success" />
-        <br>
-
-        If they fail, they lose: <br>
-        @for (outcome of playerStories[this.currentStoryIndex].options[1].failureResults; track outcome) {
-            <div>{{outcome.impactedStat}}</div>
-        }
-        <input type="text" id="optionTwoFailure" [formControl]="optionTwoFailure" placeholder="Option Two Failure" />
     </div>
 
     <div></div>

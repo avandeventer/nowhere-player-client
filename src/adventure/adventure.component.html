@@ -7,13 +7,9 @@
     <div>Wealth: {{player.wealth}}</div>
     <div>Magic: {{player.magic}}</div>
 
-    @if(selectedLocation.locationName === "") {
-        @for (location of locations; track location.locationId) {
-            <button (click)="getLocationTasks(location)">{{ location.locationName }}</button><br>
-        }
-    } @else {
+    @if (selectedLocation.label != "") {
         <br>
-        You travel to the {{selectedLocation.locationName}}
+        You travel to the {{selectedLocation.label}}
         <br>
         <button (click)="selectLocationOption(0)">{{ selectedLocation.options[0].optionText }}</button>
         <br>
@@ -27,7 +23,7 @@
         }
     }
 
-    @if(playerStory.storyId != "") {
+    @if(playerStory.storyId != "" && selectedLocationOption.successResults.length != 0) {
         {{playerStory.prompt}}<br>
         {{playerStory.options[0].optionText}}
         <button (click)="pickOption(0)">Option 1</button><br>

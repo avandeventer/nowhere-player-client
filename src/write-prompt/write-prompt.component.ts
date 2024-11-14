@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
 import { ResponseObject } from 'src/assets/response-object';
@@ -9,7 +9,6 @@ import { Story } from 'src/assets/story';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
-import { OutcomeStat } from 'src/assets/outcome-stat';
 
 @Component({
   selector: 'write-prompt',
@@ -21,6 +20,7 @@ export class WritePromptComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_PROMPTS;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
+  @Output() playerDone = new EventEmitter<boolean>();
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
   outcomeDisplay: string[] = [];
@@ -160,6 +160,9 @@ export class WritePromptComponent implements OnInit {
     this.optionOne.reset('');
     this.optionTwo.reset('');
     this.currentStoryIndex++;
+    if(this.currentStoryIndex >= this.playerStories.length) {
+      this.playerDone.emit(true);
+    }
     console.log(this.currentStoryIndex);
   }
 

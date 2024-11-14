@@ -1,0 +1,9 @@
+@if (!isLocationsSelected) {
+    <div>Choose where you will travel in the coming weeks</div>
+    <div>select {{locationsSelected}} of 2</div>
+    @for (location of locations; track location.locationId) {
+        <button (click)="getStory(location)">{{ location.label }}</button><br>
+    }
+} @else {
+    <div>You have chosen where you will travel. Await the other player's choices.</div>
+}

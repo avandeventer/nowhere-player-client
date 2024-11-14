@@ -7,16 +7,24 @@ import { Player } from 'src/assets/player';
 import { WriteOutcomesComponent } from 'src/write-options/write-outcomes.component';
 import { ActivePlayerSession } from 'src/assets/active-player-session';
 import { AdventureComponent } from 'src/adventure/adventure.component';
+import { HttpConstants } from 'src/assets/http-constants';
+import { environment } from 'src/environments/environment';
+import { LocationComponent } from 'src/location/location.component';
 
 @Component({
   selector: 'game-state-manager',
   templateUrl: './game-state-manager.component.html',
   standalone: true,
-  imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent]
+  imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent]
 })
 export class GameStateManagerComponent implements OnInit {
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
+  @Input() setDone(isDone: boolean) {
+    if(isDone) {
+      this.playerIsDone();
+    }
+  }
   gameState: GameState = GameState.INIT;
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
 
@@ -54,12 +62,33 @@ export class GameStateManagerComponent implements OnInit {
       });
   }
 
+  playerIsDone() {
+    const url = `${environment.nowhereBackendUrl}${HttpConstants.ACTIVE_GAME_STATE_SESSION_PATH}?gameCode=${this.gameCode}&authorId=${this.player.authorId}&isDone=${true}`;
+
+    console.log(url);
+
+    this.http
+      .put(url, {})
+      .subscribe({
+        next: (response) => {
+          console.log('Player is done!', response);
+        },
+        error: (error) => {
+          console.error('Error updating player done status', error);
+        },
+      });
+  }
+
   isGameInitialized() {
     return this.gameState === GameState.INIT;
   }
 
   isGameStarted() {
     return this.gameState === GameState.WRITE_PROMPTS || this.gameState === GameState.WRITE_PROMPTS_AGAIN;
+  }
+
+  isLocationSelect() {
+    return this.gameState === GameState.LOCATION_SELECT;
   }
 
   isGameInWriteOutcomesPhase() {

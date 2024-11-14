@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
 import { ResponseObject } from 'src/assets/response-object';
 import { Story } from 'src/assets/story';
+import { Option } from 'src/assets/option';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -16,18 +17,18 @@ export class WriteOutcomesComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_OPTIONS;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
+  @Output() playerDone = new EventEmitter<boolean>();
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
+  playerOption: Option = new Option();
 
-  optionOneSuccess = new FormControl('');
-  optionOneFailure = new FormControl('');
-
-  optionTwoSuccess = new FormControl('');
-  optionTwoFailure = new FormControl('');
+  optionSuccess = new FormControl('');
+  optionFailure = new FormControl('');
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
+    this.currentStoryIndex = 0;
     this.getPlayerStoryOptions(this.player.authorId);
   }
 
@@ -57,6 +58,7 @@ export class WriteOutcomesComponent implements OnInit {
         next: (response) => {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
+          this.setPlayerOption();
           console.log('Player stories', this.playerStories);
         },
         error: (error) => {
@@ -65,20 +67,23 @@ export class WriteOutcomesComponent implements OnInit {
       });
   }
 
+  private setPlayerOption() {
+    this.playerStories[this.currentStoryIndex].options.forEach(option => {
+      if (option.outcomeAuthorId === this.player.authorId) {
+        this.playerOption = option;
+      }
+    });
+  }
+
   submitOutcomes() {
       const requestBody = {
         gameCode: this.gameCode,
         storyId: this.playerStories[this.currentStoryIndex].storyId,
         options: [
           {
-            optionId: this.playerStories[this.currentStoryIndex].options[0].optionId,
-            successText: this.optionOneSuccess.value,
-            failureText: this.optionOneFailure.value
-          }, 
-          {
-            optionId: this.playerStories[this.currentStoryIndex].options[1].optionId,
-            successText: this.optionTwoSuccess.value,
-            failureText: this.optionTwoFailure.value
+            optionId: this.playerOption.optionId,
+            successText: this.optionSuccess.value,
+            failureText: this.optionFailure.value
           }
         ]
       };
@@ -97,16 +102,19 @@ export class WriteOutcomesComponent implements OnInit {
   }
 
   private setNextStoryPrompt() {
-    this.optionOneSuccess.reset('');
-    this.optionOneFailure.reset('');
-    this.optionTwoSuccess.reset('');
-    this.optionTwoFailure.reset('');
+    this.optionSuccess.reset('');
+    this.optionFailure.reset('');
     this.currentStoryIndex++;
+    if(this.currentStoryIndex < this.playerStories.length) {
+      this.setPlayerOption();
+      this.playerDone.emit(true);
+    }
+    
     console.log(this.currentStoryIndex);
   }
 
-  public statDCDifficulty(promptIndex: number) {
-    let statDC: number = this.playerStories[this.currentStoryIndex].options[promptIndex].statDC;
+  public statDCDifficulty() {
+    let statDC: number = this.playerOption.statDC;
     if(statDC >= 7) {
       return "HARD";
     }

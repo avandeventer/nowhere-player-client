@@ -25,6 +25,7 @@ export class AdventureComponent implements OnInit {
     locations: Location[] = [];
     selectedLocationOption: Option = new Option();
     selectedLocation: Location = new Location();
+    playerStories: Story[] = [];
     playerStory: Story = new Story();
     selectedOption: Option = new Option();
     outcomeDisplay: String[] = [];
@@ -34,7 +35,7 @@ export class AdventureComponent implements OnInit {
 
     ngOnInit(): void {
       console.log("Adventure Loaded!" + this.activePlayerSession);
-      this.getLocations(this.gameCode);
+      this.getStory();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -47,7 +48,7 @@ export class AdventureComponent implements OnInit {
         this.outcomeDisplay = [];
         this.selectedOption = new Option();
         this.selectedLocationOption = new Option();
-        this.playerStory = new Story();
+        this.playerStories = [];
       }
     }
 
@@ -76,26 +77,27 @@ export class AdventureComponent implements OnInit {
         this.selectedLocation = selectedLocation;
       }
 
-      getStory(selectedLocation: Location) {
+      getStory() {
         const params = {
           gameCode: this.gameCode,
-          playerId: this.player.authorId,
-          locationId: selectedLocation.locationId
+          playerId: this.player.authorId
         };
     
         console.log(params);
     
         this.http
-        .get<Story>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PATH, { params })
+        .get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, { params })
           .subscribe({
             next: (response) => {
               console.log('Story retrieved!', response);
-              this.playerStory = response;
+              this.playerStories = response;
+              this.playerStory = this.playerStories[0];
+              this.selectedLocation = this.playerStory.location;
               this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
-              console.log('Player Story', this.playerStory);
+              console.log('Player Story', this.playerStories);
             },
             error: (error) => {
-              console.error('Error creating game', error);
+              console.error('Error retrieving stories', error);
             },
           });
         
@@ -235,6 +237,5 @@ export class AdventureComponent implements OnInit {
     });
 
     this.updatePlayer();
-    this.getStory(this.selectedLocation);
   }
 }

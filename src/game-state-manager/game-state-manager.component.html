@@ -8,11 +8,15 @@
 }
 
 @if (isGameStarted()) {
-    <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player"></write-prompt>
+    <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-prompt>
+}
+
+@if (isLocationSelect()) {
+    <location [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></location>
 }
 
 @if (isGameInWriteOutcomesPhase()) {
-    <write-outcomes [gameCode]="gameCode" [gameState]="gameState" [player]="player"></write-outcomes>
+    <write-outcomes [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-outcomes>
 }
 
 @if (isGameInAdventurePhase()) {
