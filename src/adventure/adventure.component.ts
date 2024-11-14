@@ -30,6 +30,7 @@ export class AdventureComponent implements OnInit {
     selectedOption: Option = new Option();
     outcomeDisplay: String[] = [];
     playerTurn: boolean = false;
+    storyRetrieved: boolean = true;
 
     constructor(private http:HttpClient) {}
 
@@ -92,7 +93,7 @@ export class AdventureComponent implements OnInit {
               console.log('Story retrieved!', response);
               this.playerStories = response;
               this.playerStory = this.playerStories[0];
-              this.selectedLocation = this.playerStory.location;
+              this.storyRetrieved = true;
               this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
               console.log('Player Story', this.playerStories);
             },
@@ -226,10 +227,11 @@ export class AdventureComponent implements OnInit {
       true
     );
     this.playerTurn = false;
+    this.storyRetrieved = false;
   }
 
   selectLocationOption(locationOptionIndex: number) {
-    this.selectedLocationOption = this.selectedLocation.options[locationOptionIndex];
+    this.selectedLocationOption = this.playerStory.options[locationOptionIndex];
 
     this.selectedLocationOption.successResults.forEach(outcomeStat => {
       const playerOutcomeStatKey = outcomeStat.impactedStat.toLowerCase() as keyof Player;

@@ -7,13 +7,13 @@
     <div>Wealth: {{player.wealth}}</div>
     <div>Magic: {{player.magic}}</div>
 
-    @if (selectedLocation.label != "") {
+    @if (storyRetrieved) {
         <br>
-        You travel to the {{selectedLocation.label}}
+        You travel to the {{playerStory.location.label}}
         <br>
-        <button (click)="selectLocationOption(0)">{{ selectedLocation.options[0].optionText }}</button>
+        <button (click)="selectLocationOption(0)">{{ playerStory.location.options[0].optionText }}</button>
         <br>
-        <button (click)="selectLocationOption(1)">{{ selectedLocation.options[1].optionText }}</button>
+        <button (click)="selectLocationOption(1)">{{ playerStory.location.options[1].optionText }}</button>
         <br>
         @if (selectedLocationOption.successResults.length != 0) {
             {{selectedLocationOption.attemptText}}
