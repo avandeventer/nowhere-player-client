@@ -45,6 +45,7 @@ export class AdventureComponent implements OnInit {
       if (changes['activePlayerSession'] 
       && changes['activePlayerSession'].currentValue?.playerId === this.player.authorId) {
         this.playerTurn = true;
+        this.getStory();    
       } else {
         this.selectedLocation = new Location();
         this.playerTurn = false;
@@ -52,7 +53,6 @@ export class AdventureComponent implements OnInit {
         this.selectedOption = new Option();
         this.selectedLocationOption = new Option();
         this.playerStories = [];
-        this.getStory();    
       }
     }
 
