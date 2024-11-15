@@ -38,14 +38,15 @@ export class AdventureComponent implements OnInit {
 
     ngOnInit(): void {
       console.log("Adventure Loaded!" + this.activePlayerSession);
-      this.getStory();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
       if (changes['activePlayerSession'] 
       && changes['activePlayerSession'].currentValue?.playerId === this.player.authorId) {
-        this.playerTurn = true;
-        this.getStory();    
+        if(!this.playerTurn) {
+          this.playerTurn = true;
+          this.getStory();
+        }
       } else {
         this.selectedLocation = new Location();
         this.playerTurn = false;
@@ -97,7 +98,7 @@ export class AdventureComponent implements OnInit {
               this.playerStories = response;
               if(this.playerStories.length == 0) {
                 this.playerDone.emit(true);
-                this.nextPlayerTurn();
+                // this.nextPlayerTurn();
               } else {
                 this.playerStory = this.playerStories[this.currentStoryIndex];
               }      
