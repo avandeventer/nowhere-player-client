@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, SimpleChange, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges } from "@angular/core";
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { GameState } from "src/assets/game-state";
 import { Player } from "src/assets/player";
@@ -21,6 +21,7 @@ export class AdventureComponent implements OnInit {
     @Input() gameCode: string = "";
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
+    @Output() playerDone = new EventEmitter<boolean>();
 
     locations: Location[] = [];
     selectedLocationOption: Option = new Option();
@@ -31,6 +32,7 @@ export class AdventureComponent implements OnInit {
     outcomeDisplay: String[] = [];
     playerTurn: boolean = false;
     storyRetrieved: boolean = true;
+    currentStoryIndex: number = 0;
 
     constructor(private http:HttpClient) {}
 
@@ -92,7 +94,7 @@ export class AdventureComponent implements OnInit {
             next: (response) => {
               console.log('Story retrieved!', response);
               this.playerStories = response;
-              this.playerStory = this.playerStories[0];
+              this.playerStory = this.playerStories[this.currentStoryIndex];
               console.log('Player Story', this.playerStory);
               this.storyRetrieved = true;
               this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
@@ -231,6 +233,13 @@ export class AdventureComponent implements OnInit {
     );
     this.playerTurn = false;
     this.storyRetrieved = false;
+    this.currentStoryIndex++;
+    if(this.currentStoryIndex >= this.playerStories.length) {
+      this.playerDone.emit(true);
+      this.currentStoryIndex = 0;
+    } else {
+      this.playerStory = this.playerStories[this.currentStoryIndex];
+    }
   }
 
   selectLocationOption(locationOptionIndex: number) {

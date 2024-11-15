@@ -20,5 +20,5 @@
 }
 
 @if (isGameInAdventurePhase()) {
-    <adventure [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession"></adventure>
+    <adventure [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></adventure>
 }
