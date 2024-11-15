@@ -98,7 +98,7 @@ export class AdventureComponent implements OnInit {
               this.playerStories = response;
               if(this.playerStories.length == 0) {
                 this.playerDone.emit(true);
-                // this.nextPlayerTurn();
+                this.nextPlayerTurn();
               } else {
                 this.playerStory = this.playerStories[this.currentStoryIndex];
               }      
