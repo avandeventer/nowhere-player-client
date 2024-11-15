@@ -21,6 +21,7 @@ export class WriteOutcomesComponent implements OnInit {
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
   playerOption: Option = new Option();
+  otherOption: Option = new Option();
 
   optionSuccess = new FormControl('');
   optionFailure = new FormControl('');
@@ -71,6 +72,8 @@ export class WriteOutcomesComponent implements OnInit {
     this.playerStories[this.currentStoryIndex].options.forEach(option => {
       if (option.outcomeAuthorId === this.player.authorId) {
         this.playerOption = option;
+      } else {
+        this.otherOption = option;
       }
     });
   }
@@ -85,6 +88,9 @@ export class WriteOutcomesComponent implements OnInit {
             outcomeAuthorId: this.player.authorId,
             successText: this.optionSuccess.value,
             failureText: this.optionFailure.value
+          },
+          {
+            optionId: this.otherOption.optionId
           }
         ]
       };
