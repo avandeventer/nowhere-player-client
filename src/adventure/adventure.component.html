@@ -9,11 +9,11 @@
 
     @if (storyRetrieved) {
         <br>
-        You travel to the {{playerStory.location.label}}
+        You travel to the {{location.label}}
         <br>
-        <button (click)="selectLocationOption(0)">{{ playerStory.location.options[0].optionText }}</button>
+        <button (click)="selectLocationOption(0)">{{ location.options[0].optionText }}</button>
         <br>
-        <button (click)="selectLocationOption(1)">{{ playerStory.location.options[1].optionText }}</button>
+        <button (click)="selectLocationOption(1)">{{ location.options[1].optionText }}</button>
         <br>
         @if (selectedLocationOption.successResults.length != 0) {
             {{selectedLocationOption.attemptText}}

@@ -24,6 +24,7 @@ export class AdventureComponent implements OnInit {
     @Output() playerDone = new EventEmitter<boolean>();
 
     locations: Location[] = [];
+    location: Location = new Location();
     selectedLocationOption: Option = new Option();
     selectedLocation: Location = new Location();
     playerStories: Story[] = [];
@@ -38,6 +39,7 @@ export class AdventureComponent implements OnInit {
 
     ngOnInit(): void {
       console.log("Adventure Loaded!" + this.activePlayerSession);
+      this.getLocations(this.gameCode);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -53,13 +55,14 @@ export class AdventureComponent implements OnInit {
         this.outcomeDisplay = [];
         this.selectedOption = new Option();
         this.selectedLocationOption = new Option();
+        this.storyRetrieved = false;
         this.playerStories = [];
       }
     }
 
     getLocations(gameCode: string) {
         const params = {
-          gameCode: this.gameCode
+          gameCode: gameCode
         };
     
         console.log(params);
@@ -101,6 +104,7 @@ export class AdventureComponent implements OnInit {
                 this.nextPlayerTurn();
               } else {
                 this.playerStory = this.playerStories[this.currentStoryIndex];
+                this.location = this.locations[this.playerStory.location.locationId];
               }      
               console.log('Player Story', this.playerStory);
               this.storyRetrieved = true;
@@ -243,7 +247,7 @@ export class AdventureComponent implements OnInit {
   }
 
   selectLocationOption(locationOptionIndex: number) {
-    this.selectedLocationOption = this.playerStory.location.options[locationOptionIndex];
+    this.selectedLocationOption = this.location.options[locationOptionIndex];
     console.log("Selected location", this.selectedLocationOption, locationOptionIndex);
 
     this.selectedLocationOption.successResults.forEach(outcomeStat => {
