@@ -65,7 +65,7 @@ export class GameStateManagerComponent implements OnInit {
   playerIsDone() {
     const url = `${environment.nowhereBackendUrl}${HttpConstants.ACTIVE_GAME_STATE_SESSION_PATH}?gameCode=${this.gameCode}&authorId=${this.player.authorId}&isDone=${true}`;
 
-    console.log(url);
+    console.log("Player is done ", this.gameState);
 
     this.http
       .put(url, {})

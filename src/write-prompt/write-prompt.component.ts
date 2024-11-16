@@ -162,6 +162,7 @@ export class WritePromptComponent implements OnInit {
     this.currentStoryIndex++;
     if(this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(true);
+      this.currentStoryIndex = 0;
     }
     console.log(this.currentStoryIndex);
   }

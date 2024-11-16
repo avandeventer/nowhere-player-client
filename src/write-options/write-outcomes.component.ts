@@ -112,9 +112,11 @@ export class WriteOutcomesComponent implements OnInit {
     this.optionSuccess.reset('');
     this.optionFailure.reset('');
     this.currentStoryIndex++;
-    if(this.currentStoryIndex < this.playerStories.length) {
-      this.setPlayerOption();
+    if(this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(true);
+      this.currentStoryIndex = 0;
+    } else {
+      this.setPlayerOption();
     }
     
     console.log(this.currentStoryIndex);
