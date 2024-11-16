@@ -99,10 +99,7 @@ export class AdventureComponent implements OnInit {
             next: (response) => {
               console.log('Story retrieved!', response);
               this.playerStories = response;
-              if(this.playerStories.length == 0) {
-                this.playerDone.emit(true);
-                this.nextPlayerTurn();
-              } else {
+              if(this.playerStories.length != 0) {
                 this.playerStory = this.playerStories[this.currentStoryIndex];
                 this.location = this.locations[this.playerStory.location.locationId];
               }      
