@@ -40,9 +40,13 @@ export class WritePromptComponent implements OnInit {
     if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
       const currentState = changes['gameState'].currentValue;
 
-      if ((currentState === GameState.WRITE_OPTIONS || currentState === GameState.WRITE_OPTIONS_AGAIN)
-          && !(this.currentStoryIndex >= this.playerStories.length)) {
-        this.submitPrompt();
+      // if ((currentState === GameState.WRITE_OPTIONS || currentState === GameState.WRITE_OPTIONS_AGAIN)
+      //     && !(this.currentStoryIndex >= this.playerStories.length)) {
+      //   this.submitPrompt();
+      // } 
+      
+      if (currentState !== GameState.WRITE_PROMPTS && currentState !== GameState.WRITE_PROMPTS_AGAIN) {
+        this.currentStoryIndex = 0;
       }
     }
   }
@@ -162,7 +166,6 @@ export class WritePromptComponent implements OnInit {
     this.currentStoryIndex++;
     if(this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(true);
-      this.currentStoryIndex = 0;
     }
     console.log(this.currentStoryIndex);
   }

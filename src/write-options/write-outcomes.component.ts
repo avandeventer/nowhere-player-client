@@ -22,6 +22,7 @@ export class WriteOutcomesComponent implements OnInit {
   currentStoryIndex: number = 0;
   playerOption: Option = new Option();
   otherOption: Option = new Option();
+  isDone: boolean = false;
 
   optionSuccess = new FormControl('');
   optionFailure = new FormControl('');
@@ -37,11 +38,16 @@ export class WriteOutcomesComponent implements OnInit {
     if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
       const currentState = changes['gameState'].currentValue;
 
-      if ((currentState === GameState.ROUND1 || currentState === GameState.ROUND2)
-          && !(this.currentStoryIndex >= this.playerStories.length)
-      ) {
-        this.submitOutcomes();
+      // if ((currentState === GameState.ROUND1 || currentState === GameState.ROUND2)
+      //     && !(this.currentStoryIndex >= this.playerStories.length)
+      // ) {
+      //   this.submitOutcomes();
+      // }
+
+      if (currentState !== GameState.WRITE_OPTIONS && currentState !== GameState.WRITE_OPTIONS_AGAIN) {
+        this.currentStoryIndex = 0;
       }
+
     }
   }
 
@@ -113,8 +119,8 @@ export class WriteOutcomesComponent implements OnInit {
     this.optionFailure.reset('');
     this.currentStoryIndex++;
     if(this.currentStoryIndex >= this.playerStories.length) {
-      this.playerDone.emit(true);
-      this.currentStoryIndex = 0;
+      this.isDone = true;
+      this.playerDone.emit(this.isDone);
     } else {
       this.setPlayerOption();
     }

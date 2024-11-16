@@ -24,6 +24,10 @@
 
     <br>
     <button (click)="submitPrompt()">Submit</button>
+    
+    @if(isAGodFavorStory(playerStories[currentStoryIndex])) {
+        <br><div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div>
+    }
 }
 
 @if(playerStories[currentStoryIndex].prequelOutcomeDisplay != null && playerStories[currentStoryIndex].prequelOutcomeDisplay.length > 0) {
@@ -34,8 +38,4 @@
         <div>{{outcome}}</div><br>
     }
     </div>
-}
-
-@if(isAGodFavorStory(playerStories[currentStoryIndex])) {
-    <br><div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div>
 }
