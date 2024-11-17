@@ -189,11 +189,6 @@ export class AdventureComponent implements OnInit {
       false
     );
 
-    if(this.playerStories.length <= 1) {
-      console.log('Player is done');
-      this.playerDone.emit(true);
-    }
-
     console.log(this.selectedOption);
   }
 
@@ -246,6 +241,10 @@ export class AdventureComponent implements OnInit {
     );
     this.playerTurn = false;
     this.storyRetrieved = false;
+    if(this.playerStories.length <= 1) {
+      console.log('Player is done');
+      this.playerDone.emit(true);
+    }
   }
 
   selectLocationOption(locationOptionIndex: number) {
