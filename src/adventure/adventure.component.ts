@@ -190,6 +190,7 @@ export class AdventureComponent implements OnInit {
     );
 
     if(this.playerStories.length <= 1) {
+      console.log('Player is done');
       this.playerDone.emit(true);
     }
 
