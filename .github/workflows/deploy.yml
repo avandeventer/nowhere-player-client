@@ -23,26 +23,35 @@ jobs:
           npm install
           npm run build
 
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Authenticate Docker to Google Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: us-east4-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_IMAGE_NAME }} .
+          docker push ${{ secrets.DOCKER_IMAGE_NAME }}
+
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: your-project-id
-
-      - name: Build Docker image
-        run: docker build -t us-east4-docker.pkg.dev/nowhere-af065/nowhere-player-client-repo/nowhere-player-client .
-
-      - name: Push Docker image
-        run: docker push us-east4-docker.pkg.dev/nowhere-af065/nowhere-player-client-repo/nowhere-player-client
-
-      - name: Deploy to Cloud Run
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+  
+      - name: Deploy to Google Cloud Run
         run: |
           gcloud run deploy nowhere-player-client \
-          --image us-east4-docker.pkg.dev/nowhere-af065/nowhere-player-client-repo/nowhere-player-client \
-          --platform managed \
-          --region us-east4 \
-          --allow-unauthenticated
+            --image ${{ secrets.DOCKER_IMAGE_NAME }} \
+            --platform managed \
+            --region ${{ secrets.GCP_REGION }} \
+            --allow-unauthenticated
