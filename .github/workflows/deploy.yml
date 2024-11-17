@@ -32,7 +32,6 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: your-project-id
-          install_components: deploy
 
       - name: Build Docker image
         run: docker build -t us-east4-docker.pkg.dev/nowhere-af065/nowhere-player-client-repo/nowhere-player-client .
