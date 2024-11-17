@@ -88,7 +88,7 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isLocationSelect() {
-    return this.gameState === GameState.LOCATION_SELECT;
+    return this.gameState === GameState.LOCATION_SELECT || this.gameState === GameState.LOCATION_SELECT_AGAIN;
   }
 
   isGameInWriteOutcomesPhase() {
