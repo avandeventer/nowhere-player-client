@@ -22,7 +22,6 @@ export class WriteOutcomesComponent implements OnInit {
   currentStoryIndex: number = 0;
   playerOption: Option = new Option();
   otherOption: Option = new Option();
-  isDone: boolean = false;
 
   optionSuccess = new FormControl('');
   optionFailure = new FormControl('');
@@ -119,8 +118,7 @@ export class WriteOutcomesComponent implements OnInit {
     this.optionFailure.reset('');
     this.currentStoryIndex++;
     if(this.currentStoryIndex >= this.playerStories.length) {
-      this.isDone = true;
-      this.playerDone.emit(this.isDone);
+      this.playerDone.emit(true);
     } else {
       this.setPlayerOption();
     }

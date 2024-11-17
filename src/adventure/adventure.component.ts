@@ -189,6 +189,10 @@ export class AdventureComponent implements OnInit {
       false
     );
 
+    if(this.playerStories.length <= 1) {
+      this.playerDone.emit(true);
+    }
+
     console.log(this.selectedOption);
   }
 
