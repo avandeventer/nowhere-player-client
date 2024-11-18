@@ -17,7 +17,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
     provideFirebaseApp(() => {
-      console.log('Initializing Firebase:', environment.firebaseConfig);
       return initializeApp(environment.firebaseConfig);
     }),
     provideFirestore(() => getFirestore()),

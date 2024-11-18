@@ -81,39 +81,38 @@ export class AdventureComponent implements OnInit {
           });
       }
       
-      getLocationTasks(selectedLocation: Location) {
-        this.selectedLocation = selectedLocation;
-      }
+    getLocationTasks(selectedLocation: Location) {
+      this.selectedLocation = selectedLocation;
+    }
 
-      getStory() {
-        const params = {
-          gameCode: this.gameCode,
-          playerId: this.player.authorId
-        };
-    
-        console.log(params);
-    
-        this.http
-        .get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, { params })
-          .subscribe({
-            next: (response) => {
-              console.log('Story retrieved!', response);
-              this.playerStories = response;
-              if(this.playerStories.length != 0) {
-                this.playerStory = this.playerStories[this.currentStoryIndex];
-                this.location = this.locations[this.playerStory.location.locationId];
-              }      
-              console.log('Player Story', this.playerStory);
-              this.storyRetrieved = true;
-              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
-              console.log('Player Stories', this.playerStories);
-            },
-            error: (error) => {
-              console.error('Error retrieving stories', error);
-            },
-          });
-        
-      }
+    getStory() {
+      const params = {
+        gameCode: this.gameCode,
+        playerId: this.player.authorId
+      };
+  
+      console.log(params);
+  
+      this.http
+      .get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, { params })
+        .subscribe({
+          next: (response) => {
+            console.log('Story retrieved!', response);
+            this.playerStories = response;
+            if(this.playerStories.length != 0) {
+              this.playerStory = this.playerStories[this.currentStoryIndex];
+              this.location = this.locations[this.playerStory.location.locationId];
+            }      
+            console.log('Player Story', this.playerStory);
+            this.storyRetrieved = true;
+            this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
+            console.log('Player Stories', this.playerStories);
+          },
+          error: (error) => {
+            console.error('Error retrieving stories', error);
+          },
+        });
+  }
 
   private updateActivePlayerSession(
     playerId: String,

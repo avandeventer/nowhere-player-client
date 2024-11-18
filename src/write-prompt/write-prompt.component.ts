@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
+import { Location } from 'src/assets/location';
 import { ResponseObject } from 'src/assets/response-object';
 import { Stat } from 'src/assets/stat';
 import { Option } from 'src/assets/option';
@@ -9,6 +10,7 @@ import { Story } from 'src/assets/story';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'write-prompt',
@@ -90,6 +92,15 @@ export class WritePromptComponent implements OnInit {
               console.log('Prequel story retrieved!', response);
               const prequelStory: Story = response.responseBody[0];
               authorStory.prequelOutcomeDisplay = this.setOutcomeDisplay(prequelStory);
+              if(authorStory.prequelStoryPlayerId !== "") {
+                this.getPrequelStoryPlayer(authorStory.prequelStoryPlayerId).then((prequelPlayer) => {
+                  authorStory.prequelOutcomeDisplay.push(this.createSequelPlayerDisplay(prequelPlayer));
+                });
+              } else {
+                this.getLocations(this.gameCode).then((gameLocations) => {
+                  authorStory.prequelOutcomeDisplay.push(this.createOutcomeLocationDisplay(prequelStory.location, gameLocations));
+                })
+              }
               console.log('Player stories', this.playerStories);
             },
             error: (error) => {
@@ -97,6 +108,34 @@ export class WritePromptComponent implements OnInit {
             },
           });
       }
+  }
+
+  async getPrequelStoryPlayer(authorId: string): Promise<Player> {
+    const params = {
+      gameCode: this.gameCode,
+      authorId: authorId
+    };
+
+    console.log(params);
+
+    try {
+      const response = await firstValueFrom(
+        this.http.get<Player>(environment.nowhereBackendUrl + HttpConstants.PLAYER_AUTHORID_PATH, { params })
+      );
+      console.log('Prequel story player retrieved!', response);
+      return response;
+    } catch (error) {
+      console.error('Error getting prequel story player', error);
+      throw error;
+    }
+  }
+
+  createOutcomeLocationDisplay(location: Location, gameLocations: Location[]): string {
+    return `This sequel story does not follow a specific player. It will trigger when anyone travels to ${gameLocations[location.locationId].label}`
+  }
+
+  createSequelPlayerDisplay(prequelPlayer: Player): string {
+    return `This story follows ${prequelPlayer.userName} wherever they go. It isn't connected to a specific location!`
   }
 
   setOutcomeDisplay(prequelStory: Story): string[] {
@@ -108,7 +147,6 @@ export class WritePromptComponent implements OnInit {
       }
     });
 
-    this.outcomeDisplay.push("You travel to " + prequelStory.location.locationName);
     this.outcomeDisplay.push(selectedPrequelOption.optionText);
     if(prequelStory.playerSucceeded) {
       this.outcomeDisplay.push(selectedPrequelOption.successText);
@@ -125,6 +163,26 @@ export class WritePromptComponent implements OnInit {
     }
     return this.outcomeDisplay;
   }
+
+  async getLocations(gameCode: string): Promise<Location[]> {
+    const params = {
+      gameCode: gameCode
+    };
+
+    console.log(params);
+
+    try {
+      const response = await firstValueFrom(
+        this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params })
+      );
+      console.log('Locations retrieved!', response);
+      return response;
+    } catch (error) {
+      console.error('Error getting locations', error);
+      throw error;
+    }
+  }
+
 
   submitPrompt() {
       const requestBody = {
