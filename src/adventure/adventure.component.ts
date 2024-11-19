@@ -34,6 +34,7 @@ export class AdventureComponent implements OnInit {
     playerTurn: boolean = false;
     storyRetrieved: boolean = true;
     currentStoryIndex: number = 0;
+    isDone: boolean = false;
 
     constructor(private http:HttpClient) {}
 
@@ -45,7 +46,7 @@ export class AdventureComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges): void {
       if (changes['activePlayerSession'] 
       && changes['activePlayerSession'].currentValue?.playerId === this.player.authorId) {
-        if(!this.playerTurn) {
+        if(!this.playerTurn && !this.isDone) {
           this.playerTurn = true;
           this.getStory();
         }
@@ -57,6 +58,12 @@ export class AdventureComponent implements OnInit {
         this.selectedLocationOption = new Option();
         this.storyRetrieved = false;
         this.playerStories = [];
+      }
+      
+      const currentState = changes['gameState'].currentValue;
+
+      if (currentState !== GameState.ROUND1 && currentState !== GameState.ROUND2) {
+        this.isDone = false;
       }
     }
 
@@ -105,7 +112,11 @@ export class AdventureComponent implements OnInit {
             }      
             console.log('Player Story', this.playerStory);
             this.storyRetrieved = true;
-            this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
+            if(this.playerStories.length > 0) {
+              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
+            } else {
+              this.nextPlayerTurn();
+            }
             console.log('Player Stories', this.playerStories);
           },
           error: (error) => {
@@ -242,6 +253,7 @@ export class AdventureComponent implements OnInit {
     this.storyRetrieved = false;
     if(this.playerStories.length <= 1) {
       console.log('Player is done');
+      this.isDone = true;
       this.playerDone.emit(true);
     }
   }
