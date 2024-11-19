@@ -49,6 +49,8 @@ export class AdventureComponent implements OnInit {
         if(!this.playerTurn && !this.isDone) {
           this.playerTurn = true;
           this.getStory();
+        } else if (this.isDone) {
+          this.nextPlayerTurn();
         }
       } else {
         this.selectedLocation = new Location();

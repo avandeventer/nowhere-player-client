@@ -1,4 +1,4 @@
-@if(playerTurn) {
+@if(playerTurn && !isDone) {
     <div>Hello {{player.userName}}</div>
     <div>Strength: {{player.strength}}</div>
     <div>Intellect: {{player.intellect}}</div>
