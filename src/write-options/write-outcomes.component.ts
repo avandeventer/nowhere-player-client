@@ -25,6 +25,7 @@ export class WriteOutcomesComponent implements OnInit {
 
   optionSuccess = new FormControl('');
   optionFailure = new FormControl('');
+  submitBothOutcomes: boolean = false;
 
   constructor(private http: HttpClient) {}
 
@@ -74,13 +75,28 @@ export class WriteOutcomesComponent implements OnInit {
   }
 
   private setPlayerOption() {
-    this.playerStories[this.currentStoryIndex].options.forEach(option => {
-      if (option.outcomeAuthorId === this.player.authorId) {
-        this.playerOption = option;
-      } else {
-        this.otherOption = option;
-      }
-    });
+    if(this.submitBothOutcomes) {
+      const alreadySubmittedOutcome = this.playerOption;
+      this.playerOption = this.otherOption;
+      this.otherOption = alreadySubmittedOutcome;
+      this.submitBothOutcomes = false;
+    } else {
+      this.playerStories[this.currentStoryIndex].options.forEach(option => {
+        if (option.outcomeAuthorId === this.player.authorId) {
+          if(this.playerOption.optionId === "") {
+              this.playerOption = option;
+              console.log("Player option: ", this.playerOption);
+          } else {
+            this.otherOption = option;
+            this.submitBothOutcomes = true;
+            console.log("Player option 2: ", this.playerOption);
+          }
+        } else {
+          this.otherOption = option;
+          console.log("Other option: ", this.otherOption);
+        }
+      })
+    };
   }
 
   submitOutcomes() {
@@ -116,7 +132,11 @@ export class WriteOutcomesComponent implements OnInit {
   private setNextStoryPrompt() {
     this.optionSuccess.reset('');
     this.optionFailure.reset('');
-    this.currentStoryIndex++;
+
+    if(!this.submitBothOutcomes) {
+      this.currentStoryIndex++;
+    }
+   
     if(this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(true);
     } else {
