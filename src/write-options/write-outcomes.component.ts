@@ -89,7 +89,7 @@ export class WriteOutcomesComponent implements OnInit {
           } else {
             this.otherOption = option;
             this.submitBothOutcomes = true;
-            console.log("Player option 2: ", this.playerOption);
+            console.log("Player option 2: ", this.otherOption);
           }
         } else {
           this.otherOption = option;
@@ -135,6 +135,8 @@ export class WriteOutcomesComponent implements OnInit {
 
     if(!this.submitBothOutcomes) {
       this.currentStoryIndex++;
+      this.playerOption = new Option();
+      this.otherOption = new Option();
     }
    
     if(this.currentStoryIndex >= this.playerStories.length) {
