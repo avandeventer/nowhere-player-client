@@ -129,7 +129,7 @@ export class WriteOutcomesComponent implements OnInit {
         });
   }
 
-  private setNextStoryPrompt() {
+  public setNextStoryPrompt() {
     this.optionSuccess.reset('');
     this.optionFailure.reset('');
 

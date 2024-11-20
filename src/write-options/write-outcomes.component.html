@@ -1,5 +1,7 @@
 @if(currentStoryIndex >= playerStories.length) {
     <p>All stories have been submitted!</p>
+    <p>If you didn't get any options to write, click here:</p>
+    <button (click)="setNextStoryPrompt()">I'm Done</button>
 } 
 @else {
     <div>Someone else has written the prompt for this one so you just write the potential outcomes!</div>
