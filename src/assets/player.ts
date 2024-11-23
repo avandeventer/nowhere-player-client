@@ -8,6 +8,7 @@ export class Player {
   magic: number;
   favor: number;
   authorId: string;
+  firstPlayer: boolean;
 
   constructor() {
     this.userName = '';
@@ -19,5 +20,6 @@ export class Player {
     this.magic = 0;
     this.favor = 0;
     this.authorId = "";
+    this.firstPlayer = false;
   }
 }

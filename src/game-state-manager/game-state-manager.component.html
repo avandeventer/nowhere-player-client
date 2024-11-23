@@ -3,8 +3,12 @@
 }
 
 @if (isGameInitialized()) {
-    <p>If all players have joined, click below!</p>
-    <button (click)="startGame()">Start game?</button>
+    <p>Hello {{player.userName}}!</p>
+
+    @if(player.firstPlayer) {
+        <p>If all players have joined, click below!</p>
+        <button (click)="startGame()">Start game?</button>
+    }
 }
 
 @if (isGameStarted()) {

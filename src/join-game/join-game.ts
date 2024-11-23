@@ -28,7 +28,7 @@ export class JoinGameComponent {
 
   setGameCode() {
     console.log(this.gameCode.value);
-    this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value;
+    this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value.toLocaleUpperCase();
   }
 
   joinGame() {
