@@ -36,4 +36,11 @@
 
     <br>
     <button (click)="submitOutcomes()">Submit</button>
+
+    <br>
+    <prequel-story-display
+    [gameCode]="gameCode" 
+    [story]="playerStories[currentStoryIndex]">
+    </prequel-story-display>
+
 }

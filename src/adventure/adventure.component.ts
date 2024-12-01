@@ -111,6 +111,7 @@ export class AdventureComponent implements OnInit {
             if(this.playerStories.length != 0) {
               this.playerStory = this.playerStories[this.currentStoryIndex];
               this.location = this.locations[this.playerStory.location.locationId];
+              this.playerStory.location = this.location;
             }      
             console.log('Player Story', this.playerStory);
             this.storyRetrieved = true;

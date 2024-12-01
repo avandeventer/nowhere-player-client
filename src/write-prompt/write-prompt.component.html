@@ -29,13 +29,9 @@
         <br><div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div>
     }
 
-    @if(playerStories[currentStoryIndex].prequelOutcomeDisplay != null && playerStories[currentStoryIndex].prequelOutcomeDisplay.length > 0) {
-        <div>Write this one as a sequel to the story below:</div>
-    
-        <div>
-        @for (outcome of playerStories[currentStoryIndex].prequelOutcomeDisplay; track outcome) {
-            <div>{{outcome}}</div><br>
-        }
-        </div>
-    }
+    <prequel-story-display
+        [gameCode]="gameCode" 
+        [story]="playerStories[currentStoryIndex]">
+    </prequel-story-display>
+
 }

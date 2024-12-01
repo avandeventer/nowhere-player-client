@@ -6,12 +6,13 @@ import { ResponseObject } from 'src/assets/response-object';
 import { Story } from 'src/assets/story';
 import { Option } from 'src/assets/option';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 
 @Component({
   selector: 'write-outcomes',
   templateUrl: './write-outcomes.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule]
+  imports: [ReactiveFormsModule, PrequelDisplayComponent]
 })
 export class WriteOutcomesComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_OPTIONS;

@@ -1,0 +1,6 @@
+@if(prequelOutcomeDisplay && prequelOutcomeDisplay.length > 0) {
+    <div>Write this one as a sequel to the story below:</div>
+    @for(outcome of prequelOutcomeDisplay; track outcome) {
+      <div >{{ outcome }}</div>
+    }
+}

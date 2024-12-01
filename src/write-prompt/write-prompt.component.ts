@@ -11,12 +11,13 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { firstValueFrom } from 'rxjs';
+import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 
 @Component({
   selector: 'write-prompt',
   templateUrl: './write-prompt.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule]
+  imports: [ReactiveFormsModule, PrequelDisplayComponent]
 })
 export class WritePromptComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_PROMPTS;
@@ -67,101 +68,12 @@ export class WritePromptComponent implements OnInit {
         next: (response) => {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
-          this.playerStories.forEach(authorStory => this.getPrequelStory(authorStory));
           console.log('Player stories', this.playerStories);
         },
         error: (error) => {
           console.error('Error creating game', error);
         },
       });
-  }
-
-  getPrequelStory(authorStory: Story) {
-      if(authorStory.prequelStoryId !== "") {
-        const params = {
-          gameCode: this.gameCode,
-          storyId: authorStory.prequelStoryId,
-        };
-    
-        console.log(params);
-    
-        this.http
-        .get<ResponseObject>(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, { params })
-          .subscribe({
-            next: (response) => {
-              console.log('Prequel story retrieved!', response);
-              const prequelStory: Story = response.responseBody[0];
-              authorStory.prequelOutcomeDisplay = this.setOutcomeDisplay(prequelStory);
-              if(authorStory.prequelStoryPlayerId !== "") {
-                this.getPrequelStoryPlayer(authorStory.prequelStoryPlayerId).then((prequelPlayer) => {
-                  authorStory.prequelOutcomeDisplay.push(this.createSequelPlayerDisplay(prequelPlayer));
-                });
-              } else {
-                this.getLocations(this.gameCode).then((gameLocations) => {
-                  authorStory.prequelOutcomeDisplay.push(this.createOutcomeLocationDisplay(prequelStory.location, gameLocations));
-                })
-              }
-              console.log('Player stories', this.playerStories);
-            },
-            error: (error) => {
-              console.error('Error creating game', error);
-            },
-          });
-      }
-  }
-
-  async getPrequelStoryPlayer(authorId: string): Promise<Player> {
-    const params = {
-      gameCode: this.gameCode,
-      authorId: authorId
-    };
-
-    console.log(params);
-
-    try {
-      const response = await firstValueFrom(
-        this.http.get<Player>(environment.nowhereBackendUrl + HttpConstants.PLAYER_AUTHORID_PATH, { params })
-      );
-      console.log('Prequel story player retrieved!', response);
-      return response;
-    } catch (error) {
-      console.error('Error getting prequel story player', error);
-      throw error;
-    }
-  }
-
-  createOutcomeLocationDisplay(location: Location, gameLocations: Location[]): string {
-    return `This sequel story does not follow a specific player. It will trigger when anyone travels to ${gameLocations[location.locationId].label}`
-  }
-
-  createSequelPlayerDisplay(prequelPlayer: Player): string {
-    return `This story follows ${prequelPlayer.userName} wherever they go. It isn't connected to a specific location!`
-  }
-
-  setOutcomeDisplay(prequelStory: Story): string[] {
-    this.outcomeDisplay = [];
-    let selectedPrequelOption: Option = new Option();
-    prequelStory.options.forEach(option => {
-      if(prequelStory.selectedOptionId === option.optionId) {
-        selectedPrequelOption = option;
-      }
-    });
-
-    this.outcomeDisplay.push(selectedPrequelOption.optionText);
-    if(prequelStory.playerSucceeded) {
-      this.outcomeDisplay.push(selectedPrequelOption.successText);
-      selectedPrequelOption.successResults.forEach(outcomeStat => {
-        const statResult: string = "You gain " + outcomeStat.statChange + " " + outcomeStat.impactedStat.toLowerCase();
-        this.outcomeDisplay.push(statResult);
-      });
-    } else {
-      this.outcomeDisplay.push(selectedPrequelOption.failureText);
-      selectedPrequelOption.failureResults.forEach(outcomeStat => {
-        const statResult: string = "You lose " + outcomeStat.statChange + " " + outcomeStat.impactedStat.toLowerCase();
-        this.outcomeDisplay.push(statResult)
-      });
-    }
-    return this.outcomeDisplay;
   }
 
   async getLocations(gameCode: string): Promise<Location[]> {
