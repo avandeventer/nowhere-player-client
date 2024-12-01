@@ -44,8 +44,8 @@ export class AdventureComponent implements OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-      if (changes['activePlayerSession'] 
-      && changes['activePlayerSession'].currentValue?.playerId === this.player.authorId) {
+      if (changes['activePlayerSession']
+      && changes['activePlayerSession']?.currentValue?.playerId === this.player.authorId) {
         if(!this.playerTurn && !this.isDone) {
           this.playerTurn = true;
           this.getStory();

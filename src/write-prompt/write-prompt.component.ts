@@ -248,6 +248,5 @@ export class WritePromptComponent implements OnInit {
       return option.successResults.some(outcomeStat => outcomeStat.impactedStat === Stat.FAVOR) ||
              option.failureResults.some(outcomeStat => outcomeStat.impactedStat === Stat.FAVOR);
     });
-    
   }
 }
