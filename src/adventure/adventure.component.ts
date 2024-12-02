@@ -49,9 +49,10 @@ export class AdventureComponent implements OnInit {
         if(!this.playerTurn && !this.isDone) {
           this.playerTurn = true;
           this.getStory();
-        } else if (this.isDone) {
-          this.nextPlayerTurn();
-        }
+        } 
+        // else if (this.isDone) {
+        //   this.nextPlayerTurn();
+        // }
       } else {
         this.selectedLocation = new Location();
         this.playerTurn = false;
@@ -117,8 +118,6 @@ export class AdventureComponent implements OnInit {
             this.storyRetrieved = true;
             if(this.playerStories.length > 0) {
               this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
-            } else {
-              this.nextPlayerTurn();
             }
             console.log('Player Stories', this.playerStories);
           },
