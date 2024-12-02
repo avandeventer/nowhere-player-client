@@ -254,7 +254,7 @@ export class AdventureComponent implements OnInit {
     );
     this.playerTurn = false;
     this.storyRetrieved = false;
-    if(this.playerStories.length <= 1) {
+    if(this.playerStories.length <= 1 && !this.isDone) {
       console.log('Player is done');
       this.isDone = true;
       this.playerDone.emit(true);
