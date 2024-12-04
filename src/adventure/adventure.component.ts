@@ -49,10 +49,8 @@ export class AdventureComponent implements OnInit {
         if(!this.playerTurn && !this.isDone) {
           this.playerTurn = true;
           this.getStory();
-        } 
-        // else if (this.isDone) {
-        //   this.nextPlayerTurn();
-        // }
+          this.updatePlayerStats(this.player.authorId);
+        }
       } else {
         this.selectedLocation = new Location();
         this.playerTurn = false;
@@ -68,6 +66,20 @@ export class AdventureComponent implements OnInit {
       if (currentState !== GameState.ROUND1 && currentState !== GameState.ROUND2) {
         this.isDone = false;
       }
+    }
+
+    updatePlayerStats(authorId: string) {
+      this.http
+        .get<Player>(environment.nowhereBackendUrl + HttpConstants.PLAYER_AUTHORID_PATH + '?gameCode=' + this.gameCode + '&authorId=' + authorId)
+        .subscribe({
+          next: (response) => {
+            console.log('Player joined!', response);
+            this.player = response;
+          },
+          error: (error) => {
+            console.error('Error creating game', error);
+          },
+        });      
     }
 
     getLocations(gameCode: string) {

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { GameStateManagerComponent } from '../game-state-manager/game-state-manager.component';
 import { Player } from 'src/assets/player';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { environment } from 'src/environments/environment';
+import { HttpConstants } from 'src/assets/http-constants';
 
 @Component({
   selector: 'join-game',
@@ -38,7 +40,7 @@ export class JoinGameComponent {
     };
 
     this.http
-      .post<Player>('https://nowhere-556057816518.us-east5.run.app/player', requestBody)
+      .post<Player>(environment.nowhereBackendUrl + HttpConstants.PLAYER_PATH, requestBody)
       .subscribe({
         next: (response) => {
           console.log('Player joined!', response);
