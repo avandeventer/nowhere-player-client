@@ -61,7 +61,8 @@ export class AdventureComponent implements OnInit {
         this.playerStories = [];
       }
       
-      const currentState = changes['gameState'].currentValue;
+      const currentState = changes['gameState'] 
+          ? changes['gameState'].currentValue : this.gameState;
 
       if (currentState !== GameState.ROUND1 && currentState !== GameState.ROUND2) {
         this.isDone = false;
