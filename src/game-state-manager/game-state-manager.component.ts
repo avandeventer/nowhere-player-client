@@ -10,6 +10,7 @@ import { AdventureComponent } from 'src/adventure/adventure.component';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { LocationComponent } from 'src/location/location.component';
+import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-type';
 
 @Component({
   selector: 'game-state-manager',
@@ -20,8 +21,8 @@ import { LocationComponent } from 'src/location/location.component';
 export class GameStateManagerComponent implements OnInit {
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
-  @Input() setDone(isDone: boolean) {
-    if(isDone) {
+  @Input() setDone(donePhase: ComponentType) {
+    if(this.isValidGameState(donePhase, this.gameState)) {
       this.playerIsDone();
     }
   }
@@ -78,6 +79,10 @@ export class GameStateManagerComponent implements OnInit {
         },
       });
   }
+
+  isValidGameState (component: ComponentType, state: GameState): boolean {
+    return ComponentTypeGameStateMap[component].includes(state);
+  };
 
   isGameInitialized() {
     return this.gameState === GameState.INIT;

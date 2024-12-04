@@ -9,6 +9,7 @@ import { Option } from 'src/assets/option';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 import { Stat } from 'src/assets/stat';
+import { ComponentType } from 'src/assets/component-type';
 
 @Component({
     selector: 'adventure',
@@ -21,7 +22,7 @@ export class AdventureComponent implements OnInit {
     @Input() gameCode: string = "";
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
-    @Output() playerDone = new EventEmitter<boolean>();
+    @Output() playerDone = new EventEmitter<ComponentType>();
 
     locations: Location[] = [];
     location: Location = new Location();
@@ -269,7 +270,7 @@ export class AdventureComponent implements OnInit {
     if(this.playerStories.length <= 1 && !this.isDone) {
       console.log('Player is done');
       this.isDone = true;
-      this.playerDone.emit(true);
+      this.playerDone.emit(ComponentType.ADVENTURE);
     }
   }
 

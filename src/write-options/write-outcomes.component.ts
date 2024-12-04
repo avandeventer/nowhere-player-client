@@ -7,6 +7,7 @@ import { Story } from 'src/assets/story';
 import { Option } from 'src/assets/option';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
+import { ComponentType } from 'src/assets/component-type';
 
 @Component({
   selector: 'write-outcomes',
@@ -18,7 +19,7 @@ export class WriteOutcomesComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_OPTIONS;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
-  @Output() playerDone = new EventEmitter<boolean>();
+  @Output() playerDone = new EventEmitter<ComponentType>();
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
   playerOption: Option = new Option();
@@ -141,7 +142,7 @@ export class WriteOutcomesComponent implements OnInit {
     }
    
     if(this.currentStoryIndex >= this.playerStories.length) {
-      this.playerDone.emit(true);
+      this.playerDone.emit(ComponentType.WRITE_OUTCOMES);
     } else {
       this.setPlayerOption();
     }

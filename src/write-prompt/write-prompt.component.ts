@@ -12,6 +12,7 @@ import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
+import { ComponentType } from 'src/assets/component-type';
 
 @Component({
   selector: 'write-prompt',
@@ -23,7 +24,7 @@ export class WritePromptComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_PROMPTS;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
-  @Output() playerDone = new EventEmitter<boolean>();
+  @Output() playerDone = new EventEmitter<ComponentType>();
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
   outcomeDisplay: string[] = [];
@@ -135,7 +136,7 @@ export class WritePromptComponent implements OnInit {
     this.optionTwo.reset('');
     this.currentStoryIndex++;
     if(this.currentStoryIndex >= this.playerStories.length) {
-      this.playerDone.emit(true);
+      this.playerDone.emit(ComponentType.WRITE_PROMPTS);
     }
     console.log(this.currentStoryIndex);
   }

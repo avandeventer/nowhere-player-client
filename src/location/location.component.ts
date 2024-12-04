@@ -7,6 +7,7 @@ import { Player } from "src/assets/player";
 import { Story } from "src/assets/story";
 import { Location } from "src/assets/location";
 import { environment } from "src/environments/environment";
+import { ComponentType } from "src/assets/component-type";
 
 @Component({
     selector: 'location',
@@ -19,7 +20,7 @@ export class LocationComponent implements OnInit {
     @Input() gameCode: string = "";
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
-    @Output() playerDone = new EventEmitter<boolean>();
+    @Output() playerDone = new EventEmitter<ComponentType>();
 
     locations: Location[] = [];
     selectedStories: Story[] = [];
@@ -76,7 +77,7 @@ export class LocationComponent implements OnInit {
               this.locationsSelected++;
 
               if(this.selectedStories.length >= 2) {
-                  this.playerDone.emit(true);
+                  this.playerDone.emit(ComponentType.LOCATION_SELECT);
                   this.isLocationsSelected = true;
               }
               console.log('Player Story', response);
