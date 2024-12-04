@@ -23,7 +23,10 @@ export class GameStateManagerComponent implements OnInit {
   @Input() player: Player = new Player();
   @Input() setDone(donePhase: ComponentType) {
     if(this.isValidGameState(donePhase, this.gameState)) {
+      console.log('Player is done', donePhase, this.gameState)
       this.playerIsDone();
+    } else {
+      console.log('Skipped done event for component type with game phase', donePhase, this.gameState)
     }
   }
   gameState: GameState = GameState.INIT;
@@ -72,7 +75,7 @@ export class GameStateManagerComponent implements OnInit {
       .put(url, {})
       .subscribe({
         next: (response) => {
-          console.log('Player is done!', response);
+          console.log('Player done triggered!', response);
         },
         error: (error) => {
           console.error('Error updating player done status', error);
