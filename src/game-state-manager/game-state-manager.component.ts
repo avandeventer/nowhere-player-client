@@ -15,7 +15,8 @@ import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-t
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent]
+    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent],
+    standalone: true
 })
 export class GameStateManagerComponent implements OnInit {
   @Input() gameCode: string = "";

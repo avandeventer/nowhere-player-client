@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 @Component({
     selector: 'app-root',
     template: `<join-game></join-game>`,
-    imports: [ReactiveFormsModule, JoinGameComponent]
+    imports: [ReactiveFormsModule, JoinGameComponent],
+    standalone: true
 })
 export class AppComponent {}
