@@ -10,10 +10,9 @@ import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story
 import { ComponentType } from 'src/assets/component-type';
 
 @Component({
-  selector: 'write-outcomes',
-  templateUrl: './write-outcomes.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, PrequelDisplayComponent]
+    selector: 'write-outcomes',
+    templateUrl: './write-outcomes.component.html',
+    imports: [ReactiveFormsModule, PrequelDisplayComponent]
 })
 export class WriteOutcomesComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_OPTIONS;

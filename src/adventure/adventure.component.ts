@@ -14,7 +14,6 @@ import { ComponentType } from 'src/assets/component-type';
 @Component({
     selector: 'adventure',
     templateUrl: './adventure.component.html',
-    standalone: true,
     imports: []
 })
 export class AdventureComponent implements OnInit {

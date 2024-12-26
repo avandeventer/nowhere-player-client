@@ -12,7 +12,6 @@ import { ComponentType } from "src/assets/component-type";
 @Component({
     selector: 'location',
     templateUrl: './location.component.html',
-    standalone: true,
     imports: []
 })
 export class LocationComponent implements OnInit {

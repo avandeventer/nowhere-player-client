@@ -7,11 +7,10 @@ import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 
 @Component({
-  selector: 'join-game',
-  styles: `.btn { padding: 5px; }`,
-  templateUrl: './join-game.component.html',
-  standalone: true,
-  imports: [GameStateManagerComponent, ReactiveFormsModule]
+    selector: 'join-game',
+    styles: `.btn { padding: 5px; }`,
+    templateUrl: './join-game.component.html',
+    imports: [GameStateManagerComponent, ReactiveFormsModule]
 })
 export class JoinGameComponent {
   constructor(private http: HttpClient) {
