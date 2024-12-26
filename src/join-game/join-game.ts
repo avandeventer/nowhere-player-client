@@ -10,8 +10,7 @@ import { HttpConstants } from 'src/assets/http-constants';
     selector: 'join-game',
     styles: `.btn { padding: 5px; }`,
     templateUrl: './join-game.component.html',
-    imports: [GameStateManagerComponent, ReactiveFormsModule],
-    standalone: true
+    imports: [GameStateManagerComponent, ReactiveFormsModule]
 })
 export class JoinGameComponent {
   constructor(private http: HttpClient) {

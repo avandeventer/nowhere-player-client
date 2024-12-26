@@ -14,8 +14,7 @@ import { ComponentType } from 'src/assets/component-type';
 @Component({
     selector: 'adventure',
     templateUrl: './adventure.component.html',
-    imports: [],
-    standalone: true
+    imports: []
 })
 export class AdventureComponent implements OnInit {
     @Input() gameState: GameState = GameState.ROUND1;

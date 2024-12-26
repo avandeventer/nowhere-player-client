@@ -17,8 +17,7 @@ import { ComponentType } from 'src/assets/component-type';
 @Component({
     selector: 'write-prompt',
     templateUrl: './write-prompt.component.html',
-    imports: [ReactiveFormsModule, PrequelDisplayComponent],
-    standalone: true
+    imports: [ReactiveFormsModule, PrequelDisplayComponent]
 })
 export class WritePromptComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_PROMPTS;

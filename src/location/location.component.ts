@@ -12,8 +12,7 @@ import { ComponentType } from "src/assets/component-type";
 @Component({
     selector: 'location',
     templateUrl: './location.component.html',
-    imports: [],
-    standalone: true
+    imports: []
 })
 export class LocationComponent implements OnInit {
     @Input() gameState: GameState = GameState.ROUND1;
