@@ -2,15 +2,16 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GameStateManagerComponent } from '../game-state-manager/game-state-manager.component';
 import { Player } from 'src/assets/player';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'join-game',
-    styles: `.btn { padding: 5px; }`,
     templateUrl: './join-game.component.html',
-    imports: [GameStateManagerComponent, ReactiveFormsModule],
+    imports: [GameStateManagerComponent, ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule],
     standalone: true
 })
 export class JoinGameComponent {

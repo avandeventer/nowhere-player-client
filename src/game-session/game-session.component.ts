@@ -1,14 +1,16 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { MatInputModule } from '@angular/material/input';
 import { GameStateManagerComponent } from '../game-state-manager/game-state-manager.component';
-import { GameState } from 'src/assets/game-state';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'game-session',
   styles: `.btn { padding: 5px; }`,
   templateUrl: './game-session.component.html',
   standalone: true,
-  imports: [GameStateManagerComponent]
+  imports: [GameStateManagerComponent, FormsModule, MatFormFieldModule, MatInputModule]
 })
 export class GameSessionComponent {
   constructor(private http: HttpClient) {

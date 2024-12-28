@@ -1,10 +1,17 @@
 <h2>Welcome to Nowhere!</h2>
 
 @if(!gameSessionCreated) {
-    <div>Game Code</div>
-    <input [formControl]="gameCode" (keyup)="setGameCode()" />
-    <div>Username</div>
-    <input [formControl]="userName" />
+    <form class="join-game">
+        <mat-form-field class="full-width">
+          <mat-label>Game Code</mat-label>
+          <input [formControl]="gameCode" (keyup)="setGameCode()" matInput placeholder="6 Character Code">
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Player Name</mat-label>
+            <input [formControl]="userName" matInput placeholder="Who are you?">
+        </mat-form-field>
+    </form>
     <button (click)="joinGame()">Join game!</button>
 } @else {
     <game-state-manager [gameCode]="gameCodeValue" [player]="player"></game-state-manager>

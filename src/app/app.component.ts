@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { JoinGameComponent } from '../join-game/join-game';
+import { JoinGameComponent } from '../join-game/join-game.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
