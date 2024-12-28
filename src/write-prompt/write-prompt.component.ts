@@ -15,12 +15,21 @@ import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
-    selector: 'write-prompt',
-    templateUrl: './write-prompt.component.html',
-    imports: [ReactiveFormsModule, PrequelDisplayComponent, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-    standalone: true
+  selector: 'write-prompt',
+  templateUrl: './write-prompt.component.html',
+  imports: [
+    ReactiveFormsModule,
+    PrequelDisplayComponent,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatDividerModule
+  ],
+  standalone: true
 })
 export class WritePromptComponent implements OnInit {
   @Input() gameState: GameState = GameState.WRITE_PROMPTS;
@@ -39,18 +48,19 @@ export class WritePromptComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getPlayerStories(this.player.authorId); 
+    this.getPlayerStories(this.player.authorId);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
       const currentState = changes['gameState'].currentValue;
 
+      // TODO: Reimplement when timer is readded - Auto submits prompts
       // if ((currentState === GameState.WRITE_OPTIONS || currentState === GameState.WRITE_OPTIONS_AGAIN)
       //     && !(this.currentStoryIndex >= this.playerStories.length)) {
       //   this.submitPrompt();
       // } 
-      
+
       if (currentState !== GameState.WRITE_PROMPTS && currentState !== GameState.WRITE_PROMPTS_AGAIN) {
         this.currentStoryIndex = 0;
       }
@@ -66,7 +76,7 @@ export class WritePromptComponent implements OnInit {
     console.log(params);
 
     this.http
-    .get<ResponseObject>(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, { params })
+      .get<ResponseObject>(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, { params })
       .subscribe({
         next: (response) => {
           console.log('Stories retrieved!', response);
@@ -100,35 +110,35 @@ export class WritePromptComponent implements OnInit {
 
 
   submitPrompt() {
-      const requestBody = {
-        gameCode: this.gameCode,
-        prompt: this.prompt.value,
-        storyId: this.playerStories[this.currentStoryIndex].storyId,
-        options: [
-          {
-            optionId: this.playerStories[this.currentStoryIndex].options[0].optionId,
-            optionText: this.optionOne.value
-          }, 
-          {
-            optionId: this.playerStories[this.currentStoryIndex].options[1].optionId,
-            optionText: this.optionTwo.value
-          }
-        ]
-      };
+    const requestBody = {
+      gameCode: this.gameCode,
+      prompt: this.prompt.value,
+      storyId: this.playerStories[this.currentStoryIndex].storyId,
+      options: [
+        {
+          optionId: this.playerStories[this.currentStoryIndex].options[0].optionId,
+          optionText: this.optionOne.value
+        },
+        {
+          optionId: this.playerStories[this.currentStoryIndex].options[1].optionId,
+          optionText: this.optionTwo.value
+        }
+      ]
+    };
 
-      console.log("Submitting story update", requestBody, this.prompt.value, this.optionOne.value, this.optionTwo.value);
-  
-      this.http
-        .put('https://nowhere-556057816518.us-east5.run.app/story', requestBody)
-        .subscribe({
-          next: (response) => {
-            console.log('Story updated!', response);
-            this.setNextStoryPrompt();
-          },
-          error: (error) => {
-            console.error('Error updating story', error);
-          },
-        });
+    console.log("Submitting story update", requestBody, this.prompt.value, this.optionOne.value, this.optionTwo.value);
+
+    this.http
+      .put('https://nowhere-556057816518.us-east5.run.app/story', requestBody)
+      .subscribe({
+        next: (response) => {
+          console.log('Story updated!', response);
+          this.setNextStoryPrompt();
+        },
+        error: (error) => {
+          console.error('Error updating story', error);
+        },
+      });
   }
 
   private setNextStoryPrompt() {
@@ -137,7 +147,7 @@ export class WritePromptComponent implements OnInit {
     this.optionOne.reset('');
     this.optionTwo.reset('');
     this.currentStoryIndex++;
-    if(this.currentStoryIndex >= this.playerStories.length) {
+    if (this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(ComponentType.WRITE_PROMPTS);
     }
     console.log(this.currentStoryIndex);
@@ -145,11 +155,11 @@ export class WritePromptComponent implements OnInit {
 
   public statDCDifficulty(promptIndex: number) {
     let statDC: number = this.playerStories[this.currentStoryIndex].options[promptIndex].statDC;
-    if(statDC >= 7) {
+    if (statDC >= 7) {
       return "HARD";
     }
 
-    else if(statDC < 7 && statDC >= 4) {
+    else if (statDC < 7 && statDC >= 4) {
       return "NORMAL";
     }
 
@@ -161,7 +171,7 @@ export class WritePromptComponent implements OnInit {
   public isAGodFavorStory(currentStory: Story): boolean {
     return currentStory.options.some(option => {
       return option.successResults.some(outcomeStat => outcomeStat.impactedStat === Stat.FAVOR) ||
-             option.failureResults.some(outcomeStat => outcomeStat.impactedStat === Stat.FAVOR);
+        option.failureResults.some(outcomeStat => outcomeStat.impactedStat === Stat.FAVOR);
     });
   }
 }

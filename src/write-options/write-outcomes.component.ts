@@ -5,14 +5,26 @@ import { Player } from 'src/assets/player';
 import { ResponseObject } from 'src/assets/response-object';
 import { Story } from 'src/assets/story';
 import { Option } from 'src/assets/option';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 import { ComponentType } from 'src/assets/component-type';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'write-outcomes',
     templateUrl: './write-outcomes.component.html',
-    imports: [ReactiveFormsModule, PrequelDisplayComponent],
+    imports: [
+      ReactiveFormsModule, 
+      PrequelDisplayComponent,
+      FormsModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatButtonModule,
+      MatDividerModule
+    ],
     standalone: true
 })
 export class WriteOutcomesComponent implements OnInit {
@@ -40,6 +52,7 @@ export class WriteOutcomesComponent implements OnInit {
     if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
       const currentState = changes['gameState'].currentValue;
 
+      // TODO: Reimplement when timer is readded - Auto submits outcomes
       // if ((currentState === GameState.ROUND1 || currentState === GameState.ROUND2)
       //     && !(this.currentStoryIndex >= this.playerStories.length)
       // ) {

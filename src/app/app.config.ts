@@ -10,12 +10,14 @@ import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { environment } from 'src/environments/environment';
 import { ReactiveFormsModule } from '@angular/forms';
  
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
+    provideAnimations(),
     provideFirebaseApp(() => {
       return initializeApp(environment.firebaseConfig);
     }),

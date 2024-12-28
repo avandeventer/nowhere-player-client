@@ -9,25 +9,31 @@
         <textarea [formControl]="prompt" matInput placeholder="Ex. You see a small child begging for scraps at the {{playerStories[currentStoryIndex].location.label}}"></textarea>
     </mat-form-field>
 
+    <mat-divider></mat-divider><br>
+
     <div>
         Now give two options for how to manage the prompt. These are just options! Someone else will write the outcomes!
         To succeed in this story the player will need to have a lot of either:
     </div>
     <br>
-    {{playerStories[currentStoryIndex].options[0].statRequirement}}
-    [{{statDCDifficulty(0)}}]
-    <mat-form-field class="full-width">
-        <mat-label>Option One</mat-label>
-        <textarea matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne"></textarea>
-    </mat-form-field>
+    <section>
+        {{playerStories[currentStoryIndex].options[0].statRequirement}}
+        [{{statDCDifficulty(0)}}]
+        <mat-form-field class="full-width">
+            <mat-label>Option One</mat-label>
+            <textarea matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne"></textarea>
+        </mat-form-field>
+    </section>
     or
     <br><br>
-    {{playerStories[currentStoryIndex].options[1].statRequirement}}
-    [{{statDCDifficulty(1)}}]
-    <mat-form-field class="full-width">
-        <mat-label>Option Two</mat-label>
-        <textarea matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo"></textarea>
-    </mat-form-field>
+    <section>
+        {{playerStories[currentStoryIndex].options[1].statRequirement}}
+        [{{statDCDifficulty(1)}}]
+        <mat-form-field class="full-width">
+            <mat-label>Option Two</mat-label>
+            <textarea matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo"></textarea>
+        </mat-form-field>
+    </section>
 
     <button mat-flat-button (click)="submitPrompt()">Submit</button>
     

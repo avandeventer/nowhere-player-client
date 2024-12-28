@@ -8,11 +8,14 @@ import { Story } from "src/assets/story";
 import { Location } from "src/assets/location";
 import { environment } from "src/environments/environment";
 import { ComponentType } from "src/assets/component-type";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+
 
 @Component({
     selector: 'location',
     templateUrl: './location.component.html',
-    imports: [],
+    imports: [MatButtonModule, MatIconModule],
     standalone: true
 })
 export class LocationComponent implements OnInit {
