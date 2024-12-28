@@ -5,19 +5,21 @@ import { Player } from 'src/assets/player';
 import { Location } from 'src/assets/location';
 import { ResponseObject } from 'src/assets/response-object';
 import { Stat } from 'src/assets/stat';
-import { Option } from 'src/assets/option';
 import { Story } from 'src/assets/story';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 import { ComponentType } from 'src/assets/component-type';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'write-prompt',
     templateUrl: './write-prompt.component.html',
-    imports: [ReactiveFormsModule, PrequelDisplayComponent],
+    imports: [ReactiveFormsModule, PrequelDisplayComponent, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
     standalone: true
 })
 export class WritePromptComponent implements OnInit {

@@ -7,11 +7,12 @@ import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
     selector: 'join-game',
     templateUrl: './join-game.component.html',
-    imports: [GameStateManagerComponent, ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule],
+    imports: [GameStateManagerComponent, ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
     standalone: true
 })
 export class JoinGameComponent {

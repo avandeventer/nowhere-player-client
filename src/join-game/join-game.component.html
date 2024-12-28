@@ -1,4 +1,4 @@
-<h2>Welcome to Nowhere!</h2>
+<h2 class="full-width">Welcome to Nowhere!</h2>
 
 @if(!gameSessionCreated) {
     <form class="join-game">
@@ -12,7 +12,9 @@
             <input [formControl]="userName" matInput placeholder="Who are you?">
         </mat-form-field>
     </form>
-    <button (click)="joinGame()">Join game!</button>
+    <div>       
+        <button mat-flat-button	(click)="joinGame()">Join game!</button>
+    </div>
 } @else {
     <game-state-manager [gameCode]="gameCodeValue" [player]="player"></game-state-manager>
 }

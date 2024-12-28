@@ -10,11 +10,11 @@
 @include mat.core();
 
 // Define the theme object.
-$first-app-theme: mat.define-theme((
+$nowhere-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
+    primary: mat.$yellow-palette,
+    tertiary: mat.$chartreuse-palette,
   ),
   density: (
     scale: 0,
@@ -25,7 +25,7 @@ $first-app-theme: mat.define-theme((
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 :root {
-  @include mat.all-component-themes($first-app-theme);
+  @include mat.all-component-themes($nowhere-theme);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.

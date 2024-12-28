@@ -11,11 +11,12 @@ import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { LocationComponent } from 'src/location/location.component';
 import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-type';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent],
+    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, MatButtonModule],
     standalone: true
 })
 export class GameStateManagerComponent implements OnInit {

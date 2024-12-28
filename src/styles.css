@@ -24,3 +24,7 @@ mat-form-field {
 mat-form-field input {
   height: auto;
 }
+
+mat-flat-button button {
+  float: right;
+}
