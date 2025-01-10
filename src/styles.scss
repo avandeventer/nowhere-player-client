@@ -1,11 +1,12 @@
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
-/* @import "@angular/material/core/theming/prebuilt/typography.css";
-@import "@angular/material/core/theming/prebuilt/roboto.css"; */
+@import "./nowhere-theme.scss";
+// @import "@angular/material/core/theming/prebuilt/typography.css";
+// @import "@angular/material/core/theming/prebuilt/roboto.css";
 
 body {
   font-family: 'Be Vietnam Pro', sans-serif;
-  background: var(--mat-sys-primary-container);
-  color: var(--mat-sys-on-primary-container);
+  background: var(--mat-option-selected-state-layer-color);
+  color: var(--mat-sys-on-surface);
 }
 
 .join-game {
