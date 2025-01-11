@@ -16,7 +16,8 @@ import { MatIconModule } from "@angular/material/icon";
     selector: 'location',
     templateUrl: './location.component.html',
     imports: [MatButtonModule, MatIconModule],
-    standalone: true
+    standalone: true,
+    styleUrl: './location.style.scss'
 })
 export class LocationComponent implements OnInit {
     @Input() gameState: GameState = GameState.ROUND1;
@@ -24,6 +25,8 @@ export class LocationComponent implements OnInit {
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
     @Output() playerDone = new EventEmitter<ComponentType>();
+    buttonTransforms: { [key: string]: string } = {};
+    mapSize: number = 500;
 
     locations: Location[] = [];
     selectedStories: Story[] = [];
@@ -43,23 +46,26 @@ export class LocationComponent implements OnInit {
     }
 
     getLocations(gameCode: string) {
-        const params = {
-          gameCode: gameCode
-        };
-    
-        console.log(params);
-    
-        this.http
-        .get<Location[]>('https://nowhere-556057816518.us-east5.run.app/location', { params })
-          .subscribe({
-            next: (response) => {
-              this.locations = response;
-              console.log('Locations', this.locations);
-            },
-            error: (error) => {
-              console.error('Error creating game', error);
-            },
+      const params = {
+        gameCode: gameCode,
+      };
+  
+      this.http.get<Location[]>('https://nowhere-556057816518.us-east5.run.app/location', { params }).subscribe({
+        next: (response) => {
+          this.locations = response;
+  
+          // Calculate transform values for each location
+          this.locations.forEach((location) => {
+            this.buttonTransforms[location.locationId] =  this.generateTransformBasedOnId(
+              location.locationId,
+              this.locations.length // Total number of locations
+            );
           });
+        },
+        error: (error) => {
+          console.error('Error fetching locations', error);
+        },
+      });
     }
 
     getStory(selectedLocation: Location) {
@@ -90,7 +96,20 @@ export class LocationComponent implements OnInit {
             },
           });
         
-      }
+    }
 
-
+    generateTransformBasedOnId(locationId: number, totalButtons: number): string {
+      const mapCenter = this.mapSize / 2; // Center of the map
+      const radius = Math.min(mapCenter - 100, totalButtons * 20);
+      const angle = (2 * Math.PI / totalButtons) * locationId; // Evenly spaced angle
+    
+      // Calculate positions relative to the center
+      const x = Math.cos(angle) * radius + mapCenter - 40; // Adjust for button width (40 = half of 80px)
+      const y = Math.sin(angle) * radius + mapCenter - 40; // Adjust for button height (40 = half of 80px)
+    
+      console.log("Your button position", locationId, x, y);
+    
+      return `translate(${x}px, ${y}px)`;
+    }
+              
 }
