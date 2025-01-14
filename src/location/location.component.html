@@ -1,23 +1,22 @@
 @if (!isLocationsSelected) {
-    <div class="instructions">
-      <div>Choose where you will travel in the coming weeks</div>
-      <div>Select {{ locationsSelected }} of 2</div>
-    </div>
-    <div class="map">
-      @for (location of locations; track location.locationId) {
-        <button
-          mat-fab
-          extended
-          (click)="getStory(location)"
-          class="location-button"
-          [style.position]="'absolute'"
-          [style.transform]="buttonTransforms[location.locationId]"
-        >
-          {{ location.label }}
-          <mat-icon>favorite</mat-icon>
-        </button>
-      }
-    </div>
-  } @else {
-    <div>You have chosen where you will travel. Await the other player's choices.</div>
-  }  
+  <div class="instructions">
+    <div>Choose where you will travel in the coming weeks</div>
+    <div>Select {{ locationsSelected }} of 2</div>
+  </div>
+  <div class="map">
+    <img src="assets/images/pyre.gif" alt="Pyre" class="pyre">
+    @for (location of locations; track location.locationId) {
+      <div
+        class="location-button"
+        (click)="getStory(location)"
+        [style.position]="'absolute'"
+        [style.transform]="buttonTransforms[location.locationId]"
+      >
+        <img src="assets/images/DiscussionParlor.png" alt="{{ location.label }}" class="location-icon" />
+        <span class="location-label">{{ location.label }}</span>
+      </div>      
+    }
+  </div>
+} @else {
+  <div>You have chosen where you will travel. Await the other player's choices.</div>
+}  

@@ -53,7 +53,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "src/public"
+                "input": "src/assets",
+                "output": "/assets"
               }
             ],
             "styles": ["src/styles.scss", "src/nowhere-theme.scss"],
