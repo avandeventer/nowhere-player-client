@@ -46,14 +46,21 @@ export class LocationComponent implements OnInit {
     }
 
     ngAfterViewInit() {
+      this.updateMapSize(); // Ensure map size is calculated initially
       this.updateButtonTransforms();
     
       // Add resize listener
       window.addEventListener('resize', () => {
-        this.updateButtonTransforms();
+        this.updateMapSize(); // Recalculate map size on resize
+        this.updateButtonTransforms(); // Update button positions
       });
     }
     
+    private updateMapSize() {
+      const mapElement = document.querySelector('.map') as HTMLElement;
+      this.mapSize = mapElement ? mapElement.offsetWidth : 500; // Get dynamic size or fallback to 500
+    }
+        
     updateButtonTransforms() {
       this.locations.forEach((location) => {
         this.buttonTransforms[location.locationId] = this.generateTransformBasedOnId(
@@ -117,9 +124,7 @@ export class LocationComponent implements OnInit {
     }
 
     generateTransformBasedOnId(locationId: number, totalButtons: number): string {
-      const mapElement = document.querySelector('.map') as HTMLElement;
-      const mapSize = mapElement ? mapElement.offsetWidth : 500; // Default to 500 if element is not found
-      const mapCenter = mapSize / 2; // Center of the map
+      const mapCenter = this.mapSize / 2; // Center of the map
       const radius = Math.min(mapCenter - 40, totalButtons * 20); // Dynamic radius based on map size
     
       const angle = (2 * Math.PI / totalButtons) * locationId; // Evenly spaced angle
@@ -131,5 +136,5 @@ export class LocationComponent implements OnInit {
       console.log("Button position (id, x, y):", locationId, x, y);
     
       return `translate(${x}px, ${y}px)`;
-    }                  
+    }
 }
