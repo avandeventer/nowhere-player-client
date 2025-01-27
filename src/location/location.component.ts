@@ -127,18 +127,25 @@ export class LocationComponent implements OnInit {
     generateTransformBasedOnId(locationId: number, totalButtons: number): string {
       const mapElement = document.querySelector('.map') as HTMLElement;
       const mapSize = mapElement.offsetWidth; // Use dynamic size
+      const exampleButton: HTMLElement = document.querySelector('.location-button') as HTMLElement;
+      const buttonWidth = exampleButton ? exampleButton.offsetWidth : 40;
+      const buttonHeight = exampleButton ? exampleButton.offsetHeight : 50;
+
       const mapCenter = mapSize / 2; // Center of the map
       const radius = mapCenter - (totalButtons * 10); // Adjust radius dynamically
+
     
       const angle = (2 * Math.PI / totalButtons) * locationId; // Evenly spaced angle
     
       // Calculate positions relative to the center
-      const x = Math.cos(angle) * radius + mapCenter - 40; // Adjust for button width
-      const y = Math.sin(angle) * radius + mapCenter - 40; // Adjust for button height
+      const x = Math.cos(angle) * radius + (mapCenter - buttonWidth / 2); // Adjust for button width
+      const y = Math.sin(angle) * radius + (mapCenter - buttonHeight / 2); // Adjust for button height
     
       console.log("Button position (id, x, y):", locationId, x, y);
       console.log("Radius in button function", radius);
-      console.log("Map size in button function", mapSize)
+      console.log("Map size in button function", mapSize);
+      console.log("Button height", buttonHeight);
+      console.log("Button width", buttonWidth);
     
       return `translate(${x}px, ${y}px)`;
     }    

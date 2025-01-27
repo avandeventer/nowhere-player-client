@@ -54,7 +54,6 @@
 
 .location-label {
   font-size: 2vw; /* Make the font size scale with the viewport */
-  max-font-size: 14px; /* Set a maximum font size for larger screens */
   color: var(--mdc-floating-label); /* Set text color */
   font-family: "Lucida Handwriting", "Courier New", monospace;
 }
