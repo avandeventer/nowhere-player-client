@@ -76,7 +76,7 @@ export class LocationComponent implements OnInit {
         gameCode: gameCode,
       };
   
-      this.http.get<Location[]>('https://nowhere-556057816518.us-east5.run.app/location', { params }).subscribe({
+      this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params }).subscribe({
         next: (response) => {
           this.locations = response;
   
