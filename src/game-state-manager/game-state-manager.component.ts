@@ -56,7 +56,7 @@ export class GameStateManagerComponent implements OnInit {
     console.log(requestBody);
 
     this.http
-      .put('https://nowhere-556057816518.us-east5.run.app/game', requestBody)
+      .put(environment.nowhereBackendUrl + HttpConstants.GAME_SESSION_PATH, requestBody)
       .subscribe({
         next: (response) => {
           console.log('Game started!', response);

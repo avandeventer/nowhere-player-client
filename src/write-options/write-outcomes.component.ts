@@ -12,6 +12,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { environment } from 'src/environments/environment';
+import { HttpConstants } from 'src/assets/http-constants';
 
 @Component({
     selector: 'write-outcomes',
@@ -75,7 +77,7 @@ export class WriteOutcomesComponent implements OnInit {
     console.log(params);
 
     this.http
-    .get<ResponseObject>('https://nowhere-556057816518.us-east5.run.app/story', { params })
+    .get<ResponseObject>(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, { params })
       .subscribe({
         next: (response) => {
           console.log('Stories retrieved!', response);
@@ -132,7 +134,7 @@ export class WriteOutcomesComponent implements OnInit {
       };
   
       this.http
-        .put('https://nowhere-556057816518.us-east5.run.app/story', requestBody)
+        .put(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, requestBody)
         .subscribe({
           next: (response) => {
             console.log('Story updated!', response);

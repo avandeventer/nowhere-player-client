@@ -36,6 +36,9 @@ export class AdventureComponent implements OnInit {
     storyRetrieved: boolean = true;
     currentStoryIndex: number = 0;
     isDone: boolean = false;
+    locationLabel: string = "";
+    locationOptionOne: string = "";
+    locationOptionTwo: string = "";
 
     constructor(private http:HttpClient) {}
 
@@ -92,7 +95,7 @@ export class AdventureComponent implements OnInit {
         console.log(params);
     
         this.http
-        .get<Location[]>('https://nowhere-556057816518.us-east5.run.app/location', { params })
+        .get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params })
           .subscribe({
             next: (response) => {
               console.log('Stories retrieved!', response);
@@ -131,7 +134,12 @@ export class AdventureComponent implements OnInit {
             console.log('Player Story', this.playerStory);
             this.storyRetrieved = true;
             if(this.playerStories.length > 0) {
-              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false);
+              this.locationLabel = "You travel to the " + this.playerStory.location.label;
+              this.locationOptionOne = this.playerStory.location.options[0].optionText;
+              this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+              this.outcomeDisplay.push(this.locationLabel);
+              this.outcomeDisplay.push(this.locationOptionOne + "\n" + this.locationOptionTwo);
+              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", this.outcomeDisplay, false);
             }
             console.log('Player Stories', this.playerStories);
           },
@@ -230,7 +238,7 @@ export class AdventureComponent implements OnInit {
       .put<Player>(environment.nowhereBackendUrl + HttpConstants.PLAYER_PATH, this.player)
       .subscribe({
         next: (response) => {
-          console.log('Player joined!', response);
+          console.log('Player updated!', response);
           this.player = response;
         },
         error: (error) => {

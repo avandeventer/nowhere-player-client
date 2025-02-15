@@ -4,6 +4,8 @@ import { MatInputModule } from '@angular/material/input';
 import { GameStateManagerComponent } from '../game-state-manager/game-state-manager.component';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { environment } from 'src/environments/environment';
+import { HttpConstants } from 'src/assets/http-constants';
 
 @Component({
   selector: 'game-session',
@@ -41,7 +43,7 @@ export class GameSessionComponent {
     };
 
     this.http
-      .post('https://nowhere-556057816518.us-east5.run.app/player', requestBody)
+      .post(environment.nowhereBackendUrl + HttpConstants.PLAYER_PATH, requestBody)
       .subscribe({
         next: (response) => {
           console.log('Game created!', response);

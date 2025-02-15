@@ -129,7 +129,7 @@ export class WritePromptComponent implements OnInit {
     console.log("Submitting story update", requestBody, this.prompt.value, this.optionOne.value, this.optionTwo.value);
 
     this.http
-      .put('https://nowhere-556057816518.us-east5.run.app/story', requestBody)
+      .put(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, requestBody)
       .subscribe({
         next: (response) => {
           console.log('Story updated!', response);
