@@ -174,6 +174,7 @@ export class AdventureComponent implements OnInit {
       .put<ActivePlayerSession>(environment.nowhereBackendUrl + HttpConstants.ACTIVE_PLAYER_SESSION_PATH, newActivePlayerSession)
       .subscribe({
         next: (response) => {
+          this.activePlayerSession = response;
           console.log('Active player session updated!', response);
         },
         error: (error) => {
@@ -226,8 +227,8 @@ export class AdventureComponent implements OnInit {
       this.selectedOption.optionId, 
       this.outcomeDisplay,
       false,
-      "",
-      []
+      this.activePlayerSession.selectedLocationOptionId,
+      this.locationOutcomeDisplay
     );
 
     console.log(this.selectedOption);
