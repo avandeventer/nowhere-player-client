@@ -65,6 +65,7 @@ export class AdventureComponent implements OnInit {
         this.selectedLocationOption = new Option();
         this.storyRetrieved = false;
         this.playerStories = [];
+        this.locationOutcomeDisplay = [];
       }
       
       const currentState = changes['gameState'] 
