@@ -10,11 +10,12 @@ import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 import { Stat } from 'src/assets/stat';
 import { ComponentType } from 'src/assets/component-type';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'adventure',
     templateUrl: './adventure.component.html',
-    imports: [],
+    imports: [MatButtonModule],
     standalone: true
 })
 export class AdventureComponent implements OnInit {
@@ -39,6 +40,7 @@ export class AdventureComponent implements OnInit {
     locationLabel: string = "";
     locationOptionOne: string = "";
     locationOptionTwo: string = "";
+    locationOutcomeDisplay: String[] = [];
 
     constructor(private http:HttpClient) {}
 
@@ -137,9 +139,7 @@ export class AdventureComponent implements OnInit {
               this.locationLabel = "You travel to the " + this.playerStory.location.label;
               this.locationOptionOne = this.playerStory.location.options[0].optionText;
               this.locationOptionTwo = this.playerStory.location.options[1].optionText;
-              this.outcomeDisplay.push(this.locationLabel);
-              this.outcomeDisplay.push(this.locationOptionOne + "\n" + this.locationOptionTwo);
-              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", this.outcomeDisplay, false);
+              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false, "", []);
             }
             console.log('Player Stories', this.playerStories);
           },
@@ -154,7 +154,9 @@ export class AdventureComponent implements OnInit {
     playerStory: Story,
     selectedOptionId: String,
     outcomeDisplay: String[],
-    nextPlayerTurn: boolean
+    nextPlayerTurn: boolean,
+    selectedLocationOptionId: String,
+    locationOutcomeDisplay: String[]
   ) {
     console.log("Your player session", this.activePlayerSession);
     const newActivePlayerSession: ActivePlayerSession = new ActivePlayerSession();
@@ -164,6 +166,8 @@ export class AdventureComponent implements OnInit {
     newActivePlayerSession.playerChoiceOptionId = selectedOptionId;
     newActivePlayerSession.outcomeDisplay = outcomeDisplay;
     newActivePlayerSession.setNextPlayerTurn = nextPlayerTurn;
+    newActivePlayerSession.selectedLocationOptionId = selectedLocationOptionId;
+    newActivePlayerSession.locationOutcomeDisplay = locationOutcomeDisplay;
 
     this.http
       .put<ActivePlayerSession>(environment.nowhereBackendUrl + HttpConstants.ACTIVE_PLAYER_SESSION_PATH, newActivePlayerSession)
@@ -220,7 +224,9 @@ export class AdventureComponent implements OnInit {
       this.playerStory, 
       this.selectedOption.optionId, 
       this.outcomeDisplay,
-      false
+      false,
+      "",
+      []
     );
 
     console.log(this.selectedOption);
@@ -271,7 +277,9 @@ export class AdventureComponent implements OnInit {
       new Story(), 
       "", 
       [],
-      true
+      true,
+      "",
+      []
     );
     this.playerTurn = false;
     this.storyRetrieved = false;
@@ -286,10 +294,21 @@ export class AdventureComponent implements OnInit {
     this.selectedLocationOption = this.location.options[locationOptionIndex];
     console.log("Selected location", this.selectedLocationOption, locationOptionIndex);
 
-    this.selectedLocationOption.successResults.forEach(outcomeStat => {
-      const playerOutcomeStatKey = outcomeStat.impactedStat.toLowerCase() as keyof Player;
-      (this.player[playerOutcomeStatKey] as number) += outcomeStat.statChange;
+    this.selectedLocationOption.successResults.forEach(outcome => {
+      const playerOutcomeStatKey = outcome.impactedStat.toLowerCase() as keyof Player;
+      (this.player[playerOutcomeStatKey] as number) += outcome.statChange;
+      this.locationOutcomeDisplay.push("You gain " + outcome.statChange + " " + outcome.impactedStat);
     });
+
+    this.updateActivePlayerSession(
+      this.player.authorId,
+      this.playerStory, 
+      "",
+      [],
+      false,
+      locationOptionIndex.toString(),
+      this.locationOutcomeDisplay
+    );
 
     this.updatePlayer();
   }

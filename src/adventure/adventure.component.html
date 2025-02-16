@@ -11,14 +11,14 @@
         <br>
             {{locationLabel}}
         <br>
-        <button (click)="selectLocationOption(0)">{{ location.options[0].optionText }}</button>
+        <button mat-flat-button (click)="selectLocationOption(0)">{{ location.options[0].optionText }}</button>
+        <br><br>
+        <button mat-flat-button (click)="selectLocationOption(1)">{{ location.options[1].optionText }}</button>
         <br>
-        <button (click)="selectLocationOption(1)">{{ location.options[1].optionText }}</button>
-        <br>
-        @if (selectedLocationOption.successResults.length != 0) {
+        @if (locationOutcomeDisplay.length != 0) {
             {{selectedLocationOption.attemptText}}
-            @for (outcome of selectedLocationOption.successResults; track outcome) {
-                <div>You gain {{outcome.statChange}} {{outcome.impactedStat}} </div>
+            @for (outcome of locationOutcomeDisplay; track outcome) {
+                <div>{{outcome}} </div>
             }
         }
     }
@@ -26,10 +26,10 @@
     @if(playerStory.storyId != "" && selectedLocationOption.successResults.length != 0) {
         {{playerStory.prompt}}<br>
         {{playerStory.options[0].optionText}}
-        <button (click)="pickOption(0)">Option 1</button><br>
+        <button mat-flat-button (click)="pickOption(0)">Option 1</button><br>
         <br>
         {{playerStory.options[1].optionText}}
-        <button (click)="pickOption(1)">Option 2</button><br>
+        <button mat-flat-button (click)="pickOption(1)">Option 2</button><br>
     }
 
     @for (outcome of outcomeDisplay; track outcome) {
@@ -37,7 +37,7 @@
     }
 
     @if (outcomeDisplay.length > 0) {
-        <button (click)="nextPlayerTurn()">Continue</button>
+        <button mat-flat-button (click)="nextPlayerTurn()">Continue</button>
     }
 } @else {
     It's another player's turn right now! Hold your horses
