@@ -10,13 +10,14 @@ import { AdventureComponent } from 'src/adventure/adventure.component';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { LocationComponent } from 'src/location/location.component';
+import { RitualComponent } from 'src/ritual/ritual.component';
 import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, MatButtonModule],
+    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, MatButtonModule],
     standalone: true
 })
 export class GameStateManagerComponent implements OnInit {
@@ -106,5 +107,9 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameInAdventurePhase() {
     return this.gameState === GameState.ROUND1 || this.gameState === GameState.ROUND2;
+  }
+
+  isGameInRitualPhase() {
+    return this.gameState === GameState.RITUAL;
   }
 }

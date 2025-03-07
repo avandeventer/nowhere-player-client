@@ -1,0 +1,19 @@
+<div>The time of the harvest is upon us! Rejoice! How will you assist in the town's ritual for Ersysus?</div>
+<br>
+
+@if (selectedRitualResponse.optionId === "") {
+    @for (ritualJob of ritual.ritualOptions; track ritualJob) {
+        @if (ritualJob.selectedByPlayerId === null) {
+            <button mat-flat-button (click)="selectRitualJob(ritualJob.optionId)">{{ritualJob.optionText}}</button><br>
+        }
+    }
+} @else {
+    <div>{{selectedRitualResponse.attemptText}}</div><br>
+    @if (selectedRitualResponse.playerSucceeded) {
+        <div>{{selectedRitualResponse.successText}}</div><br>
+    } @else {
+        <div>{{selectedRitualResponse.failureText}}</div><br>
+    }
+    {{selectedRitualResponse.successMarginText}}<br><br>
+    <button mat-flat-button (click)="setNextPlayerTurn()">Continue</button>
+}

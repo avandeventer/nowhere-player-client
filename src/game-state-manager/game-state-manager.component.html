@@ -26,3 +26,7 @@
 @if (isGameInAdventurePhase()) {
     <adventure [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></adventure>
 }
+
+@if (isGameInRitualPhase()) {
+    <ritual [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></ritual>
+}
