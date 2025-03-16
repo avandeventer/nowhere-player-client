@@ -13,7 +13,7 @@
     } @else {
         @for (outcome of outcomeDisplay; track outcome) {
             <div>{{ outcome }}</div>
-        }
+        }<br>
         <button mat-flat-button (click)="nextPlayerTurn()">Continue</button>
     }
 }
