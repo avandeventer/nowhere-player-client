@@ -1,10 +1,11 @@
 import { RitualOption } from "./ritual-option";
+import { Story } from "./story";
 
-export class Ritual {
-    gameCode: string;
+export class RitualStory extends Story {
     ritualOptions: RitualOption[];
 
     constructor () {
+        super();
         this.gameCode = '';
         this.ritualOptions = [];
     }

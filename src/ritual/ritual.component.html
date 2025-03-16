@@ -8,12 +8,8 @@
         }
     }
 } @else {
-    <div>{{selectedRitualResponse.attemptText}}</div><br>
-    @if (selectedRitualResponse.playerSucceeded) {
-        <div>{{selectedRitualResponse.successText}}</div><br>
-    } @else {
-        <div>{{selectedRitualResponse.failureText}}</div><br>
+    @for (outcome of outcomeDisplay; track outcome) {
+        <div>{{ outcome }}</div>
     }
-    {{selectedRitualResponse.successMarginText}}<br><br>
-    <button mat-flat-button (click)="setNextPlayerTurn()">Continue</button>
+    <button mat-flat-button (click)="nextPlayerTurn()">Continue</button>
 }

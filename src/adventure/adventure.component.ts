@@ -11,6 +11,8 @@ import { HttpConstants } from 'src/assets/http-constants';
 import { Stat } from 'src/assets/stat';
 import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
+import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'adventure',
@@ -42,7 +44,7 @@ export class AdventureComponent implements OnInit {
     locationOptionTwo: string = "";
     locationOutcomeDisplay: String[] = [];
 
-    constructor(private http:HttpClient) {}
+    constructor(private activePlayerSessionService: ActivePlayerSessionService, private http: HttpClient) {}
 
     ngOnInit(): void {
       console.log("Adventure Loaded!" + this.activePlayerSession);
@@ -140,7 +142,16 @@ export class AdventureComponent implements OnInit {
               this.locationLabel = "You travel to the " + this.playerStory.location.label;
               this.locationOptionOne = this.playerStory.location.options[0].optionText;
               this.locationOptionTwo = this.playerStory.location.options[1].optionText;
-              this.updateActivePlayerSession(this.player.authorId, this.playerStory, "", [], false, "", []);
+              this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, "", [], false, "", [])
+                .subscribe({
+                  next: (updatedSession) => {
+                    console.log("Updated session:", updatedSession);
+                    this.activePlayerSession = updatedSession;
+                  },
+                  error: (err) => {
+                    console.error("Error:", err);
+                  }
+                });
             }
             console.log('Player Stories', this.playerStories);
           },
@@ -148,39 +159,6 @@ export class AdventureComponent implements OnInit {
             console.error('Error retrieving stories', error);
           },
         });
-  }
-
-  private updateActivePlayerSession(
-    playerId: String,
-    playerStory: Story,
-    selectedOptionId: String,
-    outcomeDisplay: String[],
-    nextPlayerTurn: boolean,
-    selectedLocationOptionId: String,
-    locationOutcomeDisplay: String[]
-  ) {
-    console.log("Your player session", this.activePlayerSession);
-    const newActivePlayerSession: ActivePlayerSession = new ActivePlayerSession();
-    newActivePlayerSession.gameCode = this.gameCode;
-    newActivePlayerSession.story = playerStory;
-    newActivePlayerSession.playerId = playerId;
-    newActivePlayerSession.playerChoiceOptionId = selectedOptionId;
-    newActivePlayerSession.outcomeDisplay = outcomeDisplay;
-    newActivePlayerSession.setNextPlayerTurn = nextPlayerTurn;
-    newActivePlayerSession.selectedLocationOptionId = selectedLocationOptionId;
-    newActivePlayerSession.locationOutcomeDisplay = locationOutcomeDisplay;
-
-    this.http
-      .put<ActivePlayerSession>(environment.nowhereBackendUrl + HttpConstants.ACTIVE_PLAYER_SESSION_PATH, newActivePlayerSession)
-      .subscribe({
-        next: (response) => {
-          this.activePlayerSession = response;
-          console.log('Active player session updated!', response);
-        },
-        error: (error) => {
-          console.error('Error updating session', error);
-        },
-      });
   }
 
   pickOption(optionPicked: number) {
@@ -221,7 +199,8 @@ export class AdventureComponent implements OnInit {
     this.updatePlayer();
     this.updateStory(playerSucceeded, this.player.authorId, this.selectedOption.optionId);
 
-    this.updateActivePlayerSession(
+    this.activePlayerSessionService.updateActivePlayerSession(
+      this.gameCode,
       this.player.authorId,
       this.playerStory, 
       this.selectedOption.optionId, 
@@ -229,7 +208,15 @@ export class AdventureComponent implements OnInit {
       false,
       this.activePlayerSession.selectedLocationOptionId,
       this.locationOutcomeDisplay
-    );
+    ).subscribe({
+      next: (updatedSession) => {
+        console.log("Updated session:", updatedSession);
+        this.activePlayerSession = updatedSession;
+      },
+      error: (err) => {
+        console.error("Error:", err);
+      }
+    });
 
     console.log(this.selectedOption);
   }
@@ -274,7 +261,8 @@ export class AdventureComponent implements OnInit {
   }
 
   nextPlayerTurn() {
-    this.updateActivePlayerSession(
+    this.activePlayerSessionService.updateActivePlayerSession(
+      this.gameCode,
       "",
       new Story(), 
       "", 
@@ -282,7 +270,15 @@ export class AdventureComponent implements OnInit {
       true,
       "",
       []
-    );
+    ).subscribe({
+      next: (updatedSession) => {
+        console.log("Updated session:", updatedSession);
+        this.activePlayerSession = updatedSession;
+      },
+      error: (err) => {
+        console.error("Error:", err);
+      }
+    });
     this.playerTurn = false;
     this.storyRetrieved = false;
     if(this.playerStories.length <= 1 && !this.isDone) {
@@ -302,7 +298,8 @@ export class AdventureComponent implements OnInit {
       this.locationOutcomeDisplay.push("You gain " + outcome.statChange + " " + outcome.impactedStat);
     });
 
-    this.updateActivePlayerSession(
+    this.activePlayerSessionService.updateActivePlayerSession(
+      this.gameCode,
       this.player.authorId,
       this.playerStory, 
       "",
@@ -310,7 +307,15 @@ export class AdventureComponent implements OnInit {
       false,
       locationOptionIndex.toString(),
       this.locationOutcomeDisplay
-    );
+    ).subscribe({
+      next: (updatedSession) => {
+        console.log("Updated session:", updatedSession);
+        this.activePlayerSession = updatedSession;
+      },
+      error: (err) => {
+        console.error("Error:", err);
+      }
+    });
 
     this.updatePlayer();
   }
