@@ -111,7 +111,7 @@ export class LocationComponent implements OnInit {
               this.selectedStories.push(response);
               this.locationsSelected++;
 
-              if(this.selectedStories.length >= 2) {
+              if(this.selectedStories.length >= 3) {
                   this.playerDone.emit(ComponentType.LOCATION_SELECT);
                   this.isLocationsSelected = true;
               }
