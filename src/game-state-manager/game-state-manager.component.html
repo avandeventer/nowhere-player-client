@@ -34,3 +34,7 @@
 @if (isGameInWriteEndingsPhase()) {
     <write-endings [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-endings>
 }
+
+@if (isGameInEndingPhase()) {
+    <ending [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></ending>
+}

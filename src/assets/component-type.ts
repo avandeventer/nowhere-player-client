@@ -6,7 +6,8 @@ export enum ComponentType {
     WRITE_OUTCOMES = "WRITE_OUTCOMES",
     ADVENTURE = "ADVENTURE",
     RITUAL = "RITUAL",
-    WRITE_ENDINGS = "WRITE_ENDINGS"
+    WRITE_ENDINGS = "WRITE_ENDINGS",
+    ENDING = "ENDING"
 }  
 
 export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
@@ -16,4 +17,5 @@ export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
     [ComponentType.ADVENTURE]: [GameState.ROUND1, GameState.ROUND2],
     [ComponentType.RITUAL]: [GameState.RITUAL],
     [ComponentType.WRITE_ENDINGS]: [GameState.WRITE_ENDINGS],
+    [ComponentType.ENDING]: [GameState.ENDING]
 };

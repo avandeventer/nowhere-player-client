@@ -14,5 +14,6 @@ export enum GameState {
   ROUND2 = "ROUND2",
   RITUAL = "RITUAL",
   WRITE_ENDINGS = "WRITE_ENDINGS",
-  FINALE = "FINALE"
+  ENDING = "ENDING",
+  FINALE = "FINALE",
 }  

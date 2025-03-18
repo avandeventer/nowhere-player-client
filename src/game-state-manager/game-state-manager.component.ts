@@ -13,12 +13,13 @@ import { LocationComponent } from 'src/location/location.component';
 import { RitualComponent } from 'src/ritual/ritual.component';
 import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
-import { WriteEndingsComponent } from 'src/ending/write-endings.component';
+import { WriteEndingsComponent } from 'src/write-endings/write-endings.component';
+import { EndingComponent } from 'src/ending/ending.component';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, MatButtonModule],
+    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule],
     standalone: true
 })
 export class GameStateManagerComponent implements OnInit {
@@ -116,5 +117,9 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameInWriteEndingsPhase() {
     return this.gameState === GameState.WRITE_ENDINGS;
+  }
+
+  isGameInEndingPhase() {
+    return this.gameState === GameState.ENDING;
   }
 }

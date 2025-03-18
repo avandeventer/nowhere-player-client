@@ -1,0 +1,6 @@
+@if (playerTurn) {
+    <div>{{playerEnding.endingBody}}</div><br>
+    <button mat-flat-button (click)="nextPlayerTurn()">Continue</button><br>
+} @else {
+    <div>Other people are experiencing their ending!</div>
+}
