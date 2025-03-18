@@ -32,6 +32,7 @@
   align-items: center; /* Center image and text */
   width: 12%; /* Adjust size relative to the map */
   max-width: 80px; /* Set maximum size for larger screens */
+  max-height: 80px; /* Set maximum size for larger screens */
   height: auto; /* Allow height to scale with content */
   text-align: center;
   cursor: pointer; /* Indicate clickable */
@@ -53,7 +54,7 @@
 }
 
 .location-label {
-  font-size: 2vw; /* Make the font size scale with the viewport */
+  font-size: clamp(12px, 2vw, 20px); /* Ensures it scales but stays between 16px and 24px */
   color: var(--mdc-floating-label); /* Set text color */
   font-family: "Lucida Handwriting", "Courier New", monospace;
 }
