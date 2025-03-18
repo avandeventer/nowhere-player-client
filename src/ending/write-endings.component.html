@@ -1,0 +1,49 @@
+@if (authorEnding.authorId != "" && !endingSubmitted) {
+    <div>Now that our ritual is done, select the thing that you think most directly represents {{authorEnding.playerUsername}}'s legacy </div>
+    <br>
+    <mat-divider></mat-divider><br>
+    @for (associatedStory of authorEnding.associatedStories; track associatedStory) {
+        <div>{{associatedStory.prompt}}</div>
+        <div>{{associatedStory.options[0].optionText}}</div>
+        @if (associatedStory.playerSucceeded) {
+            <div>{{associatedStory.options[0].successText}}</div>
+        }
+        @else {
+            <div>{{associatedStory.options[0].failureText}}</div>
+        }
+        <br>
+
+        @if (!legacySelected) {
+            <button mat-flat-button (click)="selectStory(associatedStory)">Choose this event</button><br><br>
+        }
+    }
+
+    @if (authorEnding.associatedRitualOption.optionId != "") {
+        <div>{{authorEnding.associatedRitualOption.optionText}}</div>
+        <div>{{authorEnding.associatedRitualOption.attemptText}}</div>
+        @if (authorEnding.associatedRitualOption.playerSucceeded) {
+            <div>{{authorEnding.associatedRitualOption.successText}}</div>
+        }
+        @else {
+            <div>{{authorEnding.associatedRitualOption.failureText}}</div>
+        }
+        <div>{{authorEnding.associatedRitualOption.successMarginText}}</div>
+
+        @if (!legacySelected) {
+            <button mat-flat-button (click)="selectRitual(authorEnding.associatedRitualOption)">Choose this event</button><br>
+        }
+    }
+
+    @if (legacySelected) {
+        <div>What happened to {{authorEnding.playerUsername}} after all was said and done? With the legacy you selected in mind, describe a little epilogue for them in the second person.</div><br>
+        <mat-form-field class="full-width">
+            <mat-label>Endings</mat-label>
+            <textarea [formControl]="ending" matInput placeholder="Ex. After the season's ritual closed, you could never shake the feeling that the spirit of the woman you killed was watching you ..."></textarea>
+        </mat-form-field>
+        <button mat-flat-button (click)="submitEnding()">Submit</button><br>
+    }
+}
+
+@if (endingSubmitted) {
+    <div>You've done all you can here. Wait for everyone to submit their endings.</div>
+}

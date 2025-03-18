@@ -5,7 +5,8 @@ export enum ComponentType {
     LOCATION_SELECT = "LOCATION_SELECT",
     WRITE_OUTCOMES = "WRITE_OUTCOMES",
     ADVENTURE = "ADVENTURE",
-    RITUAL = "RITUAL"
+    RITUAL = "RITUAL",
+    WRITE_ENDINGS = "WRITE_ENDINGS"
 }  
 
 export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
@@ -13,5 +14,6 @@ export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
     [ComponentType.LOCATION_SELECT]: [GameState.LOCATION_SELECT, GameState.LOCATION_SELECT_AGAIN],
     [ComponentType.WRITE_OUTCOMES]: [GameState.WRITE_OPTIONS, GameState.WRITE_OPTIONS_AGAIN],
     [ComponentType.ADVENTURE]: [GameState.ROUND1, GameState.ROUND2],
-    [ComponentType.RITUAL]: [GameState.RITUAL]
+    [ComponentType.RITUAL]: [GameState.RITUAL],
+    [ComponentType.WRITE_ENDINGS]: [GameState.WRITE_ENDINGS],
 };

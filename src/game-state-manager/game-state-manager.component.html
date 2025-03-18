@@ -30,3 +30,7 @@
 @if (isGameInRitualPhase()) {
     <ritual [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></ritual>
 }
+
+@if (isGameInWriteEndingsPhase()) {
+    <write-endings [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-endings>
+}
