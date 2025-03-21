@@ -222,7 +222,7 @@ export class AdventureComponent implements OnInit {
   }
 
   rollForSuccess(playerStat: number, dcToBeat: number): boolean {
-    const diceRoll: number = Math.floor((Math.random() * 10) + 1);
+    const diceRoll: number = Math.floor((Math.random() * 4) + 1);
     const playerTotal = diceRoll + playerStat;
     console.log("Dice roll: ", playerTotal, diceRoll);
     return playerTotal >= dcToBeat;
