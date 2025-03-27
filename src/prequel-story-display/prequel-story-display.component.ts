@@ -7,15 +7,18 @@ import { Player } from 'src/assets/player';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'prequel-story-display',
   templateUrl: './prequel-story-display.component.html',
   standalone: true,
+  imports: [MatCardModule]
 })
 export class PrequelDisplayComponent implements OnChanges {
   @Input() gameCode: string = '';
-  @Input() story: Story | null = null;
+  @Input() story: Story = new Story();
+  sequelTypeClarifier: string = "";
 
   prequelOutcomeDisplay: string[] = [];
 
@@ -55,17 +58,15 @@ export class PrequelDisplayComponent implements OnChanges {
           const prequelPlayer = await this.fetchPrequelStoryPlayer(
             story.prequelStoryPlayerId
           );
-          this.prequelOutcomeDisplay.push(
-            this.createSequelPlayerDisplay(prequelPlayer)
-          );
+          this.sequelTypeClarifier = 
+            this.createSequelPlayerDisplay(prequelPlayer);
         } else {
           const gameLocations = await this.fetchLocations(this.gameCode);
-          this.prequelOutcomeDisplay.push(
+          this.sequelTypeClarifier = 
             this.createOutcomeLocationDisplay(
-              prequelStory.location,
+              this.story.location,
               gameLocations
-            )
-          );
+            );
         }
       }
     } catch (error) {

@@ -3,24 +3,32 @@
     <p>If you didn't get any options to write, click here:</p>
 }
 @else {
-    <div>Someone else has written the prompt for this one so you just write the possible outcomes!</div>
-    {{playerStories[this.currentStoryIndex].prompt}}
-
+    {{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Written
+    <br><br>
+    <div>Someone else has written the prompt for this one so you just write the possible outcomes!</div><br>
+    <mat-card class="story">{{playerStories[this.currentStoryIndex].prompt}}</mat-card>
+    <br><mat-divider></mat-divider><br>
     <div>
         The player who gets this story will have two choices with a success and failure outcome each. Type out what happens
         when they succeed or fail for the below option!
     </div>
     <br>
     <div>
-        {{playerOption.statRequirement}}[{{statDCDifficulty()}}]<br>
-        {{playerOption.optionText}}
+        <mat-card class="story">{{playerOption.optionText}}</mat-card>
+        <mat-chip-set><mat-chip class="stat">
+            {{playerOption.statRequirement}}[{{statDCDifficulty()}}]<br>
+        </mat-chip></mat-chip-set>
         <br>
 
         <section>
-            If they succeed, they gain: <br>
+            If they succeed, they gain:
+            <mat-chip-set>
             @for (outcome of playerOption.successResults; track outcome) {
-            <div>{{outcome.impactedStat}}</div>
+                <mat-chip class="stat">        
+                    <div>{{outcome.impactedStat}}</div>
+                </mat-chip>
             }
+            </mat-chip-set>
 
             <mat-form-field class="full-width">
                 <mat-label>Option Success</mat-label>
@@ -33,11 +41,14 @@
         <mat-divider></mat-divider><br>
 
         <section>
-            If they fail, they lose: <br>
-            @for (outcome of playerOption.failureResults; track outcome) {
-            <div>{{outcome.impactedStat}}</div>
-            }
-
+            If they fail, they lose:
+            <mat-chip-set>
+                @for (outcome of playerOption.failureResults; track outcome) {
+                    <mat-chip class="stat">        
+                        <div>{{outcome.impactedStat}}</div>
+                    </mat-chip>
+                }
+            </mat-chip-set>
             <mat-form-field class="full-width">
                 <mat-label>Option Failure</mat-label>
                 <textarea matInput

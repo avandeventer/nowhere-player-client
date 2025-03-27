@@ -14,6 +14,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
+import {MatCardModule} from '@angular/material/card';
+import { MatChipSet, MatChip } from '@angular/material/chips'
 
 @Component({
     selector: 'write-outcomes',
@@ -25,7 +27,10 @@ import { HttpConstants } from 'src/assets/http-constants';
       MatFormFieldModule,
       MatInputModule,
       MatButtonModule,
-      MatDividerModule
+      MatDividerModule,
+      MatCardModule,
+      MatChipSet,
+      MatChip
     ],
     standalone: true
 })
@@ -42,6 +47,9 @@ export class WriteOutcomesComponent implements OnInit {
   optionSuccess = new FormControl('');
   optionFailure = new FormControl('');
   submitBothOutcomes: boolean = false;
+
+  numberOfOutcomesToWrite: number = 0;
+  numberOfOutcomesWritten: number = 0;
 
   constructor(private http: HttpClient) {}
 
@@ -82,6 +90,7 @@ export class WriteOutcomesComponent implements OnInit {
         next: (response) => {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
+          this.numberOfOutcomesToWrite = this.playerStories.length;
           this.setPlayerOption();
           console.log('Player stories', this.playerStories);
         },
@@ -138,6 +147,7 @@ export class WriteOutcomesComponent implements OnInit {
         .subscribe({
           next: (response) => {
             console.log('Story updated!', response);
+            this.numberOfOutcomesWritten++;
             this.setNextStoryPrompt();
           },
           error: (error) => {

@@ -31,3 +31,19 @@ mat-form-field input {
 mat-flat-button button {
   float: right;
 }
+
+mat-card.story {
+  background: var(--mat-optgroup-label-text-color);
+  color: var(--mat-option-selected-state-layer-color);
+  font-family: "Courier New", monospace;
+  padding: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: 5px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+mat-chip.stat {
+  color: var(--mat-option-selected-state-layer-color) !important;
+  background-color: #76a37e !important;
+}
