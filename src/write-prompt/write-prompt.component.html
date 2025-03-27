@@ -2,6 +2,8 @@
     <p>All stories have been submitted!</p>
 } 
 @else {
+    {{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Outcomes Written
+
     <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.label}}</div>
 
     <mat-form-field class="full-width">
@@ -17,8 +19,9 @@
     </div>
     <br>
     <section>
-        {{playerStories[currentStoryIndex].options[0].statRequirement}}
-        [{{statDCDifficulty(0)}}]
+        <mat-chip-set><mat-chip class="stat">
+           {{playerStories[currentStoryIndex].options[0].statRequirement}} [{{statDCDifficulty(0)}}]
+        </mat-chip></mat-chip-set>
         <mat-form-field class="full-width">
             <mat-label>Option One</mat-label>
             <textarea matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne"></textarea>
@@ -27,8 +30,9 @@
     or
     <br><br>
     <section>
-        {{playerStories[currentStoryIndex].options[1].statRequirement}}
-        [{{statDCDifficulty(1)}}]
+        <mat-chip-set><mat-chip class="stat">
+            {{playerStories[currentStoryIndex].options[1].statRequirement}} [{{statDCDifficulty(1)}}]
+        </mat-chip></mat-chip-set>
         <mat-form-field class="full-width">
             <mat-label>Option Two</mat-label>
             <textarea matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo"></textarea>

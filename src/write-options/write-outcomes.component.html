@@ -1,6 +1,5 @@
 @if(currentStoryIndex >= playerStories.length) {
     <p>All stories have been submitted!</p>
-    <p>If you didn't get any options to write, click here:</p>
 }
 @else {
     {{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Written
@@ -59,9 +58,6 @@
 
         <br>
     </div>
-
-    <div></div>
-
     <br>
     <button mat-flat-button (click)="submitOutcomes()">Submit</button>
 

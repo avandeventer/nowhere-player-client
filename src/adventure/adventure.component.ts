@@ -13,11 +13,12 @@ import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
 import { Observable } from 'rxjs';
+import {MatCardModule} from '@angular/material/card';
 
 @Component({
     selector: 'adventure',
     templateUrl: './adventure.component.html',
-    imports: [MatButtonModule],
+    imports: [MatButtonModule, MatCardModule],
     standalone: true
 })
 export class AdventureComponent implements OnInit {

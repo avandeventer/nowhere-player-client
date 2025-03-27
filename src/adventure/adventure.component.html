@@ -1,43 +1,64 @@
-@if(playerTurn && !isDone) {
-    <div>Hello {{player.userName}}</div>
+<mat-card class="stat-board">
+    <div>{{player.userName}}</div>
     <div>Strength: {{player.strength}}</div>
     <div>Intellect: {{player.intellect}}</div>
     <div>Charisma: {{player.charisma}}</div>
     <div>Dexterity: {{player.dexterity}}</div>
     <div>Wealth: {{player.wealth}}</div>
     <div>Magic: {{player.magic}}</div>
+</mat-card><br>
 
+@if(playerTurn && !isDone) {
     @if (storyRetrieved) {
         <br>
-            {{locationLabel}}
+            <mat-card class="story">{{locationLabel}}</mat-card>
         <br>
-        <button mat-flat-button (click)="selectLocationOption(0)">{{ location.options[0].optionText }}</button>
-        <br><br>
-        <button mat-flat-button (click)="selectLocationOption(1)">{{ location.options[1].optionText }}</button>
-        <br>
-        @if (locationOutcomeDisplay.length != 0) {
-            {{selectedLocationOption.attemptText}}
-            @for (outcome of locationOutcomeDisplay; track outcome) {
-                <div>{{outcome}} </div>
-            }
+        @if (locationOutcomeDisplay.length === 0) {
+            <button mat-flat-button (click)="selectLocationOption(0)">{{ location.options[0].optionText }}</button>
+            <br><br>
+            <button mat-flat-button (click)="selectLocationOption(1)">{{ location.options[1].optionText }}</button>
+            <br>
+        }
+        @else {
+            <mat-card class="story">
+                {{selectedLocationOption.attemptText}}
+                @for (outcome of locationOutcomeDisplay; track outcome) {
+                    <div>{{outcome}} </div>
+                }
+            </mat-card>
         }
     }
 
     @if(playerStory.storyId != "" && selectedLocationOption.successResults.length != 0) {
-        {{playerStory.prompt}}<br>
-        {{playerStory.options[0].optionText}}
-        <button mat-flat-button (click)="pickOption(0)">Option 1</button><br>
-        <br>
-        {{playerStory.options[1].optionText}}
-        <button mat-flat-button (click)="pickOption(1)">Option 2</button><br>
-    }
-
-    @for (outcome of outcomeDisplay; track outcome) {
-        <div>{{outcome}}</div><br>
+        <mat-card class="story">
+            {{playerStory.prompt}}<br>
+        </mat-card>
+        <mat-card class="story">
+            {{playerStory.options[0].optionText}}
+        </mat-card>
+        
+        @if (outcomeDisplay.length === 0) {
+            <br><button mat-flat-button (click)="pickOption(0)">Option 1</button><br>
+            <br>
+        }
+        
+        <mat-card class="story">
+            {{playerStory.options[1].optionText}}
+        </mat-card>
+        
+        @if (outcomeDisplay.length === 0) {
+            <br><button mat-flat-button (click)="pickOption(1)">Option 2</button><br>
+        }
     }
 
     @if (outcomeDisplay.length > 0) {
-        <button mat-flat-button (click)="nextPlayerTurn()">Continue</button>
+        <mat-card class="story">
+            @for (outcome of outcomeDisplay; track outcome) {
+                <div>{{outcome}}</div><br>
+            }
+        </mat-card>
+
+        <br><button mat-flat-button (click)="nextPlayerTurn()">Continue</button>
     }
 } @else {
     It's another player's turn right now! Hold your horses

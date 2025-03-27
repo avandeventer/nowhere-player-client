@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatChip, MatChipSet } from '@angular/material/chips';
 
 @Component({
   selector: 'write-prompt',
@@ -27,7 +28,9 @@ import { MatDividerModule } from '@angular/material/divider';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    MatChipSet,
+    MatChip
   ],
   standalone: true
 })
@@ -43,6 +46,8 @@ export class WritePromptComponent implements OnInit {
   prompt = new FormControl();
   optionOne = new FormControl();
   optionTwo = new FormControl();
+  numberOfPromptsWritten: number = 0;
+  numberOfPromptsToWrite: number = 0;
 
   constructor(private http: HttpClient) {
   }
@@ -81,6 +86,7 @@ export class WritePromptComponent implements OnInit {
         next: (response) => {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
+          this.numberOfPromptsToWrite = this.playerStories.length;
           console.log('Player stories', this.playerStories);
         },
         error: (error) => {
@@ -133,6 +139,7 @@ export class WritePromptComponent implements OnInit {
       .subscribe({
         next: (response) => {
           console.log('Story updated!', response);
+          this.numberOfPromptsWritten++;
           this.setNextStoryPrompt();
         },
         error: (error) => {
