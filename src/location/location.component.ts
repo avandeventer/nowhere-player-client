@@ -32,6 +32,7 @@ export class LocationComponent implements OnInit {
     selectedStories: Story[] = [];
     locationsSelected: number = 0;
     isLocationsSelected: boolean = false;
+    loadingSelection: boolean = false;
     // selectedLocationOption: Option = new Option();
     // selectedLocation: Location = new Location();
     // playerStory: Story = new Story();
@@ -75,23 +76,22 @@ export class LocationComponent implements OnInit {
       const params = {
         gameCode: gameCode,
       };
-  
       this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params }).subscribe({
-        next: (response) => {
-          this.locations = response;
-  
-          // Calculate transform values for each location
-          this.locations.forEach((location) => {
-            this.buttonTransforms[location.locationId] =  this.generateTransformBasedOnId(
-              location.locationId,
-              this.locations.length // Total number of locations
-            );
-          });
-        },
-        error: (error) => {
-          console.error('Error fetching locations', error);
-        },
-      });
+          next: (response) => {
+            this.locations = response;
+    
+            // Calculate transform values for each location
+            this.locations.forEach((location) => {
+              this.buttonTransforms[location.locationId] =  this.generateTransformBasedOnId(
+                location.locationId,
+                this.locations.length // Total number of locations
+              );
+            });
+          },
+          error: (error) => {
+            console.error('Error fetching locations', error);
+          },
+        });
     }
 
     getStory(selectedLocation: Location) {
@@ -103,24 +103,28 @@ export class LocationComponent implements OnInit {
     
         console.log(params);
     
-        this.http
-        .get<Story>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PATH, { params })
-          .subscribe({
-            next: (response) => {
-              console.log('Story retrieved!', response);
-              this.selectedStories.push(response);
-              this.locationsSelected++;
+        if (!this.loadingSelection) {
+          this.loadingSelection = true;  
+          this.http
+          .get<Story>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PATH, { params })
+            .subscribe({
+              next: (response) => {
+                console.log('Story retrieved!', response);
+                this.selectedStories.push(response);
+                this.locationsSelected++;
+                this.loadingSelection = false;
 
-              if(this.selectedStories.length >= 3) {
-                  this.playerDone.emit(ComponentType.LOCATION_SELECT);
-                  this.isLocationsSelected = true;
-              }
-              console.log('Player Story', response);
-            },
-            error: (error) => {
-              console.error('Error retrieving stories', error);
-            },
-          });
+                if(this.selectedStories.length >= 3) {
+                    this.playerDone.emit(ComponentType.LOCATION_SELECT);
+                    this.isLocationsSelected = true;
+                }
+                console.log('Player Story', response);
+              },
+              error: (error) => {
+                console.error('Error retrieving stories', error);
+              },
+            });
+        }
         
     }
 
