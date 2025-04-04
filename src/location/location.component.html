@@ -4,13 +4,19 @@
     <div>Select {{ locationsSelected }} of 3</div>
   </div>
   <div class="map">
+    @if (isLoadingSelection) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
     <img src="assets/images/pyre.gif" alt="Pyre" class="pyre">
     @for (location of locations; track location.locationId) {
       <div
         class="location-button"
-        (click)="getStory(location)"
+        (click)="!isLoadingSelection && getStory(location)"
         [style.position]="'absolute'"
         [style.transform]="buttonTransforms[location.locationId]"
+        [class.disabled]="isLoadingSelection"
       >
         <img src="{{location.iconDirectory}}" alt="{{ location.label }}" class="location-icon" />
         <span class="location-label">{{ location.label }}</span>

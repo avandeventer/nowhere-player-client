@@ -10,12 +10,13 @@ import { environment } from "src/environments/environment";
 import { ComponentType } from "src/assets/component-type";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinner } from "@angular/material/progress-spinner"
 
 
 @Component({
     selector: 'location',
     templateUrl: './location.component.html',
-    imports: [MatButtonModule, MatIconModule],
+    imports: [MatButtonModule, MatIconModule, MatProgressSpinner],
     standalone: true,
     styleUrl: './location.style.scss'
 })
@@ -32,7 +33,7 @@ export class LocationComponent implements OnInit {
     selectedStories: Story[] = [];
     locationsSelected: number = 0;
     isLocationsSelected: boolean = false;
-    loadingSelection: boolean = false;
+    isLoadingSelection: boolean = false;
     // selectedLocationOption: Option = new Option();
     // selectedLocation: Location = new Location();
     // playerStory: Story = new Story();
@@ -103,8 +104,8 @@ export class LocationComponent implements OnInit {
     
         console.log(params);
     
-        if (!this.loadingSelection) {
-          this.loadingSelection = true;  
+        if (!this.isLoadingSelection) {
+          this.isLoadingSelection = true;  
           this.http
           .get<Story>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PATH, { params })
             .subscribe({
@@ -112,7 +113,7 @@ export class LocationComponent implements OnInit {
                 console.log('Story retrieved!', response);
                 this.selectedStories.push(response);
                 this.locationsSelected++;
-                this.loadingSelection = false;
+                this.isLoadingSelection = false;
 
                 if(this.selectedStories.length >= 3) {
                     this.playerDone.emit(ComponentType.LOCATION_SELECT);
