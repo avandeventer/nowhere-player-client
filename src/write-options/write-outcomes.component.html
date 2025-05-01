@@ -5,6 +5,10 @@
     {{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Written
     <br><br>
     <div>Someone else has written the prompt for this one so you just write the possible outcomes!</div><br>
+    
+    <prequel-story-display [gameCode]="gameCode" [story]="playerStories[currentStoryIndex]">
+    </prequel-story-display>
+
     <mat-card class="story">{{playerStories[this.currentStoryIndex].prompt}}</mat-card>
     <br><mat-divider></mat-divider><br>
     <div>
@@ -60,9 +64,4 @@
     </div>
     <br>
     <button mat-flat-button (click)="submitOutcomes()">Submit</button>
-
-    <br>
-    <prequel-story-display [gameCode]="gameCode" [story]="playerStories[currentStoryIndex]">
-    </prequel-story-display>
-
 }
