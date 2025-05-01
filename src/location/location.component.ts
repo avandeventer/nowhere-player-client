@@ -116,7 +116,7 @@ export class LocationComponent implements OnInit {
                 this.locationsSelected++;
                 this.isLoadingSelection = false;
 
-                if(this.selectedStories.length >= 3) {
+                if(this.selectedStories.length >= this.storiesToWritePerRound) {
                     this.playerDone.emit(ComponentType.LOCATION_SELECT);
                     this.isLocationsSelected = true;
                 }
