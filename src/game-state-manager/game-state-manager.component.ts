@@ -35,6 +35,7 @@ export class GameStateManagerComponent implements OnInit {
   }
   gameState: GameState = GameState.INIT;
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
+  storiesToWritePerRound: number = 0;
 
   constructor(
     private gameService: GameService,
@@ -45,6 +46,7 @@ export class GameStateManagerComponent implements OnInit {
     this.gameService.listenForGameStateChanges(this.gameCode).subscribe((newState) => {
       this.gameState = newState.gameState as unknown as GameState;
       this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
+      this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       
       console.log('New gameState:', this.gameState);
     });

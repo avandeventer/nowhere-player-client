@@ -25,6 +25,7 @@ export class LocationComponent implements OnInit {
     @Input() gameCode: string = "";
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
+    @Input() storiesToWritePerRound: number = 1;
     @Output() playerDone = new EventEmitter<ComponentType>();
     buttonTransforms: { [key: string]: string } = {};
     mapSize: number = 500;
