@@ -50,24 +50,17 @@ export class GameStateManagerComponent implements OnInit {
     });
   }
 
-  startGame() {
-    const requestBody = {
-      gameCode: this.gameCode,
-      gameState: GameState.START,
-    };
-
-    console.log(requestBody);
-
+  startGame() {    
     this.http
-      .put(environment.nowhereBackendUrl + HttpConstants.GAME_SESSION_PATH, requestBody)
-      .subscribe({
-        next: (response) => {
-          console.log('Game started!', response);
-        },
-        error: (error) => {
-          console.error('Error started game', error);
-        },
-      });
+    .put(environment.nowhereBackendUrl + HttpConstants.NEXT_GAME_SESSION_PATH + '?gameCode=' + this.gameCode, {})
+    .subscribe({
+      next: (response) => {
+        console.log('Game phase updated', response);
+      },
+      error: (error) => {
+        console.error('Error updating game phase', error);
+      },
+    });
   }
 
   playerIsDone() {
