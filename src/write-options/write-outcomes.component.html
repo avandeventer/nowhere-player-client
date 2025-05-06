@@ -4,7 +4,7 @@
 @else {
     {{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Written
     <br><br>
-    <div>Someone else has written the prompt for this one so you just write the possible outcomes!</div><br>
+    <div>Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}} so you just write the possible outcomes!</div><br>
     
     <prequel-story-display [gameCode]="gameCode" [story]="playerStories[currentStoryIndex]">
     </prequel-story-display>
