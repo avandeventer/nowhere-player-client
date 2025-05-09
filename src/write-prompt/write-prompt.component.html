@@ -2,7 +2,7 @@
     <p>All stories have been submitted!</p>
 } 
 @else {
-    {{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written<br>
+    <mat-chip-set><mat-chip class="progress">{{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written</mat-chip></mat-chip-set><br>
 
     <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.label}}</div><br>
 

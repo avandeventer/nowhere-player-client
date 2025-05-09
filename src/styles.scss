@@ -54,6 +54,12 @@ mat-card.stat-board {
 mat-chip.stat {
   color: var(--mat-option-selected-state-layer-color) !important;
   background-color: #76a37e !important;
+  float: right !important;
+}
+
+mat-chip.progress {
+  float: right !important;
+  background-color: #85b0e2 !important;
 }
 
 .loading-overlay {
