@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChip, MatChipSet } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'write-prompt',
@@ -30,7 +31,8 @@ import { MatChip, MatChipSet } from '@angular/material/chips';
     MatButtonModule,
     MatDividerModule,
     MatChipSet,
-    MatChip
+    MatChip,
+    MatCardModule
   ],
   standalone: true
 })
@@ -42,6 +44,7 @@ export class WritePromptComponent implements OnInit {
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
   outcomeDisplay: string[] = [];
+  promptSubmitted: boolean = false;
 
   prompt = new FormControl();
   optionOne = new FormControl();
@@ -116,6 +119,10 @@ export class WritePromptComponent implements OnInit {
 
 
   submitPrompt() {
+    this.promptSubmitted = true;
+  }
+
+  submitOptions() {
     const requestBody = {
       gameCode: this.gameCode,
       prompt: this.prompt.value,
@@ -154,6 +161,7 @@ export class WritePromptComponent implements OnInit {
     this.optionOne.reset('');
     this.optionTwo.reset('');
     this.currentStoryIndex++;
+    this.promptSubmitted = false;
     if (this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(ComponentType.WRITE_PROMPTS);
     }

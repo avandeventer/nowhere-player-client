@@ -4,50 +4,57 @@
 @else {
     <mat-chip-set><mat-chip class="progress">{{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written</mat-chip></mat-chip-set><br>
 
-    <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.label}}</div><br>
+    @if (!promptSubmitted) {
+        <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.label}}</div><br>
+        @if(isAGodFavorStory(playerStories[currentStoryIndex])) {
+            <div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div><br>
+        }
+        <prequel-story-display
+            [gameCode]="gameCode" 
+            [story]="playerStories[currentStoryIndex]"
+            [isAdventureMode]="false">
+        </prequel-story-display>
 
-    @if(isAGodFavorStory(playerStories[currentStoryIndex])) {
-        <br><br><div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div>
+        <mat-form-field class="full-width">
+            <mat-label>Prompt</mat-label>
+            <textarea [formControl]="prompt" matInput placeholder="Ex. You see a small child begging for scraps at the {{playerStories[currentStoryIndex].location.label}}"></textarea>
+        </mat-form-field>
+
+        <button mat-flat-button (click)="submitPrompt()">Submit</button>
     }
+    @else {
+        <mat-card class="story">{{prompt.value}}</mat-card><br>
+        
+        @if(isAGodFavorStory(playerStories[currentStoryIndex])) {
+            <div>This is a special story. Erysus is watching and may change her approval of the player who travels this path.</div><br>
+        }
 
-    <prequel-story-display
-        [gameCode]="gameCode" 
-        [story]="playerStories[currentStoryIndex]"
-        [isAdventureMode]="false">
-    </prequel-story-display>
+        <div>
+            Now give two options for how to manage the prompt. These are just options! Someone else will write the outcomes!
+            To succeed in this story the player will need to have a lot of either:
+        </div>
+        <br>
+        <section>
+            <mat-chip-set><mat-chip class="stat">
+            {{playerStories[currentStoryIndex].options[0].statRequirement}} [{{statDCDifficulty(0)}}]
+            </mat-chip></mat-chip-set>
+            <mat-form-field class="full-width">
+                <mat-label>Option One</mat-label>
+                <textarea matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne"></textarea>
+            </mat-form-field>
+        </section>
+        or
+        <br>
+        <section>
+            <mat-chip-set><mat-chip class="stat">
+                {{playerStories[currentStoryIndex].options[1].statRequirement}} [{{statDCDifficulty(1)}}]
+            </mat-chip></mat-chip-set>
+            <mat-form-field class="full-width">
+                <mat-label>Option Two</mat-label>
+                <textarea matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo"></textarea>
+            </mat-form-field>
+        </section>
 
-    <mat-form-field class="full-width">
-        <mat-label>Prompt</mat-label>
-        <textarea [formControl]="prompt" matInput placeholder="Ex. You see a small child begging for scraps at the {{playerStories[currentStoryIndex].location.label}}"></textarea>
-    </mat-form-field>
-
-    <mat-divider></mat-divider><br>
-
-    <div>
-        Now give two options for how to manage the prompt. These are just options! Someone else will write the outcomes!
-        To succeed in this story the player will need to have a lot of either:
-    </div>
-    <br>
-    <section>
-        <mat-chip-set><mat-chip class="stat">
-           {{playerStories[currentStoryIndex].options[0].statRequirement}} [{{statDCDifficulty(0)}}]
-        </mat-chip></mat-chip-set>
-        <mat-form-field class="full-width">
-            <mat-label>Option One</mat-label>
-            <textarea matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne"></textarea>
-        </mat-form-field>
-    </section>
-    or
-    <br><br>
-    <section>
-        <mat-chip-set><mat-chip class="stat">
-            {{playerStories[currentStoryIndex].options[1].statRequirement}} [{{statDCDifficulty(1)}}]
-        </mat-chip></mat-chip-set>
-        <mat-form-field class="full-width">
-            <mat-label>Option Two</mat-label>
-            <textarea matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo"></textarea>
-        </mat-form-field>
-    </section>
-
-    <button mat-flat-button (click)="submitPrompt()">Submit</button>
+        <button mat-flat-button (click)="submitOptions()">Submit</button>
+    }
 }
