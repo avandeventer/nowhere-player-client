@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Component, ComponentRef, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -25,7 +26,8 @@ import { PrequelDisplayComponent } from "src/prequel-story-display/prequel-story
       MatFormFieldModule,
       MatInputModule,
       MatButtonModule,
-      MatDividerModule
+      MatDividerModule,
+      MatCardModule
     ],
     standalone: true
 })

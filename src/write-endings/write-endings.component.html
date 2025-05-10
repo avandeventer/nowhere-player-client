@@ -3,14 +3,16 @@
     <br>
     <mat-divider></mat-divider><br>
     @for (associatedStory of authorEnding.associatedStories; track associatedStory) {
-        <div>{{associatedStory.prompt}}</div>
-        <div>{{associatedStory.options[0].optionText}}</div>
-        @if (associatedStory.playerSucceeded) {
-            <div>{{associatedStory.options[0].successText}}</div>
-        }
-        @else {
-            <div>{{associatedStory.options[0].failureText}}</div>
-        }
+        <mat-card class="story">
+            <div>{{associatedStory.prompt}}</div>
+            <div>{{associatedStory.options[0].optionText}}</div>
+            @if (associatedStory.playerSucceeded) {
+                <div>{{associatedStory.options[0].successText}}</div>
+            }
+            @else {
+                <div>{{associatedStory.options[0].failureText}}</div>
+            }
+        </mat-card>
         <br>
 
         @if (!legacySelected) {
@@ -19,16 +21,18 @@
     }
 
     @if (authorEnding.associatedRitualOption.optionId != "") {
-        <div>{{authorEnding.associatedRitualOption.optionText}}</div>
-        <div>{{authorEnding.associatedRitualOption.attemptText}}</div>
-        @if (authorEnding.associatedRitualOption.playerSucceeded) {
-            <div>{{authorEnding.associatedRitualOption.successText}}</div>
-        }
-        @else {
-            <div>{{authorEnding.associatedRitualOption.failureText}}</div>
-        }
-        <div>{{authorEnding.associatedRitualOption.successMarginText}}</div>
-
+        <mat-card class="story">
+            <div>{{authorEnding.associatedRitualOption.optionText}}</div>
+            <div>{{authorEnding.associatedRitualOption.attemptText}}</div>
+            @if (authorEnding.associatedRitualOption.playerSucceeded) {
+                <div>{{authorEnding.associatedRitualOption.successText}}</div>
+            }
+            @else {
+                <div>{{authorEnding.associatedRitualOption.failureText}}</div>
+            }
+            <div>{{authorEnding.associatedRitualOption.successMarginText}}</div>
+        </mat-card>
+        <br>
         @if (!legacySelected) {
             <button mat-flat-button (click)="selectRitual(authorEnding.associatedRitualOption)">Choose this event</button><br>
         }
