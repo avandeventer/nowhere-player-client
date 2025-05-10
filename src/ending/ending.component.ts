@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { OnInit, Input, Output, EventEmitter, SimpleChanges, Component } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { ComponentType } from "src/assets/component-type";
 import { Ending } from "src/assets/ending";
@@ -14,7 +15,7 @@ import { ActivePlayerSessionService } from "src/services/active-player-session.s
 @Component({
     selector: 'ending',
     templateUrl: './ending.component.html',
-    imports: [MatButtonModule],
+    imports: [MatButtonModule, MatCardModule],
     standalone: true
 })
 export class EndingComponent implements OnInit {
