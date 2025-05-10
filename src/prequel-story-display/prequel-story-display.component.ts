@@ -18,6 +18,7 @@ import { MatCardModule } from '@angular/material/card';
 export class PrequelDisplayComponent implements OnChanges {
   @Input() gameCode: string = '';
   @Input() story: Story = new Story();
+  @Input() isAdventureMode: boolean = false;
   sequelTypeClarifier: string = "";
 
   prequelOutcomeDisplay: string[] = [];

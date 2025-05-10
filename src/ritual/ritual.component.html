@@ -11,9 +11,10 @@
             }
         }
     } @else {
+        <mat-card class="story">
         @for (outcome of outcomeDisplay; track outcome) {
             <div>{{ outcome }}</div>
-        }<br>
+        }</mat-card><br>
         <button mat-flat-button (click)="nextPlayerTurn()">Continue</button>
     }
 }

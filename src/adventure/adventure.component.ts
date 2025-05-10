@@ -14,11 +14,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
 import { Observable } from 'rxjs';
 import {MatCardModule} from '@angular/material/card';
+import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 
 @Component({
     selector: 'adventure',
     templateUrl: './adventure.component.html',
-    imports: [MatButtonModule, MatCardModule],
+    imports: [MatButtonModule, MatCardModule, PrequelDisplayComponent],
     standalone: true
 })
 export class AdventureComponent implements OnInit {

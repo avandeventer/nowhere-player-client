@@ -49,16 +49,23 @@
         @if (outcomeDisplay.length === 0) {
             <br><button mat-flat-button (click)="pickOption(1)">Option 2</button><br>
         }
-    }
 
-    @if (outcomeDisplay.length > 0) {
-        <mat-card class="story">
-            @for (outcome of outcomeDisplay; track outcome) {
-                <div>{{outcome}}</div><br>
-            }
-        </mat-card>
+        @if (outcomeDisplay.length > 0) {
+            <mat-card class="story">
+                @for (outcome of outcomeDisplay; track outcome) {
+                    <div>{{outcome}}</div><br>
+                }
+            </mat-card>
 
-        <br><button mat-flat-button (click)="nextPlayerTurn()">Continue</button>
+            <br><button mat-flat-button (click)="nextPlayerTurn()">Continue</button><br>
+        }
+
+        <br>
+        <prequel-story-display 
+            [gameCode]="gameCode" 
+            [story]="playerStory"
+            [isAdventureMode]="true">
+        </prequel-story-display>
     }
 } @else {
     It's another player's turn right now! Hold your horses

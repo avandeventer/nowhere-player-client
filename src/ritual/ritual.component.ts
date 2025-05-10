@@ -11,11 +11,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { RitualStory } from 'src/assets/ritual-story';
 import { RitualOption } from 'src/assets/ritual-option';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
     selector: 'ritual',
     templateUrl: './ritual.component.html',
-    imports: [MatButtonModule],
+    imports: [MatButtonModule, MatCardModule],
     standalone: true
 })
 export class RitualComponent implements OnInit {
