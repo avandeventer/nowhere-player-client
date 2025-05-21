@@ -25,7 +25,7 @@ export class LocationComponent implements OnInit {
     @Input() gameCode: string = "";
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
-    @Input() storiesToWritePerRound: number = 1;
+    @Input() storiesToPlayPerRound: number = 1;
     @Output() playerDone = new EventEmitter<ComponentType>();
     buttonTransforms: { [key: string]: string } = {};
     mapSize: number = 500;
@@ -116,7 +116,7 @@ export class LocationComponent implements OnInit {
                 this.locationsSelected++;
                 this.isLoadingSelection = false;
 
-                if(this.selectedStories.length >= this.storiesToWritePerRound) {
+                if(this.selectedStories.length >= this.storiesToPlayPerRound) {
                     this.playerDone.emit(ComponentType.LOCATION_SELECT);
                     this.isLocationsSelected = true;
                 }
