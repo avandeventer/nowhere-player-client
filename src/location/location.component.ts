@@ -46,6 +46,7 @@ export class LocationComponent implements OnInit {
 
     ngOnInit(): void {
       this.getLocations(this.gameCode);
+      console.log("Stories to play per round" + this.storiesToPlayPerRound);
     }
 
     ngAfterViewInit() {
