@@ -47,7 +47,11 @@
             <mat-chip-set>
                 @for (outcome of playerOption.failureResults; track outcome) {
                     <mat-chip class="stat">        
-                        <div>{{outcome.playerStat.statType.label}}</div>
+                        <div>{{outcome.playerStat.statType.label}}
+                        @if (outcome.playerStat.statType.isFavorType) {
+                            with {{outcome.playerStat.statType.favorEntity}}
+                        }
+                        </div>
                     </mat-chip>
                 }
             </mat-chip-set>

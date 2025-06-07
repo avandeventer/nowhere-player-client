@@ -6,7 +6,7 @@
 
     @if (!promptSubmitted) {
         <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.label}}</div><br>
-        @if(isAGodFavorStory(playerStories[currentStoryIndex])) {
+        @if(isAFavorStory(playerStories[currentStoryIndex])) {
             <div>This is a special story. The powers that be are watching and may change their approval of the player who travels this path.</div><br>
         }
         <prequel-story-display
@@ -25,7 +25,7 @@
     @else {
         <mat-card class="story">{{prompt.value}}</mat-card><br>
         
-        @if(isAGodFavorStory(playerStories[currentStoryIndex])) {
+        @if(isAFavorStory(playerStories[currentStoryIndex])) {
             <div>This is a special story. The powers that be are watching and may change their approval of the player who travels this path.</div><br>
         }
 
