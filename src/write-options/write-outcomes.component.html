@@ -18,7 +18,7 @@
     <div>
         <mat-card class="story">{{playerOption.optionText}}</mat-card>
         <mat-chip-set><mat-chip class="stat">
-            {{playerOption.statRequirement}} [{{statDCDifficulty()}}]<br>
+            {{playerOption.playerStatDCs[0].statType.label}} [{{statDCDifficulty()}}]<br>
         </mat-chip></mat-chip-set>
         <br>
 
@@ -27,7 +27,7 @@
             <mat-chip-set>
             @for (outcome of playerOption.successResults; track outcome) {
                 <mat-chip class="stat">        
-                    <div>{{outcome.impactedStat}}</div>
+                    <div>{{outcome.playerStat.statType.label}}</div>
                 </mat-chip>
             }
             </mat-chip-set>
@@ -47,7 +47,7 @@
             <mat-chip-set>
                 @for (outcome of playerOption.failureResults; track outcome) {
                     <mat-chip class="stat">        
-                        <div>{{outcome.impactedStat}}</div>
+                        <div>{{outcome.playerStat.statType.label}}</div>
                     </mat-chip>
                 }
             </mat-chip-set>

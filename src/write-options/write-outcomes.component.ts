@@ -176,7 +176,7 @@ export class WriteOutcomesComponent implements OnInit {
   }
 
   public statDCDifficulty() {
-    let statDC: number = this.playerOption.statDC;
+    let statDC: number = this.playerOption.playerStatDCs[0].value;
     if(statDC >= 7) {
       return "HARD";
     }

@@ -36,7 +36,7 @@
         <br>
         <section>
             <mat-chip-set><mat-chip class="stat">
-            {{playerStories[currentStoryIndex].options[0].statRequirement}} [{{statDCDifficulty(0)}}]
+            {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.label}} [{{statDCDifficulty(0)}}]
             </mat-chip></mat-chip-set>
             <mat-form-field class="full-width">
                 <mat-label>Option One</mat-label>
@@ -47,7 +47,7 @@
         <br>
         <section>
             <mat-chip-set><mat-chip class="stat">
-                {{playerStories[currentStoryIndex].options[1].statRequirement}} [{{statDCDifficulty(1)}}]
+                {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}} [{{statDCDifficulty(1)}}]
             </mat-chip></mat-chip-set>
             <mat-form-field class="full-width">
                 <mat-label>Option Two</mat-label>

@@ -169,7 +169,7 @@ export class WritePromptComponent implements OnInit {
   }
 
   public statDCDifficulty(promptIndex: number) {
-    let statDC: number = this.playerStories[this.currentStoryIndex].options[promptIndex].statDC;
+    let statDC: number = this.playerStories[this.currentStoryIndex].options[promptIndex].playerStatDCs[0].value;
     if (statDC >= 7) {
       return "HARD";
     }

@@ -1,3 +1,5 @@
+import { PlayerStat } from "./player-stat";
+
 export class Player {
   userName: string;
   strength: number;
@@ -9,6 +11,7 @@ export class Player {
   favor: number;
   authorId: string;
   firstPlayer: boolean;
+  playerStats: PlayerStat[];
 
   constructor() {
     this.userName = '';
@@ -21,5 +24,6 @@ export class Player {
     this.favor = 0;
     this.authorId = "";
     this.firstPlayer = false;
+    this.playerStats = [];
   }
 }

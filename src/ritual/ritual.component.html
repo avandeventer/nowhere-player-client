@@ -1,11 +1,8 @@
 <mat-card class="stat-board">
-    <div>{{player.userName}}</div>
-    <div>Strength: {{player.strength}}</div>
-    <div>Intellect: {{player.intellect}}</div>
-    <div>Charisma: {{player.charisma}}</div>
-    <div>Dexterity: {{player.dexterity}}</div>
-    <div>Wealth: {{player.wealth}}</div>
-    <div>Magic: {{player.magic}}</div>
+    <div>{{player.userName}}</div><br>
+    @for (playerStat of player.playerStats; track playerStat) {
+        <div>{{playerStat.statType.label}}: {{playerStat.statType.label}}</div>
+    }
 </mat-card><br>
 
 @if (playerTurn) {
