@@ -1,13 +1,13 @@
 export class StatType {
     id: string;
     label: string;
-    isFavorType: boolean;
+    favorType: boolean;
     favorEntity: string;
 
     constructor () {
         this.id = "";
         this.label = "";
-        this.isFavorType = false;
+        this.favorType = false;
         this.favorEntity = "";
     }
 }

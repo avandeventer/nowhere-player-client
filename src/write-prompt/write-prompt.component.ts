@@ -185,8 +185,8 @@ export class WritePromptComponent implements OnInit {
 
   public isAFavorStory(currentStory: Story): boolean {
     return currentStory.options.some(option => {
-      return option.successResults.some(outcomeStat => outcomeStat.playerStat.statType.isFavorType) ||
-        option.failureResults.some(outcomeStat => outcomeStat.playerStat.statType.isFavorType);
+      return option.successResults.some(outcomeStat => outcomeStat.playerStat.statType.favorType) ||
+        option.failureResults.some(outcomeStat => outcomeStat.playerStat.statType.favorType);
     });
   }
 }
