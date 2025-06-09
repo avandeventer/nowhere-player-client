@@ -1,12 +1,12 @@
 <mat-card class="stat-board">
-    <div>{{player.userName}}</div><br>
+    <div>{{player.userName}}</div>
     @for (playerStat of player.playerStats; track playerStat) {
-        <div>{{playerStat.statType.label}}: {{playerStat.statType.label}}</div>
+        <div>{{playerStat.statType.label}}: {{playerStat.value}}</div>
     }
 </mat-card><br>
 
 @if(playerTurn && !isDone) {
-    @if (storyRetrieved) {
+    @if (storyRetrieved && locations.length > 0) {
         <br>
             <mat-card class="story">{{locationLabel}}</mat-card>
         <br>

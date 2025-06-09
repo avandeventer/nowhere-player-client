@@ -12,9 +12,11 @@ import { Stat } from 'src/assets/stat';
 import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import {MatCardModule} from '@angular/material/card';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
+import { PlayerStat } from 'src/assets/player-stat';
+import { StatType } from 'src/assets/stat-type';
 
 @Component({
     selector: 'adventure',
@@ -60,6 +62,40 @@ export class AdventureComponent implements OnInit {
           this.playerTurn = true;
           this.getStory();
           this.updatePlayerStats(this.player.authorId);
+          this.getLocations(this.gameCode).pipe(
+            switchMap((locations: Location[]) => {
+              this.locations = locations;
+              return this.http.get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, {
+                params: { gameCode: this.gameCode, playerId: this.player.authorId }
+              });
+            })
+          ).subscribe({
+            next: (stories) => {
+              this.playerStories = stories;
+              if (this.playerStories.length > 0) {
+                this.playerStory = this.playerStories[this.currentStoryIndex];
+                this.location = this.locations[this.playerStory.location.locationId];
+                this.playerStory.location = this.location;
+    
+                this.locationLabel = "You travel to the " + this.playerStory.location.label;
+                this.locationOptionOne = this.playerStory.location.options[0].optionText;
+                this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+                this.storyRetrieved = true;
+    
+                this.activePlayerSessionService.updateActivePlayerSession(
+                  this.gameCode,
+                  this.player.authorId,
+                  this.playerStory,
+                  "",
+                  [],
+                  false,
+                  "",
+                  []
+                ).subscribe();
+              }
+            },
+            error: (err) => console.error('Error in chained getStory', err)
+          });
         }
       } else {
         this.selectedLocation = new Location();
@@ -94,26 +130,12 @@ export class AdventureComponent implements OnInit {
         });      
     }
 
-    getLocations(gameCode: string) {
-        const params = {
-          gameCode: gameCode
-        };
+    getLocations(gameCode: string): Observable<Location[]> {
+      const params = { gameCode };
     
-        console.log(params);
+      return this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params });
+    }
     
-        this.http
-        .get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params })
-          .subscribe({
-            next: (response) => {
-              console.log('Stories retrieved!', response);
-              this.locations = response;
-              console.log('Locations', this.locations);
-            },
-            error: (error) => {
-              console.error('Error creating game', error);
-            },
-          });
-      }
       
     getLocationTasks(selectedLocation: Location) {
       this.selectedLocation = selectedLocation;
@@ -137,13 +159,11 @@ export class AdventureComponent implements OnInit {
               this.playerStory = this.playerStories[this.currentStoryIndex];
               this.location = this.locations[this.playerStory.location.locationId];
               this.playerStory.location = this.location;
-            }      
-            console.log('Player Story', this.playerStory);
-            this.storyRetrieved = true;
-            if(this.playerStories.length > 0) {
+              console.log('Player Story', this.playerStory);
               this.locationLabel = "You travel to the " + this.playerStory.location.label;
               this.locationOptionOne = this.playerStory.location.options[0].optionText;
               this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+              this.storyRetrieved = true;
               this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, "", [], false, "", [])
                 .subscribe({
                   next: (updatedSession) => {
@@ -168,59 +188,74 @@ export class AdventureComponent implements OnInit {
     this.selectedOption = this.playerStory.options[optionPicked];
     console.log("Player story at option select", this.playerStory);
     console.log("Selected Option", this.selectedOption);
-    const statRequirement: Stat = this.selectedOption.statRequirement;
-    const playerDCStatKey = statRequirement.toLowerCase() as keyof Player;
-    const playerDCStatValue: number = +this.player[playerDCStatKey];
-    const playerSucceeded: boolean = this.rollForSuccess(playerDCStatValue, this.selectedOption.statDC);
+    const dcStat: PlayerStat = this.selectedOption.playerStatDCs[0];
+    const playerStat = this.player.playerStats.find(stat => stat.statType.id === dcStat.statType.id);
 
-    this.outcomeDisplay.push(this.selectedOption.attemptText);
+    if (playerStat) {
+      const playerSucceeded: boolean = this.rollForSuccess(playerStat.value, dcStat.value);
 
-    if(playerSucceeded) {
-      this.outcomeDisplay.push(this.selectedOption.successText);
-      this.selectedOption.successResults.forEach(outcomeStat => {
-        const statResult: String = "You gain " + outcomeStat.statChange + " " + outcomeStat.impactedStat.toLowerCase();
-        this.outcomeDisplay.push(statResult);
+      this.outcomeDisplay.push(this.selectedOption.attemptText);
 
-        const playerOutcomeStatKey = outcomeStat.impactedStat.toLowerCase() as keyof Player;
-        (this.player[playerOutcomeStatKey] as number) += outcomeStat.statChange;
-      });
-    } else {
-      this.outcomeDisplay.push(this.selectedOption.failureText);
-      this.selectedOption.failureResults.forEach(outcomeStat => {
-        const statResult: String = "You lose " + outcomeStat.statChange + " " + outcomeStat.impactedStat.toLowerCase();
-        this.outcomeDisplay.push(statResult)
+      if(playerSucceeded) {
+        this.outcomeDisplay.push(this.selectedOption.successText);
+        this.selectedOption.successResults.forEach(outcome => {
+            const statResult: String = `You gain ${outcome.playerStat.value} ${outcome.playerStat.statType.label}`;
+            this.outcomeDisplay.push(statResult);
 
-        const playerOutcomeStatKey = outcomeStat.impactedStat.toLowerCase() as keyof Player;
-        (this.player[playerOutcomeStatKey] as number) -= outcomeStat.statChange;
-        if ((this.player[playerOutcomeStatKey] as number) <= 0) {
-          (this.player[playerOutcomeStatKey] as number) = 0;
+            const impactedStatId = outcome.playerStat.statType.id;
+            const playerStat = this.player.playerStats.find(stat => stat.statType.id === impactedStatId);
+          
+            if (playerStat) {
+              playerStat.value += outcome.playerStat.value;
+            } else {
+              console.warn(`Stat not found on player for ID: ${impactedStatId}`);
+            }
+
+          });
+      } else {
+        this.outcomeDisplay.push(this.selectedOption.failureText);
+        this.selectedOption.failureResults.forEach(outcome => {
+          const statResult: String = `You lose ${outcome.playerStat.value} ${outcome.playerStat.statType.label}`;
+          this.outcomeDisplay.push(statResult);
+
+          const impactedStatId = outcome.playerStat.statType.id;
+          const playerStat = this.player.playerStats.find(stat => stat.statType.id === impactedStatId);
+        
+          if (playerStat) {
+            playerStat.value -= outcome.playerStat.value;
+            if (playerStat.value < 0) {
+              playerStat.value = 0;
+            }
+          } else {
+            console.warn(`Stat not found on player for ID: ${impactedStatId}`);
+          }
+        });
+      }
+
+      this.updatePlayer();
+      this.updateStory(playerSucceeded, this.player.authorId, this.selectedOption.optionId);
+
+      this.activePlayerSessionService.updateActivePlayerSession(
+        this.gameCode,
+        this.player.authorId,
+        this.playerStory, 
+        this.selectedOption.optionId, 
+        this.outcomeDisplay,
+        false,
+        this.activePlayerSession.selectedLocationOptionId,
+        this.locationOutcomeDisplay
+      ).subscribe({
+        next: (updatedSession) => {
+          console.log("Updated session:", updatedSession);
+          this.activePlayerSession = updatedSession;
+        },
+        error: (err) => {
+          console.error("Error:", err);
         }
       });
+
+      console.log(this.selectedOption);
     }
-
-    this.updatePlayer();
-    this.updateStory(playerSucceeded, this.player.authorId, this.selectedOption.optionId);
-
-    this.activePlayerSessionService.updateActivePlayerSession(
-      this.gameCode,
-      this.player.authorId,
-      this.playerStory, 
-      this.selectedOption.optionId, 
-      this.outcomeDisplay,
-      false,
-      this.activePlayerSession.selectedLocationOptionId,
-      this.locationOutcomeDisplay
-    ).subscribe({
-      next: (updatedSession) => {
-        console.log("Updated session:", updatedSession);
-        this.activePlayerSession = updatedSession;
-      },
-      error: (err) => {
-        console.error("Error:", err);
-      }
-    });
-
-    console.log(this.selectedOption);
   }
 
   rollForSuccess(playerStat: number, dcToBeat: number): boolean {
@@ -295,9 +330,15 @@ export class AdventureComponent implements OnInit {
     console.log("Selected location", this.selectedLocationOption, locationOptionIndex);
 
     this.selectedLocationOption.successResults.forEach(outcome => {
-      const playerOutcomeStatKey = outcome.impactedStat.toLowerCase() as keyof Player;
-      (this.player[playerOutcomeStatKey] as number) += outcome.statChange;
-      this.locationOutcomeDisplay.push("You gain " + outcome.statChange + " " + outcome.impactedStat);
+      const impactedStatId = outcome.playerStat.statType.id;
+      const playerStat = this.player.playerStats.find(stat => stat.statType.id === impactedStatId);
+    
+      if (playerStat) {
+        playerStat.value += outcome.playerStat.value;
+        this.locationOutcomeDisplay.push(`You gain ${outcome.playerStat.value} ${playerStat.statType.label}`);
+      } else {
+        console.warn(`Stat not found on player for ID: ${impactedStatId}`);
+      }
     });
 
     this.activePlayerSessionService.updateActivePlayerSession(
