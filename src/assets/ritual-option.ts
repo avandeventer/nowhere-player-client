@@ -5,6 +5,7 @@ export class RitualOption extends Option {
     playerSucceeded: boolean;
     pointsRewarded: number;
     successMarginText: string;
+    optionType: string;
 
     constructor() {
         super();
@@ -12,5 +13,6 @@ export class RitualOption extends Option {
         this.playerSucceeded = false;
         this.pointsRewarded = 0;
         this.successMarginText = "";
+        this.optionType = "ritual";
     }
 }

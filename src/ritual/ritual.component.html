@@ -1,5 +1,5 @@
 <mat-card class="stat-board">
-    <div>{{player.userName}}</div><br>
+    <div>{{player.userName}}</div>
     @for (playerStat of player.playerStats; track playerStat) {
         <div>{{playerStat.statType.label}}: {{playerStat.statType.label}}</div>
     }

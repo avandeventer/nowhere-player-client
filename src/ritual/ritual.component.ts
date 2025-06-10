@@ -84,6 +84,7 @@ export class RitualComponent implements OnInit {
         ritualOptions:  [
           {
             optionId: ritualJobId,
+            optionType: "ritual",
             selectedByPlayerId: this.player.authorId
           }
         ]
