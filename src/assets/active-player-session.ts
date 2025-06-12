@@ -1,4 +1,3 @@
-import { RitualStory } from "./ritual-story";
 import { Story } from "./story";
 
 export class ActivePlayerSession {
@@ -10,7 +9,7 @@ export class ActivePlayerSession {
     setNextPlayerTurn: boolean;
     gameCode: String;
     outcomeDisplay: String[];
-    ritualStory: RitualStory | undefined;
+    ritualStory: Story | undefined;
 
     constructor() {
             this.playerId = "";
@@ -21,6 +20,6 @@ export class ActivePlayerSession {
             this.gameCode = "";
             this.outcomeDisplay = [];
             this.locationOutcomeDisplay = [];
-            this.ritualStory = new RitualStory();
+            this.ritualStory = new Story();
     }
 }

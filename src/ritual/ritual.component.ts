@@ -8,8 +8,7 @@ import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
-import { RitualStory } from 'src/assets/ritual-story';
-import { RitualOption } from 'src/assets/ritual-option';
+import { Option } from 'src/assets/option';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
 import { MatCardModule } from '@angular/material/card';
 
@@ -25,8 +24,8 @@ export class RitualComponent implements OnInit {
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
     @Output() playerDone = new EventEmitter<ComponentType>();
-    ritual: RitualStory = new RitualStory();
-    selectedRitualResponse: RitualOption = new RitualOption();
+    ritual: Story = new Story();
+    selectedRitualResponse: Option = new Option();
     isDone: boolean = false;
     playerTurn: boolean = false;
     outcomeDisplay: string[] = [];
@@ -46,8 +45,8 @@ export class RitualComponent implements OnInit {
         }
       } else {
         this.playerTurn = false;
-        this.ritual = new RitualStory();
-        this.selectedRitualResponse = new RitualOption();    
+        this.ritual = new Story();
+        this.selectedRitualResponse = new Option();    
       }
       
       const currentState = changes['gameState'] 
@@ -66,7 +65,7 @@ export class RitualComponent implements OnInit {
       console.log(params);
   
       this.http
-      .get<RitualStory>(environment.nowhereBackendUrl + HttpConstants.RITUAL_PATH + '?gameCode=' + this.gameCode)
+      .get<Story>(environment.nowhereBackendUrl + HttpConstants.RITUAL_PATH + '?gameCode=' + this.gameCode)
         .subscribe({
           next: (response) => {
             this.ritual = response;
@@ -84,7 +83,6 @@ export class RitualComponent implements OnInit {
         ritualOptions:  [
           {
             optionId: ritualJobId,
-            optionType: "ritual",
             selectedByPlayerId: this.player.authorId
           }
         ]
@@ -93,7 +91,7 @@ export class RitualComponent implements OnInit {
       console.log(ritualWithSelectedJob);
   
       this.http
-      .put<RitualOption>(environment.nowhereBackendUrl + HttpConstants.RITUAL_PATH, ritualWithSelectedJob)
+      .put<Option>(environment.nowhereBackendUrl + HttpConstants.RITUAL_PATH, ritualWithSelectedJob)
         .subscribe({
           next: (response) => {
             this.selectedRitualResponse = response;
@@ -117,7 +115,7 @@ export class RitualComponent implements OnInit {
               false,
               "",
               [],
-              <RitualStory>ritualWithSelectedJob
+              <Story><unknown>ritualWithSelectedJob
             ).subscribe({
               next: (updatedSession) => {
                 console.log("Updated session:", updatedSession);

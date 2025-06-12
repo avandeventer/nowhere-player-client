@@ -11,7 +11,7 @@ import { Ending } from "src/assets/ending";
 import { GameState } from "src/assets/game-state";
 import { HttpConstants } from "src/assets/http-constants";
 import { Player } from "src/assets/player";
-import { RitualOption } from "src/assets/ritual-option";
+import { Option } from "src/assets/option";
 import { Story } from "src/assets/story";
 import { environment } from "src/environments/environment";
 import { PrequelDisplayComponent } from "src/prequel-story-display/prequel-story-display.component";
@@ -58,7 +58,7 @@ export class WriteEndingsComponent implements OnInit {
     this.authorEnding = this.playerEnding;
   } 
 
-  selectRitual(ritualOption: RitualOption) {
+  selectRitual(ritualOption: Option) {
     this.playerEnding.playerId = this.authorEnding.playerId;
     this.playerEnding.authorId = this.authorEnding.authorId;
     this.playerEnding.didWeSucceed = this.authorEnding.didWeSucceed;

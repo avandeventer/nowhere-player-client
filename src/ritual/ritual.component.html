@@ -1,7 +1,9 @@
 <mat-card class="stat-board">
     <div>{{player.userName}}</div>
     @for (playerStat of player.playerStats; track playerStat) {
-        <div>{{playerStat.statType.label}}: {{playerStat.statType.label}}</div>
+        @if (!playerStat.statType.favorType) {
+            <div>{{playerStat.statType.label}}: {{playerStat.value}}</div>
+        }
     }
 </mat-card><br>
 
@@ -10,7 +12,7 @@
     <br>
 
     @if (selectedRitualResponse.optionId === "") {
-        @for (ritualJob of ritual.ritualOptions; track ritualJob) {
+        @for (ritualJob of ritual.options; track ritualJob) {
             @if (ritualJob.selectedByPlayerId === null) {
                 <button mat-flat-button (click)="selectRitualJob(ritualJob.optionId)">{{ritualJob.optionText}}</button><br>
             }

@@ -1,4 +1,4 @@
-import { RitualOption } from "./ritual-option";
+import { Option } from "./option";
 import { Story } from "./story";
 
 export class Ending {
@@ -6,7 +6,7 @@ export class Ending {
     playerUsername: string;
     associatedStories: Story[];
     associatedLocationId: string;
-    associatedRitualOption: RitualOption;
+    associatedRitualOption: Option;
     authorId: string;
     endingBody: string;
     didWeSucceed: boolean;
@@ -16,7 +16,7 @@ export class Ending {
         this.playerUsername = "";
         this.associatedStories = [];
         this.associatedLocationId = "";
-        this.associatedRitualOption = new RitualOption();
+        this.associatedRitualOption = new Option();
         this.authorId = "";
         this.endingBody = "";
         this.didWeSucceed = false;

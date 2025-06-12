@@ -14,6 +14,11 @@ export class Option {
     successResults: OutcomeStat[];
     failureResults: OutcomeStat[];
     outcomeAuthorId: string;
+    selectedByPlayerId: string;
+    playerSucceeded: boolean;
+    pointsRewarded: number;
+    successMarginText: string;
+
 
     constructor () {
         this.optionId = "";
@@ -27,5 +32,9 @@ export class Option {
         this.failureResults = [];
         this.outcomeAuthorId = "";
         this.playerStatDCs = [];
+        this.selectedByPlayerId = "";
+        this.playerSucceeded = false;
+        this.pointsRewarded = 0;
+        this.successMarginText = "";
     }
 }

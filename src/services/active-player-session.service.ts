@@ -3,7 +3,6 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { HttpConstants } from "src/assets/http-constants";
-import { RitualStory } from "src/assets/ritual-story";
 import { Story } from "src/assets/story";
 import { environment } from "src/environments/environment";
 
@@ -21,7 +20,7 @@ export class ActivePlayerSessionService {
         nextPlayerTurn: boolean,
         selectedLocationOptionId: String,
         locationOutcomeDisplay: String[],
-        ritualStory?: RitualStory
+        ritualStory?: Story
       ): Observable<ActivePlayerSession> {
         const newActivePlayerSession: ActivePlayerSession = new ActivePlayerSession();
         newActivePlayerSession.gameCode = gameCode;
