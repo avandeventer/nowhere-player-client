@@ -1,14 +1,14 @@
 import { Option } from './option';
 
 export class Location {
-    locationId: number;
-    locationName: String;
+    id: string;
+    locationName: string;
     options: Option[];
     label: String;
     iconDirectory: String;
 
     constructor () {
-        this.locationId = 0;
+        this.id = "";
         this.locationName = "";
         this.options = []
         this.label = "";
