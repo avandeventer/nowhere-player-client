@@ -127,14 +127,14 @@ export class PrequelDisplayComponent implements OnChanges {
         outcomeDisplay.push(selectedPrequelOption.successText);
         for (const outcomeStat of selectedPrequelOption.successResults) {
           outcomeDisplay.push(
-            `You gain ${outcomeStat.statChange} ${outcomeStat.impactedStat.toLowerCase()}`
+            `You gain ${outcomeStat.playerStat.value} ${outcomeStat.playerStat.statType.label}`
           );
         }
       } else {
         outcomeDisplay.push(selectedPrequelOption.failureText);
         for (const outcomeStat of selectedPrequelOption.failureResults) {
           outcomeDisplay.push(
-            `You lose ${outcomeStat.statChange} ${outcomeStat.impactedStat.toLowerCase()}`
+            `You lose ${outcomeStat.playerStat.value} ${outcomeStat.playerStat.statType.label}`
           );
         }
       }
@@ -147,7 +147,8 @@ export class PrequelDisplayComponent implements OnChanges {
     location: Location,
     gameLocations: Location[]
   ): string {
-    return `This sequel story does not follow a specific player. It will trigger when anyone travels to ${gameLocations[location.locationId].label}`;
+    const gameLocation = gameLocations.find(gameLocation => gameLocation.id === location.id);
+    return `This sequel story does not follow a specific player. It will trigger when anyone travels to ${gameLocation?.id}`;
   }
 
   private createSequelPlayerDisplay(prequelPlayer: Player): string {

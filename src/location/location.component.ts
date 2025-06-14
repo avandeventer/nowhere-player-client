@@ -67,11 +67,14 @@ export class LocationComponent implements OnInit {
     }
     
     private updateButtonTransforms() {
+      let startingLocation = 0;
+
       this.locations.forEach((location) => {
-        this.buttonTransforms[location.locationId] = this.generateTransformBasedOnId(
-          location.locationId,
+        this.buttonTransforms[startingLocation] = this.generateTransformBasedOnId(
+          startingLocation,
           this.locations.length
         );
+        startingLocation += startingLocation;
       });
     }
     
@@ -82,13 +85,16 @@ export class LocationComponent implements OnInit {
       this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params }).subscribe({
           next: (response) => {
             this.locations = response;
-    
+
+            const numberOfLocations = this.locations.length;
+            let startingLocation = 0;
             // Calculate transform values for each location
             this.locations.forEach((location) => {
-              this.buttonTransforms[location.locationId] =  this.generateTransformBasedOnId(
-                location.locationId,
+              this.buttonTransforms[startingLocation] =  this.generateTransformBasedOnId(
+                startingLocation,
                 this.locations.length // Total number of locations
               );
+              startingLocation += startingLocation;
             });
           },
           error: (error) => {
@@ -101,7 +107,7 @@ export class LocationComponent implements OnInit {
         const params = {
           gameCode: this.gameCode,
           playerId: this.player.authorId,
-          locationId: selectedLocation.locationId
+          locationId: selectedLocation.id
         };
     
         console.log(params);
