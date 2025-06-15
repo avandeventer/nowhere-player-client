@@ -15,7 +15,7 @@
         class="location-button"
         (click)="!isLoadingSelection && getStory(location)"
         [style.position]="'absolute'"
-        [style.transform]="buttonTransforms[location.id]"
+        [style.transform]="buttonTransforms[location.locationIndex]"
         [class.disabled]="isLoadingSelection"
       >
         <img src="{{location.iconDirectory}}" alt="{{ location.label }}" class="location-icon" />

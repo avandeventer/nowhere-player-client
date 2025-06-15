@@ -87,14 +87,15 @@ export class LocationComponent implements OnInit {
             this.locations = response;
 
             const numberOfLocations = this.locations.length;
-            let startingLocation = 0;
+            let locationIndex = 0;
             // Calculate transform values for each location
             this.locations.forEach((location) => {
-              this.buttonTransforms[startingLocation] =  this.generateTransformBasedOnId(
-                startingLocation,
+              this.buttonTransforms[locationIndex] =  this.generateTransformBasedOnId(
+                locationIndex,
                 this.locations.length // Total number of locations
               );
-              startingLocation += startingLocation;
+              location.locationIndex = locationIndex;
+              locationIndex += 1;
             });
           },
           error: (error) => {

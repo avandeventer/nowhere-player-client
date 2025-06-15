@@ -6,6 +6,7 @@ export class Location {
     options: Option[];
     label: String;
     iconDirectory: String;
+    locationIndex: number;
 
     constructor () {
         this.id = "";
@@ -13,5 +14,6 @@ export class Location {
         this.options = []
         this.label = "";
         this.iconDirectory = "";
+        this.locationIndex = 0;
     }
 }
