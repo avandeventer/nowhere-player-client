@@ -74,24 +74,28 @@ export class AdventureComponent implements OnInit {
               this.playerStories = stories;
               if (this.playerStories.length > 0) {
                 this.playerStory = this.playerStories[this.currentStoryIndex];
-                this.location = this.locations[this.playerStory.location.locationId];
-                this.playerStory.location = this.location;
-    
-                this.locationLabel = "You travel to the " + this.playerStory.location.label;
-                this.locationOptionOne = this.playerStory.location.options[0].optionText;
-                this.locationOptionTwo = this.playerStory.location.options[1].optionText;
-                this.storyRetrieved = true;
-    
-                this.activePlayerSessionService.updateActivePlayerSession(
-                  this.gameCode,
-                  this.player.authorId,
-                  this.playerStory,
-                  "",
-                  [],
-                  false,
-                  "",
-                  []
-                ).subscribe();
+                const location = this.locations.find(location => location.id === this.playerStory.location.id);
+
+                if (location) {
+                  this.location = location;
+                  this.playerStory.location = this.location;
+      
+                  this.locationLabel = "You travel to the " + this.playerStory.location.label;
+                  this.locationOptionOne = this.playerStory.location.options[0].optionText;
+                  this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+                  this.storyRetrieved = true;
+      
+                  this.activePlayerSessionService.updateActivePlayerSession(
+                    this.gameCode,
+                    this.player.authorId,
+                    this.playerStory,
+                    "",
+                    [],
+                    false,
+                    "",
+                    []
+                  ).subscribe();
+                }
               }
             },
             error: (err) => console.error('Error in chained getStory', err)
@@ -157,23 +161,27 @@ export class AdventureComponent implements OnInit {
             this.playerStories = response;
             if(this.playerStories.length != 0) {
               this.playerStory = this.playerStories[this.currentStoryIndex];
-              this.location = this.locations[this.playerStory.location.locationId];
-              this.playerStory.location = this.location;
-              console.log('Player Story', this.playerStory);
-              this.locationLabel = "You travel to the " + this.playerStory.location.label;
-              this.locationOptionOne = this.playerStory.location.options[0].optionText;
-              this.locationOptionTwo = this.playerStory.location.options[1].optionText;
-              this.storyRetrieved = true;
-              this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, "", [], false, "", [])
-                .subscribe({
-                  next: (updatedSession) => {
-                    console.log("Updated session:", updatedSession);
-                    this.activePlayerSession = updatedSession;
-                  },
-                  error: (err) => {
-                    console.error("Error:", err);
-                  }
-                });
+              const location = this.locations.find(location => location.id === this.playerStory.location.id);
+
+              if (location) {
+                this.location = location;
+                this.playerStory.location = this.location;
+                console.log('Player Story', this.playerStory);
+                this.locationLabel = "You travel to the " + this.playerStory.location.label;
+                this.locationOptionOne = this.playerStory.location.options[0].optionText;
+                this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+                this.storyRetrieved = true;
+                this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, "", [], false, "", [])
+                  .subscribe({
+                    next: (updatedSession) => {
+                      console.log("Updated session:", updatedSession);
+                      this.activePlayerSession = updatedSession;
+                    },
+                    error: (err) => {
+                      console.error("Error:", err);
+                    }
+                  });
+                }
             }
             console.log('Player Stories', this.playerStories);
           },

@@ -10,12 +10,12 @@
       </div>
     }
     <img src="assets/images/pyre.gif" alt="Pyre" class="pyre">
-    @for (location of locations; track location.locationId) {
+    @for (location of locations; track location.id) {
       <div
         class="location-button"
         (click)="!isLoadingSelection && getStory(location)"
         [style.position]="'absolute'"
-        [style.transform]="buttonTransforms[location.locationId]"
+        [style.transform]="buttonTransforms[location.id]"
         [class.disabled]="isLoadingSelection"
       >
         <img src="{{location.iconDirectory}}" alt="{{ location.label }}" class="location-icon" />

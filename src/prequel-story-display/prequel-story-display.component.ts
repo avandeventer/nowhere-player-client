@@ -147,7 +147,8 @@ export class PrequelDisplayComponent implements OnChanges {
     location: Location,
     gameLocations: Location[]
   ): string {
-    return `This sequel story does not follow a specific player. It will trigger when anyone travels to ${gameLocations[location.locationId].label}`;
+    const gameLocation = gameLocations.find(gameLocation => gameLocation.id === location.id);
+    return `This sequel story does not follow a specific player. It will trigger when anyone travels to ${gameLocation?.id}`;
   }
 
   private createSequelPlayerDisplay(prequelPlayer: Player): string {
