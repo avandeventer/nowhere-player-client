@@ -8,7 +8,6 @@ import { Story } from 'src/assets/story';
 import { Option } from 'src/assets/option';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
-import { Stat } from 'src/assets/stat';
 import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
@@ -16,7 +15,6 @@ import { Observable, switchMap } from 'rxjs';
 import {MatCardModule} from '@angular/material/card';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 import { PlayerStat } from 'src/assets/player-stat';
-import { StatType } from 'src/assets/stat-type';
 
 @Component({
     selector: 'adventure',
