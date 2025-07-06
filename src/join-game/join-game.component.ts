@@ -28,7 +28,7 @@ export class JoinGameComponent {
   gameSessionCreated: boolean = false;
   player: Player = new Player();
   readonly CACHE_KEY = 'joinGameCache';
-  readonly CACHE_DURATION_MS = 60 * 60 * 1000;
+  readonly CACHE_DURATION_MS = 60 * 30 * 1000;
 
   ngOnInit() {
     console.log(this.gameSessionCreated);
