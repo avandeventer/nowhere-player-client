@@ -51,13 +51,13 @@ export class JoinGameComponent {
 
   setGameCode() {
     console.log(this.gameCode.value);
-    this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value.toLocaleUpperCase();
+    this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value.trim().toLocaleUpperCase();
   }
 
   getPlayer() {
     const requestBody = {
-      gameCode: this.gameCode.value,
-      userName: this.userName.value,
+      gameCode: this.gameCodeValue,
+      userName: this.userName.value?.trim() || '',
     };
 
     this.http
@@ -66,8 +66,8 @@ export class JoinGameComponent {
         next: (response) => {
           console.log('Player joined!', response);
           this.player = response;
-          this.cacheInputs();
           this.gameSessionCreated = true;
+          this.cacheInputs(requestBody.gameCode, requestBody.userName);
         },
         error: (error) => {
           console.error('Error creating game', error);
@@ -75,12 +75,13 @@ export class JoinGameComponent {
       });
   }
 
-  private cacheInputs() {
+  private cacheInputs(gameCodeSubmitted: string, userNameSubmitted: string) {
     const cache: JoinGameCache = {
-      gameCode: this.gameCode.value || '',
-      userName: this.userName.value || '',
+      gameCode: gameCodeSubmitted,
+      userName: userNameSubmitted,
       timestamp: Date.now()
     };
+    console.info('Values cached, ', cache.gameCode, cache.userName, cache.timestamp);
     localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
   }  
 
