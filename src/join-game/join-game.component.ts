@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { GameStateManagerComponent } from '../game-state-manager/game-state-manager.component';
 import { Player } from 'src/assets/player';
@@ -8,6 +8,8 @@ import { HttpConstants } from 'src/assets/http-constants';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { GameState } from 'src/assets/game-state';
+import { JoinGameCache } from 'src/assets/join-game-cache';
 
 @Component({
     selector: 'join-game',
@@ -25,9 +27,26 @@ export class JoinGameComponent {
   userName = new FormControl('');
   gameSessionCreated: boolean = false;
   player: Player = new Player();
+  readonly CACHE_KEY = 'joinGameCache';
+  readonly CACHE_DURATION_MS = 60 * 60 * 1000;
 
   ngOnInit() {
     console.log(this.gameSessionCreated);
+    const cached = localStorage.getItem(this.CACHE_KEY);
+    if (cached) {
+      const parsed: JoinGameCache = JSON.parse(cached);
+      const now = Date.now();
+      const notExpired = now - parsed.timestamp < this.CACHE_DURATION_MS;
+  
+      if (notExpired) {
+        this.gameCode.setValue(parsed.gameCode);
+        this.userName.setValue(parsed.userName);
+        this.gameCodeValue = parsed.gameCode;
+        console.log('Loaded cached values:', parsed);
+      } else {
+        localStorage.removeItem(this.CACHE_KEY);
+      }
+    }  
   }
 
   setGameCode() {
@@ -35,7 +54,7 @@ export class JoinGameComponent {
     this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value.toLocaleUpperCase();
   }
 
-  joinGame() {
+  getPlayer() {
     const requestBody = {
       gameCode: this.gameCode.value,
       userName: this.userName.value,
@@ -47,11 +66,30 @@ export class JoinGameComponent {
         next: (response) => {
           console.log('Player joined!', response);
           this.player = response;
+          this.cacheInputs();
           this.gameSessionCreated = true;
         },
         error: (error) => {
           console.error('Error creating game', error);
         },
       });
+  }
+
+  private cacheInputs() {
+    const cache: JoinGameCache = {
+      gameCode: this.gameCode.value || '',
+      userName: this.userName.value || '',
+      timestamp: Date.now()
+    };
+    localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
+  }  
+
+  @Input() refreshPlayer(gameState: GameState) {
+    if (gameState === GameState.FINALE) {
+      localStorage.removeItem(this.CACHE_KEY);
+      console.log('Cache cleared due to FINALE');
+    } else {
+      this.getPlayer();
+    }
   }
 }

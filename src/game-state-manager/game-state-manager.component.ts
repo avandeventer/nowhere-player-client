@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GameService } from '../services/game-session.service';
 import { HttpClient } from '@angular/common/http';
 import { GameState } from 'src/assets/game-state';
@@ -34,6 +34,7 @@ export class GameStateManagerComponent implements OnInit {
     }
   }
   gameState: GameState = GameState.INIT;
+  @Output() gameStateChanged = new EventEmitter<GameState>();
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   storiesToWritePerRound: number = 1;
   storiesToPlayPerRound: number = 1;
@@ -45,7 +46,11 @@ export class GameStateManagerComponent implements OnInit {
 
   ngOnInit() {
     this.gameService.listenForGameStateChanges(this.gameCode).subscribe((newState) => {
-      this.gameState = newState.gameState as unknown as GameState;
+      if (this.gameState !== newState.gameState as unknown as GameState) {
+        this.gameState = newState.gameState as unknown as GameState;
+        this.gameStateChanged.emit(this.gameState);
+      }
+      
       this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
       this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       this.storiesToPlayPerRound = newState.storiesToPlayPerRound as unknown as number;
