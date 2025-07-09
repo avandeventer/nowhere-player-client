@@ -7,23 +7,23 @@
   margin: 0 auto; /* Center the map horizontally */
   border: 1px dashed #ccc;
   border-radius: 50%; /* Ensure the element remains circular */
-  background-color: #76a37e;
+  background-color: var(--mdc-filled-text-field-container-color);
   animation: glow 2s infinite;
-  box-shadow: 0 0 300px rgba(0, 0, 0) inset;
+  // box-shadow: 0 0 300px rgba(0, 0, 0) inset;
   overflow: hidden;
 }
 
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 298px rgba(33, 43, 33) inset;
-  }
-  50% {
-    box-shadow: 0 0 300px rgba(0, 0, 0) inset;
-  }
-  100% {
-    box-shadow: 0 0 298px rgba(33, 43, 33) inset;
-  }
-}
+// @keyframes glow {
+//   0% {
+//     box-shadow: 0 0 298px rgb(173, 173, 173) inset;
+//   }
+//   50% {
+//     box-shadow: 0 0 300px rgba(0, 0, 0) inset;
+//   }
+//   100% {
+//     box-shadow: 0 0 298px rgb(173, 173, 173) inset;
+//   }
+// }
 
 .location-button {
   position: absolute;
@@ -31,8 +31,8 @@
   flex-direction: column; /* Stack image and text */
   align-items: center; /* Center image and text */
   width: 12%; /* Adjust size relative to the map */
-  max-width: 80px; /* Set maximum size for larger screens */
-  max-height: 80px; /* Set maximum size for larger screens */
+  max-width: 100px; /* Set maximum size for larger screens */
+  max-height: 100px; /* Set maximum size for larger screens */
   height: auto; /* Allow height to scale with content */
   text-align: center;
   cursor: pointer; /* Indicate clickable */
@@ -47,7 +47,7 @@
 }
 
 .location-icon {
-  width: 70%; /* Scale icon relative to the button */
+  width: 100%; /* Scale icon relative to the button */
   height: auto; /* Maintain aspect ratio */
   object-fit: contain; /* Ensure the image scales proportionally */
   margin-bottom: 8px; /* Add space below the icon */
