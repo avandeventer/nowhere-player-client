@@ -79,7 +79,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 10%; /* Scale the pyre relative to the map */
-  max-width: 50px; /* Set a maximum size for larger screens */
+  width: 20%; /* Scale the pyre relative to the map */
+  max-width: 80px; /* Set a maximum size for larger screens */
   height: auto; /* Maintain aspect ratio */
 }

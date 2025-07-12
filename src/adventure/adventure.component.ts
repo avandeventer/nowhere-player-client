@@ -335,6 +335,7 @@ export class AdventureComponent implements OnInit {
     this.selectedLocationOption = this.location.options[locationOptionIndex];
     console.log("Selected location", this.selectedLocationOption, locationOptionIndex);
 
+    this.locationOutcomeDisplay.push(this.selectedLocationOption.attemptText);
     this.selectedLocationOption.successResults.forEach(outcome => {
       const impactedStatId = outcome.playerStat.statType.id;
       const playerStat = this.player.playerStats.find(stat => stat.statType.id === impactedStatId);

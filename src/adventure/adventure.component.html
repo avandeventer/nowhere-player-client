@@ -20,7 +20,6 @@
         }
         @else {
             <mat-card class="story">
-                {{selectedLocationOption.attemptText}}
                 @for (outcome of locationOutcomeDisplay; track outcome) {
                     <div>{{outcome}} </div>
                 }
@@ -32,22 +31,23 @@
         <mat-card class="story">
             {{playerStory.prompt}}<br>
         </mat-card>
-        <mat-card class="story">
-            {{playerStory.options[0].optionText}}
-        </mat-card>
         
         @if (outcomeDisplay.length === 0) {
             <br><button mat-flat-button (click)="pickOption(0)">Option 1</button><br>
             <br>
         }
-        
+
         <mat-card class="story">
-            {{playerStory.options[1].optionText}}
+            {{playerStory.options[0].optionText}}
         </mat-card>
         
         @if (outcomeDisplay.length === 0) {
             <br><button mat-flat-button (click)="pickOption(1)">Option 2</button><br>
         }
+
+        <mat-card class="story">
+            {{playerStory.options[1].optionText}}
+        </mat-card>
 
         @if (outcomeDisplay.length > 0) {
             <mat-card class="story">
