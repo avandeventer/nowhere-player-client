@@ -9,7 +9,6 @@ export class ActivePlayerSession {
     setNextPlayerTurn: boolean;
     gameCode: String;
     outcomeDisplay: String[];
-    ritualStory: Story | undefined;
 
     constructor() {
             this.playerId = "";
@@ -20,6 +19,5 @@ export class ActivePlayerSession {
             this.gameCode = "";
             this.outcomeDisplay = [];
             this.locationOutcomeDisplay = [];
-            this.ritualStory = new Story();
     }
 }

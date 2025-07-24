@@ -19,8 +19,7 @@ export class ActivePlayerSessionService {
         outcomeDisplay: String[],
         nextPlayerTurn: boolean,
         selectedLocationOptionId: String,
-        locationOutcomeDisplay: String[],
-        ritualStory?: Story
+        locationOutcomeDisplay: String[]
       ): Observable<ActivePlayerSession> {
         const newActivePlayerSession: ActivePlayerSession = new ActivePlayerSession();
         newActivePlayerSession.gameCode = gameCode;
@@ -31,7 +30,6 @@ export class ActivePlayerSessionService {
         newActivePlayerSession.setNextPlayerTurn = nextPlayerTurn;
         newActivePlayerSession.selectedLocationOptionId = selectedLocationOptionId;
         newActivePlayerSession.locationOutcomeDisplay = locationOutcomeDisplay;
-        newActivePlayerSession.ritualStory = ritualStory;
     
         return this.http.put<ActivePlayerSession>(
             environment.nowhereBackendUrl + HttpConstants.ACTIVE_PLAYER_SESSION_PATH, 

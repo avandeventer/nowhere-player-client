@@ -38,11 +38,13 @@ export class RitualComponent implements OnInit {
 
     ngOnChanges(changes: SimpleChanges): void {
       if (changes['activePlayerSession']) {
-        if(this.activePlayerSession.playerId === this.player.authorId 
-          && !this.playerTurn && !this.isDone) {
-            this.playerTurn = true;
-            this.getRitualJobs(this.gameCode);
-        } else {
+        if(this.activePlayerSession.playerId === this.player.authorId) {
+          if(!this.playerTurn && !this.isDone) {
+              this.playerTurn = true;
+              this.getRitualJobs(this.gameCode);
+          } 
+        }
+        else {
           this.playerTurn = false;
           this.ritual = new Story();
           this.selectedRitualResponse = new Option();    
@@ -80,7 +82,7 @@ export class RitualComponent implements OnInit {
     selectRitualJob(ritualJobId: string) {
       const ritualWithSelectedJob = {
         gameCode: this.gameCode,
-        ritualOptions:  [
+        options:  [
           {
             optionId: ritualJobId,
             selectedByPlayerId: this.player.authorId
@@ -101,6 +103,7 @@ export class RitualComponent implements OnInit {
               this.selectedRitualResponse.failureText;
 
             this.outcomeDisplay = [
+              this.selectedRitualResponse.optionText,
               this.selectedRitualResponse.attemptText,
               outcomeText, 
               this.selectedRitualResponse.successMarginText
@@ -114,8 +117,7 @@ export class RitualComponent implements OnInit {
               this.outcomeDisplay,
               false,
               "",
-              [],
-              <Story><unknown>ritualWithSelectedJob
+              []
             ).subscribe({
               next: (updatedSession) => {
                 console.log("Updated session:", updatedSession);
