@@ -33,20 +33,20 @@ export class RitualComponent implements OnInit {
     constructor(private http: HttpClient, private activePlayerSessionService: ActivePlayerSessionService) {}
 
     ngOnInit(): void {
-        console.log("Rituals Loaded!" + this.activePlayerSession);
+        console.log("Rituals Loaded!", this.activePlayerSession);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-      if (changes['activePlayerSession']
-      && changes['activePlayerSession']?.currentValue?.playerId === this.player.authorId) {
-        if(!this.playerTurn && !this.isDone) {
-          this.playerTurn = true;
-          this.getRitualJobs(this.gameCode);
+      if (changes['activePlayerSession']) {
+        if(this.activePlayerSession.playerId === this.player.authorId 
+          && !this.playerTurn && !this.isDone) {
+            this.playerTurn = true;
+            this.getRitualJobs(this.gameCode);
+        } else {
+          this.playerTurn = false;
+          this.ritual = new Story();
+          this.selectedRitualResponse = new Option();    
         }
-      } else {
-        this.playerTurn = false;
-        this.ritual = new Story();
-        this.selectedRitualResponse = new Option();    
       }
       
       const currentState = changes['gameState'] 
