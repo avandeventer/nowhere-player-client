@@ -306,7 +306,7 @@ export class AdventureComponent implements OnInit {
   nextPlayerTurn() {
     this.activePlayerSessionService.updateActivePlayerSession(
       this.gameCode,
-      "",
+      this.player.authorId,
       new Story(), 
       "", 
       [],
