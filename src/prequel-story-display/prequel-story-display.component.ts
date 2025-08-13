@@ -8,12 +8,14 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 import { MatCardModule } from '@angular/material/card';
+import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'prequel-story-display',
   templateUrl: './prequel-story-display.component.html',
   standalone: true,
-  imports: [MatCardModule]
+  imports: [MatCardModule, CdkAccordionModule, MatExpansionModule]
 })
 export class PrequelDisplayComponent implements OnChanges {
   @Input() gameCode: string = '';

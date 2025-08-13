@@ -12,6 +12,13 @@
         <br>
             <mat-card class="story">{{locationLabel}}</mat-card>
         <br>
+
+        <prequel-story-display 
+            [gameCode]="gameCode" 
+            [story]="playerStory"
+            [isAdventureMode]="true">
+        </prequel-story-display>
+
         @if (locationOutcomeDisplay.length === 0) {
             <button mat-flat-button (click)="selectLocationOption(0)">{{ location.options[0].optionText }}</button>
             <br><br>
@@ -57,15 +64,20 @@
                 }
             </mat-card>
 
-            <br><button mat-flat-button (click)="nextPlayerTurn()">Continue</button><br>
+            @if ((repercussionOutput.ending !== null || repercussionOutput.locationDestroyed !== null) && !repercussionsSubmitted) {
+                <br>
+                <button mat-raised-button color="accent" (click)="openRepercussionsModal()">
+                    Huh? Reveal Repercussions
+                </button>
+                <br>
+            } @else {
+                <br>
+                <button mat-flat-button (click)="nextPlayerTurn()">
+                    Continue
+                </button>
+                <br>
+            }
         }
-
-        <br>
-        <prequel-story-display 
-            [gameCode]="gameCode" 
-            [story]="playerStory"
-            [isAdventureMode]="true">
-        </prequel-story-display>
     }
 } @else {
     It's another player's turn right now! Hold your horses

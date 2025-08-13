@@ -11,16 +11,26 @@ import { HttpConstants } from 'src/assets/http-constants';
 import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
-import { Observable, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import {MatCardModule} from '@angular/material/card';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 import { PlayerStat } from 'src/assets/player-stat';
+import { RepercussionOutput } from 'src/assets/repercussion-output';
+import { FormControl } from '@angular/forms';
+import { MatLabel } from '@angular/material/form-field';
+import { RepercussionsComponent } from 'src/repercussions/repercussions.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'adventure',
     templateUrl: './adventure.component.html',
-    imports: [MatButtonModule, MatCardModule, PrequelDisplayComponent],
-    standalone: true
+    imports: [
+      MatButtonModule, 
+      MatCardModule, 
+      PrequelDisplayComponent, 
+      MatLabel
+  ],
+  standalone: true
 })
 export class AdventureComponent implements OnInit {
     @Input() gameState: GameState = GameState.ROUND1;
@@ -39,84 +49,133 @@ export class AdventureComponent implements OnInit {
     outcomeDisplay: String[] = [];
     playerTurn: boolean = false;
     storyRetrieved: boolean = true;
-    currentStoryIndex: number = 0;
     isDone: boolean = false;
     locationLabel: string = "";
     locationOptionOne: string = "";
     locationOptionTwo: string = "";
     locationOutcomeDisplay: String[] = [];
+    repercussionOutput: RepercussionOutput = new RepercussionOutput();
+    repercussionsSubmitted: boolean = false;
+    endingOptionOne = new FormControl();
+    endingOptionTwo = new FormControl();  
 
-    constructor(private activePlayerSessionService: ActivePlayerSessionService, private http: HttpClient) {}
+    constructor(private activePlayerSessionService: ActivePlayerSessionService, private http: HttpClient, private dialog: MatDialog) {}
 
     ngOnInit(): void {
-      console.log("Adventure Loaded!" + this.activePlayerSession);
-      this.getLocations(this.gameCode);
+      console.log("Adventure Loaded!", this.activePlayerSession, this.player);
+      this.tryInitializeTurn();
     }
+          
 
     ngOnChanges(changes: SimpleChanges): void {
-      if (changes['activePlayerSession']
-      && changes['activePlayerSession']?.currentValue?.playerId === this.player.authorId) {
-        if(!this.playerTurn && !this.isDone) {
-          this.playerTurn = true;
-          this.getStory();
-          this.updatePlayerStats(this.player.authorId);
-          this.getLocations(this.gameCode).pipe(
-            switchMap((locations: Location[]) => {
-              this.locations = locations;
-              return this.http.get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, {
-                params: { gameCode: this.gameCode, playerId: this.player.authorId }
-              });
-            })
-          ).subscribe({
-            next: (stories) => {
-              this.playerStories = stories;
-              if (this.playerStories.length > 0) {
-                this.playerStory = this.playerStories[this.currentStoryIndex];
-                const location = this.locations.find(location => location.id === this.playerStory.location.id);
-
-                if (location) {
-                  this.location = location;
-                  this.playerStory.location = this.location;
-      
-                  this.locationLabel = "You travel to the " + this.playerStory.location.label;
-                  this.locationOptionOne = this.playerStory.location.options[0].optionText;
-                  this.locationOptionTwo = this.playerStory.location.options[1].optionText;
-                  this.storyRetrieved = true;
-      
-                  this.activePlayerSessionService.updateActivePlayerSession(
-                    this.gameCode,
-                    this.player.authorId,
-                    this.playerStory,
-                    "",
-                    [],
-                    false,
-                    "",
-                    []
-                  ).subscribe();
-                }
-              }
-            },
-            error: (err) => console.error('Error in chained getStory', err)
-          });
-        }
-      } else {
-        this.selectedLocation = new Location();
-        this.playerTurn = false;
-        this.outcomeDisplay = [];
-        this.selectedOption = new Option();
-        this.selectedLocationOption = new Option();
-        this.storyRetrieved = false;
-        this.playerStories = [];
-        this.locationOutcomeDisplay = [];
+      const stateChanged = changes['gameState'];
+      const playerSessionChanged = changes['activePlayerSession'];
+    
+      if (playerSessionChanged || stateChanged) {
+        this.tryInitializeTurn();
       }
-      
-      const currentState = changes['gameState'] 
-          ? changes['gameState'].currentValue : this.gameState;
-
-      if (currentState !== GameState.ROUND1 && currentState !== GameState.ROUND2) {
-        this.isDone = false;
+    
+      if (stateChanged) {
+        const currentState = stateChanged.currentValue ?? this.gameState;
+        if (currentState !== GameState.ROUND1 && currentState !== GameState.ROUND2) {
+          this.isDone = false;
+        }
       }
     }
+
+    private tryInitializeTurn(): void {
+      if (this.activePlayerSession?.playerId !== this.player.authorId) {
+        this.resetTurnState();
+        return;
+      }
+    
+      if (this.playerTurn || this.isDone) return;
+    
+      this.getLocations(this.gameCode).subscribe(locations => {
+        this.locations = locations;
+        this.setCurrentPlayerTurn();
+      });
+    }
+      
+    private resetTurnState() {
+      this.selectedLocation = new Location();
+      this.playerTurn = false;
+      this.outcomeDisplay = [];
+      this.selectedOption = new Option();
+      this.selectedLocationOption = new Option();
+      this.storyRetrieved = false;
+      this.playerStories = [];
+      this.locationOutcomeDisplay = [];
+      this.repercussionOutput = new RepercussionOutput();
+    }
+
+    private setCurrentPlayerTurn(): void {
+      console.log("Setting current player turn");
+      this.playerTurn = true;
+
+      this.updatePlayerStats(this.player.authorId);
+
+      if (this.activePlayerSession.outcomeDisplay.length != 0 || this.activePlayerSession.locationOutcomeDisplay.length != 0) {
+        this.setCurrentTurnFromActivePlayerSession();
+        return;
+      }
+
+      this.http.get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, {
+        params: { gameCode: this.gameCode, playerId: this.player.authorId }
+      }).subscribe({
+        next: (stories) => {
+          console.log('Story retrieved!', stories);
+
+          this.playerStories = stories;
+          if (this.playerStories.length > 0) {
+            this.playerStory = this.playerStories[0];
+            const location = this.locations.find(location => location.id === this.playerStory.location.id);
+
+            if (location) {
+              this.location = location;
+              this.playerStory.location = this.location;
+
+              this.locationLabel = "You travel to the " + this.playerStory.location.label;
+              this.locationOptionOne = this.playerStory.location.options[0].optionText;
+              this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+              this.storyRetrieved = true;
+
+              this.activePlayerSessionService.updateActivePlayerSession(
+                  this.gameCode,
+                  this.player.authorId,
+                  this.playerStory,
+                  "",
+                  [],
+                  false,
+                  "",
+                  [],
+                  this.repercussionOutput
+                ).subscribe();
+              }
+            }
+          },
+          error: (err) => console.error('Error retrieving stories', err)
+        }
+      );
+    }
+
+  private setCurrentTurnFromActivePlayerSession() {
+    this.outcomeDisplay = this.activePlayerSession.outcomeDisplay;
+    this.locationOutcomeDisplay = this.activePlayerSession.locationOutcomeDisplay;
+    this.playerStory = this.activePlayerSession.story;
+    const location = this.locations.find(location => location.id === this.playerStory.location.id);
+
+    if (location) {
+      this.location = location;
+      this.playerStory.location = this.location;
+      this.selectedLocationOption = this.location.options[parseInt(this.activePlayerSession.selectedLocationOptionId.toString())];
+      this.locationLabel = "You travel to the " + this.playerStory.location.label;
+      this.locationOptionOne = this.playerStory.location.options[0].optionText;
+      this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+      this.storyRetrieved = true;
+      this.repercussionOutput = this.activePlayerSession.repercussions;
+    }
+  }
 
     updatePlayerStats(authorId: string) {
       this.http
@@ -158,7 +217,7 @@ export class AdventureComponent implements OnInit {
             console.log('Story retrieved!', response);
             this.playerStories = response;
             if(this.playerStories.length != 0) {
-              this.playerStory = this.playerStories[this.currentStoryIndex];
+              this.playerStory = this.playerStories[0];
               const location = this.locations.find(location => location.id === this.playerStory.location.id);
 
               if (location) {
@@ -169,7 +228,7 @@ export class AdventureComponent implements OnInit {
                 this.locationOptionOne = this.playerStory.location.options[0].optionText;
                 this.locationOptionTwo = this.playerStory.location.options[1].optionText;
                 this.storyRetrieved = true;
-                this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, "", [], false, "", [])
+                this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, "", [], false, "", [], this.repercussionOutput)
                   .subscribe({
                     next: (updatedSession) => {
                       console.log("Updated session:", updatedSession);
@@ -239,29 +298,32 @@ export class AdventureComponent implements OnInit {
       }
 
       this.updatePlayer();
-      this.updateStory(playerSucceeded, this.player.authorId, this.selectedOption.optionId);
-
-      this.activePlayerSessionService.updateActivePlayerSession(
-        this.gameCode,
-        this.player.authorId,
-        this.playerStory, 
-        this.selectedOption.optionId, 
-        this.outcomeDisplay,
-        false,
-        this.activePlayerSession.selectedLocationOptionId,
-        this.locationOutcomeDisplay
-      ).subscribe({
-        next: (updatedSession) => {
-          console.log("Updated session:", updatedSession);
-          this.activePlayerSession = updatedSession;
-        },
-        error: (err) => {
-          console.error("Error:", err);
-        }
-      });
+      this.resolveStoryOutcomes(playerSucceeded, this.player.authorId, this.selectedOption.optionId);
 
       console.log(this.selectedOption);
     }
+  }
+
+  private updatePlayerTurnDisplay() {
+    this.activePlayerSessionService.updateActivePlayerSession(
+      this.gameCode,
+      this.player.authorId,
+      this.playerStory,
+      this.selectedOption.optionId,
+      this.outcomeDisplay,
+      false,
+      this.activePlayerSession.selectedLocationOptionId,
+      this.locationOutcomeDisplay,
+      this.repercussionOutput
+    ).subscribe({
+      next: (updatedSession) => {
+        console.log("Updated session:", updatedSession);
+        this.activePlayerSession = updatedSession;
+      },
+      error: (err) => {
+        console.error("Error:", err);
+      }
+    });
   }
 
   rollForSuccess(playerStat: number, dcToBeat: number): boolean {
@@ -280,22 +342,24 @@ export class AdventureComponent implements OnInit {
           this.player = response;
         },
         error: (error) => {
-          console.error('Error creating game', error);
+          console.error('Error creating g2ame', error);
         },
       });
   }
 
-  updateStory(playerSucceeded: boolean, playerId: string, selectedOptionId: string) {
+  resolveStoryOutcomes(playerSucceeded: boolean, playerId: string, selectedOptionId: string) {
     this.playerStory.playerSucceeded = playerSucceeded;
     this.playerStory.playerId = playerId;
     this.playerStory.selectedOptionId = selectedOptionId;
 
     console.log('Updating story', this.playerStory);
     this.http
-      .put<Story>(environment.nowhereBackendUrl + HttpConstants.AUTHOR_STORIES_PATH, this.playerStory)
+      .put<RepercussionOutput>(environment.nowhereBackendUrl + HttpConstants.ADVENTURE_REPERCUSSIONS_PATH, this.playerStory)
       .subscribe({
         next: (response) => {
           console.log('Player story updated!', response);
+          this.repercussionOutput = response;
+          this.updatePlayerTurnDisplay();
         },
         error: (error) => {
           console.error('Error creating game', error);
@@ -303,7 +367,38 @@ export class AdventureComponent implements OnInit {
       });
   }
 
+  openRepercussionsModal() {
+    const favorStat: PlayerStat | undefined = this.player.playerStats.find(stat => stat.statType.favorType);
+
+    if (favorStat === undefined) {
+      throw new Error("There is no stat that currently influences the ending.");
+    }
+
+    if (this.activePlayerSession.repercussions.ending == null) {
+      this.updatePlayerTurnDisplay();
+    }
+
+    const dialogRef = this.dialog.open(RepercussionsComponent, {
+      width: '500px',
+      data: {
+        gameCode: this.gameCode,
+        repercussionOutput: this.repercussionOutput,
+        favorStatType: favorStat.statType
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Repercussions submitted:', result);
+        this.repercussionOutput.ending = result.ending;
+        this.updatePlayerTurnDisplay();
+        this.repercussionsSubmitted = true;
+      }
+    });
+  }
+
   nextPlayerTurn() {
+    this.resetTurnState();
     this.activePlayerSessionService.updateActivePlayerSession(
       this.gameCode,
       this.player.authorId,
@@ -312,7 +407,8 @@ export class AdventureComponent implements OnInit {
       [],
       true,
       "",
-      []
+      [],
+      new RepercussionOutput()
     ).subscribe({
       next: (updatedSession) => {
         console.log("Updated session:", updatedSession);
@@ -356,7 +452,8 @@ export class AdventureComponent implements OnInit {
       [],
       false,
       locationOptionIndex.toString(),
-      this.locationOutcomeDisplay
+      this.locationOutcomeDisplay,
+      this.repercussionOutput
     ).subscribe({
       next: (updatedSession) => {
         console.log("Updated session:", updatedSession);

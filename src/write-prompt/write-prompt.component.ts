@@ -4,7 +4,6 @@ import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
 import { Location } from 'src/assets/location';
 import { ResponseObject } from 'src/assets/response-object';
-import { Stat } from 'src/assets/stat';
 import { Story } from 'src/assets/story';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpConstants } from 'src/assets/http-constants';
@@ -18,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
+import { StatType } from 'src/assets/stat-type';
 
 @Component({
   selector: 'write-prompt',
@@ -51,6 +51,7 @@ export class WritePromptComponent implements OnInit {
   optionTwo = new FormControl();
   numberOfPromptsWritten: number = 0;
   numberOfPromptsToWrite: number = 0;
+  favorStat: StatType = new StatType();
 
   constructor(private http: HttpClient) {
   }
@@ -184,9 +185,17 @@ export class WritePromptComponent implements OnInit {
   }
 
   public isAFavorStory(currentStory: Story): boolean {
-    return currentStory.options.some(option => {
-      return option.successResults.some(outcomeStat => outcomeStat.playerStat.statType.favorType) ||
-        option.failureResults.some(outcomeStat => outcomeStat.playerStat.statType.favorType);
-    });
+
+    let favorStat: StatType | undefined = currentStory.options
+        .flatMap(option => [...(option.successResults || []), ...(option.failureResults || [])])
+        .map(outcomeStat => outcomeStat.playerStat.statType)
+        .find(statType => statType.favorType);
+
+    if (favorStat !== undefined) {
+      this.favorStat = favorStat;
+      return true;
+    }
+
+    return false;
   }
 }

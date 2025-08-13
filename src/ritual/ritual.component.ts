@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Option } from 'src/assets/option';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
 import { MatCardModule } from '@angular/material/card';
+import { RepercussionOutput } from 'src/assets/repercussion-output';
 
 @Component({
     selector: 'ritual',
@@ -117,7 +118,8 @@ export class RitualComponent implements OnInit {
               this.outcomeDisplay,
               false,
               "",
-              []
+              [],
+              new RepercussionOutput()
             ).subscribe({
               next: (updatedSession) => {
                 console.log("Updated session:", updatedSession);
@@ -144,7 +146,8 @@ export class RitualComponent implements OnInit {
         [],
         true,
         "",
-        []
+        [],
+        new RepercussionOutput()
       ).subscribe({
         next: (updatedSession) => {
           console.log("Updated session:", updatedSession);

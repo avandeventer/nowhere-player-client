@@ -1,0 +1,52 @@
+<div class="repercussions">
+  <h2 mat-dialog-title>Artifact Discovered!</h2>
+
+  <mat-card class="instructions">
+    <div>During your encounter with {{favorStatType.favorEntity}} you managed to get a hold of two new artifacts</div><br>
+    <div>Label two artifacts which are sacred in your culture and which you and your allies may choose to wield to earn {{favorStatType.label}} in the final confrontation!</div>
+  </mat-card>
+
+  <mat-dialog-content>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Artifact One</mat-label>
+      <input
+        matInput
+        [(ngModel)]="optionOneRepercussion"
+        rows="3"
+        placeholder="Ex. Sacred Gum">
+    </mat-form-field>
+
+    <div>Requirements to wield:</div>
+    <mat-chip-set>
+      @for (statType of uniqueArtifactStatTypes[0]; track statType) {
+        <mat-chip class="stat">
+          {{statType.label}}
+        </mat-chip>    
+      }
+    </mat-chip-set><br>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Artifact Two</mat-label>
+      <input
+        matInput
+        [(ngModel)]="optionTwoRepercussion"
+        rows="3"
+        placeholder="Ex. A Unicorn Horn"
+      >
+    </mat-form-field>
+    <div>Requirements to wield:</div>
+    <mat-chip-set>
+      @for (statType of uniqueArtifactStatTypes[1]; track statType) {
+        <mat-chip class="stat">
+          {{statType.label}}
+        </mat-chip>    
+      }
+    </mat-chip-set>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="close()">Go Back</button>
+    <button mat-flat-button (click)="submitOptions()">Submit</button>
+  </mat-dialog-actions>
+</div>

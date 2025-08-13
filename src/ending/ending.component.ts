@@ -8,6 +8,7 @@ import { Ending } from "src/assets/ending";
 import { GameState } from "src/assets/game-state";
 import { HttpConstants } from "src/assets/http-constants";
 import { Player } from "src/assets/player";
+import { RepercussionOutput } from "src/assets/repercussion-output";
 import { Story } from "src/assets/story";
 import { environment } from "src/environments/environment";
 import { ActivePlayerSessionService } from "src/services/active-player-session.service";
@@ -77,7 +78,8 @@ export class EndingComponent implements OnInit {
                 [this.player.userName + "'s legacy:", this.playerEnding.endingBody],
                 false,
                 "",
-                []
+                [],
+                new RepercussionOutput()
               ).subscribe({
                 next: (updatedSession) => {
                   console.log("Updated session:", updatedSession);
@@ -104,7 +106,8 @@ export class EndingComponent implements OnInit {
           [],
           true,
           "",
-          []
+          [],
+          new RepercussionOutput()
         ).subscribe({
           next: (updatedSession) => {
             console.log("Updated session:", updatedSession);

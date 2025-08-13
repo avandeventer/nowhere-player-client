@@ -1,17 +1,25 @@
 @if(prequelOutcomeDisplay && prequelOutcomeDisplay.length > 0) {
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            @if(isAdventureMode) {
+              <div>This story is a sequel:</div><br>
+            } @else {
+              <div>Write this one as a sequel to the story here:</div>
+            }
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
-    @if(isAdventureMode) {
-      <div>The story you're playing is a sequel to this story:</div><br>
-    } @else {
-      <div>Write this one as a sequel to the story below:</div>
-    }
+        <mat-card class="story">
+          @for(outcome of prequelOutcomeDisplay; track outcome) {
+            {{ outcome }}<br>
+          }
+        </mat-card><br>
 
-    <mat-card class="story">
-    @for(outcome of prequelOutcomeDisplay; track outcome) {
-      {{ outcome }}<br>
-    }</mat-card><br>
-
-    @if (!isAdventureMode) {
-      <div>{{sequelTypeClarifier}}</div><br>
-    }
+        @if (!isAdventureMode) {
+          <div>{{sequelTypeClarifier}}</div><br>
+        }
+      </mat-expansion-panel>
+    </mat-accordion><br>
 }
