@@ -8,13 +8,14 @@
 </mat-card><br>
 
 @if (playerTurn) {
-    <div>How will you proceed?</div>
-    <br>
+    <div>Which sacred artifact will you wield in the final encounter?</div><br>
 
     @if (selectedRitualResponse.optionId === "") {
-        @for (ritualJob of ritual.options; track ritualJob) {
-            @if (ritualJob.selectedByPlayerId === null) {
-                <button mat-flat-button (click)="selectRitualJob(ritualJob.optionId)">{{ritualJob.optionText}}</button><br>
+        @for (ritual of rituals; track ritual) {
+            @for (ritualOption of ritual.options; track ritualOption) {
+                @if (ritualOption.selectedByPlayerId === null) {
+                    <button mat-flat-button (click)="selectRitualJob(ritualOption.optionId)">{{ritualOption.optionText}}</button><br><br>
+                }
             }
         }
     } @else {

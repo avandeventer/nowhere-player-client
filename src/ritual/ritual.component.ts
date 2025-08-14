@@ -25,7 +25,7 @@ export class RitualComponent implements OnInit {
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
     @Output() playerDone = new EventEmitter<ComponentType>();
-    ritual: Story = new Story();
+    rituals: Story[] = [];
     selectedRitualResponse: Option = new Option();
     isDone: boolean = false;
     playerTurn: boolean = false;
@@ -47,7 +47,7 @@ export class RitualComponent implements OnInit {
         }
         else {
           this.playerTurn = false;
-          this.ritual = new Story();
+          this.rituals = []
           this.selectedRitualResponse = new Option();    
         }
       }
@@ -68,11 +68,11 @@ export class RitualComponent implements OnInit {
       console.log(params);
   
       this.http
-      .get<Story>(environment.nowhereBackendUrl + HttpConstants.RITUAL_PATH + '?gameCode=' + this.gameCode)
+      .get<Story[]>(environment.nowhereBackendUrl + HttpConstants.RITUAL_PATH + '?gameCode=' + this.gameCode)
         .subscribe({
           next: (response) => {
-            this.ritual = response;
-            console.log('Final ritual retrieved', this.ritual);
+            this.rituals = response;
+            console.log('Final ritual retrieved', this.rituals);
           },
           error: (error) => {
             console.error('Error retrieving ritual jobs', error);
@@ -129,7 +129,7 @@ export class RitualComponent implements OnInit {
                 console.error("Error:", err);
               }
             });        
-            console.log('Final ritual retrieved', this.ritual);
+            console.log('Final ritual retrieved', this.rituals);
           },
           error: (error) => {
             console.error('Error retrieving ritual jobs', error);
