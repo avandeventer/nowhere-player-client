@@ -100,7 +100,7 @@ export class EndingComponent implements OnInit {
       nextPlayerTurn() {
         this.activePlayerSessionService.updateActivePlayerSession(
           this.gameCode,
-          "",
+          this.player.authorId,
           new Story(), 
           "", 
           [],
