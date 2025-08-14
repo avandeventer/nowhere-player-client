@@ -104,8 +104,8 @@ export class RitualComponent implements OnInit {
               this.selectedRitualResponse.failureText;
 
             this.outcomeDisplay = [
-              this.selectedRitualResponse.optionText,
               this.selectedRitualResponse.attemptText,
+              this.selectedRitualResponse.optionText,
               outcomeText, 
               this.selectedRitualResponse.successMarginText
             ];
