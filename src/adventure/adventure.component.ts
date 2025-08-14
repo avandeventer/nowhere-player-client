@@ -359,10 +359,20 @@ export class AdventureComponent implements OnInit {
         next: (response) => {
           console.log('Player story updated!', response);
           this.repercussionOutput = response;
-          this.updatePlayerTurnDisplay();
+          this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, this.selectedOption.optionId,
+            this.outcomeDisplay, false, this.activePlayerSession.selectedLocationOptionId, this.locationOutcomeDisplay, new RepercussionOutput()
+          ).subscribe({
+            next: (updatedSession) => {
+              console.log("Updated session:", updatedSession);
+              this.activePlayerSession = updatedSession;
+            },
+            error: (err) => {
+              console.error("Error:", err);
+            }
+          });
         },
         error: (error) => {
-          console.error('Error creating game', error);
+          console.error('Error resolving outcomes', error);
         },
       });
   }
