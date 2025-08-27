@@ -16,6 +16,7 @@ export class Story {
     prequelStoryPlayerId: string;
     prequelOutcomeDisplay: string[];
     gameCode: string;
+    isMainPlotStory: boolean;
     
     constructor() {
         this.prompt = "";
@@ -32,5 +33,6 @@ export class Story {
         this.prequelStoryPlayerId = "";
         this.prequelOutcomeDisplay = [];
         this.gameCode = "";
+        this.isMainPlotStory = false;
     }
 }

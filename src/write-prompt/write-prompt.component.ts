@@ -18,6 +18,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { StatType } from 'src/assets/stat-type';
+import { WritePhase } from 'src/assets/phases/write-phase';
 
 @Component({
   selector: 'write-prompt',
@@ -52,6 +53,9 @@ export class WritePromptComponent implements OnInit {
   numberOfPromptsWritten: number = 0;
   numberOfPromptsToWrite: number = 0;
   favorStat: StatType = new StatType();
+
+  phase: WritePhase = WritePhase.PROMPT;
+  protected WritePhase = WritePhase;
 
   constructor(private http: HttpClient) {
   }
@@ -118,12 +122,33 @@ export class WritePromptComponent implements OnInit {
     }
   }
 
+  submitWriting() {
+    const isMainPlotStory = this.playerStories[this.currentStoryIndex].isMainPlotStory;
 
-  submitPrompt() {
-    this.promptSubmitted = true;
+    switch (this.phase) {
+      case WritePhase.PROMPT:
+        if (isMainPlotStory) {
+          this.phase = WritePhase.DONE;
+          this.submitStory();
+        } else {
+          this.phase = WritePhase.OPTIONS;
+        }
+        break;
+      case WritePhase.OPTIONS:
+        if (isMainPlotStory) {
+          this.phase = WritePhase.PROMPT;
+        } else {
+          this.phase = WritePhase.DONE;
+          this.submitStory();
+        }
+        break;
+      default:
+        this.phase = WritePhase.DONE;
+        break;
+    }
   }
 
-  submitOptions() {
+  submitStory() {
     const requestBody = {
       gameCode: this.gameCode,
       prompt: this.prompt.value,

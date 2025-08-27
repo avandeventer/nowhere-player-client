@@ -4,30 +4,27 @@
 @else {
     <mat-chip-set><mat-chip class="progress">{{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written</mat-chip></mat-chip-set><br>
 
-    @if (!promptSubmitted) {
+    <prequel-story-display
+        [gameCode]="gameCode" 
+        [story]="playerStories[currentStoryIndex]"
+        [isAdventureMode]="false">
+    </prequel-story-display>
+
+    @if(playerStories[currentStoryIndex].isMainPlotStory) {
+        <div>This is a main plot story! It should involve an encounter with {{favorStat.favorEntity}}.</div><br>
+    }
+    
+    @if (phase === WritePhase.PROMPT) {
         <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.label}}</div><br>
-        @if(isAFavorStory(playerStories[currentStoryIndex])) {
-            <div>This is a main plot story! It should involve an encounter with {{favorStat.favorEntity}}.</div><br>
-        }
-        <prequel-story-display
-            [gameCode]="gameCode" 
-            [story]="playerStories[currentStoryIndex]"
-            [isAdventureMode]="false">
-        </prequel-story-display>
 
         <mat-form-field class="full-width">
             <mat-label>Prompt</mat-label>
             <textarea [formControl]="prompt" matInput placeholder="Ex. You see a small child begging for scraps at the {{playerStories[currentStoryIndex].location.label}}"></textarea>
         </mat-form-field>
-
-        <button mat-flat-button (click)="submitPrompt()">Submit</button>
     }
-    @else {
+
+    @if (phase === WritePhase.OPTIONS) {
         <mat-card class="story">{{prompt.value}}</mat-card><br>
-        
-        @if(isAFavorStory(playerStories[currentStoryIndex])) {
-            <div>This is a main plot story! It should involve an encounter with {{favorStat.favorEntity}}.</div><br>
-        }
 
         <div>
             Now give two options for how to manage the prompt. These are just options! Someone else will write the outcomes!
@@ -62,7 +59,6 @@
                 <input matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo">
             </mat-form-field>
         </section>
-
-        <button mat-flat-button (click)="submitOptions()">Submit</button>
     }
+    <button mat-flat-button (click)="submitWriting()">Submit</button>
 }
