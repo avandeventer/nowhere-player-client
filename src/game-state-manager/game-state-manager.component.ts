@@ -73,18 +73,18 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   playerIsDone() {
-    const url = `${environment.nowhereBackendUrl}${HttpConstants.ACTIVE_GAME_STATE_SESSION_PATH}?gameCode=${this.gameCode}&authorId=${this.player.authorId}&isDone=${true}`;
+    const url = `${environment.nowhereBackendUrl}${HttpConstants.ACTIVE_GAME_STATE_SESSION_PATH}?gameCode=${this.gameCode}&gamePhase=${this.gameState.toString()}&authorId=${this.player.authorId}&isDone=${true}`;
 
-    console.log("Player is done ", this.gameState);
+    console.log("Player is done for phase:", this.gameState.toString());
 
     this.http
       .put(url, {})
       .subscribe({
         next: (response) => {
-          console.log('Player done triggered!', response);
+          console.log('Player done status updated successfully:', response);
         },
         error: (error) => {
-          console.error('Error updating player done status', error);
+          console.error('Error updating player done status:', error);
         },
       });
   }
