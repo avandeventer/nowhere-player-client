@@ -10,7 +10,7 @@
         [isAdventureMode]="false">
     </prequel-story-display>
 
-    @if(playerStories[currentStoryIndex].isMainPlotStory) {
+    @if(playerStories[currentStoryIndex].mainPlotStory) {
         <div>This is a main plot story! It should involve an encounter with {{favorStat.favorEntity}}.</div><br>
     }
     
