@@ -123,7 +123,7 @@ export class WritePromptComponent implements OnInit {
   }
 
   submitWriting() {
-    const isMainPlotStory = this.playerStories[this.currentStoryIndex].isMainPlotStory;
+    const isMainPlotStory = this.playerStories[this.currentStoryIndex].mainPlotStory;
 
     switch (this.phase) {
       case WritePhase.PROMPT:
