@@ -3,7 +3,6 @@
 } 
 @else {    
     @if (phase === WritePhase.PROMPT) {
-        <mat-chip-set><mat-chip class="progress">{{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written</mat-chip></mat-chip-set><br>
         @if(playerStories[currentStoryIndex].mainPlotStory) {
             <div class="instructions">Now describe an an encounter with {{favorStat.favorEntity}} at the {{playerStories[currentStoryIndex].location.label}} where you must choose to help or harm them!</div><br>
         } @else {
@@ -15,6 +14,8 @@
             [story]="playerStories[currentStoryIndex]"
             [isAdventureMode]="false">
         </prequel-story-display>
+
+        <mat-chip-set><mat-chip class="progress">{{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written</mat-chip></mat-chip-set><br>
         
         <mat-form-field class="full-width">
             <mat-label>Prompt</mat-label>
@@ -26,18 +27,16 @@
     @if (phase === WritePhase.OPTION_ONE || phase === WritePhase.OPTION_TWO) {
         @if(playerStories[currentStoryIndex].mainPlotStory) {
             <div class="instructions">
-                This is a main plot story! Start by describing some things about {{favorStat.favorEntity}}. These should be short so don't think about them too hard!
+                This is a main plot story! Start by describing some things about {{favorStat.favorEntity}}.
             </div>
         } @else {
             <div class="instructions">
-                Now list something you could try to resolve this prompt. These are just options! Someone else will write the outcomes! 
-                These should be short so don't worry about thinking about them too hard!
+                Now list something you could try to resolve this prompt. These are just options! Someone else will write the outcomes.
             </div>
         }
         <br>
 
         @if(phase === WritePhase.OPTION_ONE) {
-            <mat-chip-set><mat-chip class="progress">0/2 Options Written</mat-chip></mat-chip-set><br>
             <section>
                 <div class="instructions">
                     <div class="writing-stats">
@@ -52,6 +51,7 @@
                         </mat-chip></mat-chip-set>
                     </div>
                 </div><br>
+                <mat-chip-set><mat-chip class="progress">0/2 Options Written</mat-chip></mat-chip-set><br>
 
                 <mat-form-field class="full-width">
                     <mat-label>{{ playerStories[currentStoryIndex].mainPlotStory ? "I could..." : "They could..." }}</mat-label>
@@ -61,7 +61,6 @@
             </section>
         }
         @if(phase === WritePhase.OPTION_TWO) {
-            <mat-chip-set><mat-chip class="progress">1/2 Options Written</mat-chip></mat-chip-set><br>
             <section>
                 <div class="instructions">
                     <div class="writing-stats">
@@ -75,6 +74,7 @@
                         </mat-chip></mat-chip-set>
                     </div>
                 </div><br>
+                <mat-chip-set><mat-chip class="progress">1/2 Options Written</mat-chip></mat-chip-set><br>
                 <mat-form-field class="full-width">
                     <mat-label>{{ playerStories[currentStoryIndex].mainPlotStory ? "I could..." : "They could..." }}</mat-label>
                     <input matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo" maxlength="30">
