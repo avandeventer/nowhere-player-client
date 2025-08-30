@@ -1,64 +1,118 @@
 @if(currentStoryIndex >= playerStories.length) {
     <p>All stories have been submitted!</p>
 } 
-@else {
-    <mat-chip-set><mat-chip class="progress">{{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written</mat-chip></mat-chip-set><br>
-
-    <prequel-story-display
-        [gameCode]="gameCode" 
-        [story]="playerStories[currentStoryIndex]"
-        [isAdventureMode]="false">
-    </prequel-story-display>
-
-    @if(playerStories[currentStoryIndex].mainPlotStory) {
-        <div>This is a main plot story! It should involve an encounter with {{favorStat.favorEntity}}.</div><br>
-    }
-    
+@else {    
     @if (phase === WritePhase.PROMPT) {
-        <div>Create a one to two sentence prompt for a story in the {{playerStories[currentStoryIndex].location.label}}</div><br>
+        <mat-chip-set><mat-chip class="progress">{{numberOfPromptsWritten}} / {{numberOfPromptsToWrite}} Prompts Written</mat-chip></mat-chip-set><br>
+        @if(playerStories[currentStoryIndex].mainPlotStory) {
+            <div class="instructions">Now describe an an encounter with {{favorStat.favorEntity}} at the {{playerStories[currentStoryIndex].location.label}} where you must choose to help or harm them!</div><br>
+        } @else {
+            <div class="instructions">Create a one to two sentence description of an encounter in the {{playerStories[currentStoryIndex].location.label}}. Someone else will get encounter on their turn!</div><br>
+        }
 
+        <prequel-story-display
+            [gameCode]="gameCode" 
+            [story]="playerStories[currentStoryIndex]"
+            [isAdventureMode]="false">
+        </prequel-story-display>
+        
         <mat-form-field class="full-width">
             <mat-label>Prompt</mat-label>
-            <textarea [formControl]="prompt" matInput placeholder="Ex. You see a small child begging for scraps at the {{playerStories[currentStoryIndex].location.label}}"></textarea>
+            <textarea [formControl]="prompt" matInput placeholder="Ex. You see a small child begging for scraps at the {{playerStories[currentStoryIndex].location.label}}" maxlength="300"></textarea>
+            <mat-hint align="end">{{prompt.value?.length || 0}}/300</mat-hint>
         </mat-form-field>
     }
 
-    @if (phase === WritePhase.OPTIONS) {
-        <mat-card class="story">{{prompt.value}}</mat-card><br>
+    @if (phase === WritePhase.OPTION_ONE || phase === WritePhase.OPTION_TWO) {
+        @if(playerStories[currentStoryIndex].mainPlotStory) {
+            <div class="instructions">
+                This is a main plot story! Start by describing some things about {{favorStat.favorEntity}}. These should be short so don't think about them too hard!
+            </div>
+        } @else {
+            <div class="instructions">
+                Now list something you could try to resolve this prompt. These are just options! Someone else will write the outcomes! 
+                These should be short so don't worry about thinking about them too hard!
+            </div>
+        }
+        <br>
 
-        <div>
-            Now give two options for how to manage the prompt. These are just options! Someone else will write the outcomes!
-            To succeed in this story the player will need to have a lot of either:
-        </div>
-        <br>
-        <section>
-            <mat-chip-set><mat-chip class="stat">
-            {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.label}}
-            @if (playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorType) {
-                with {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorEntity}}
-            }
-            [{{statDCDifficulty(0)}}]
-            </mat-chip></mat-chip-set>
-            <mat-form-field class="full-width">
-                <mat-label>Option One</mat-label>
-                <input matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne">
-            </mat-form-field>
-        </section>
-        or
-        <br>
-        <section>
-            <mat-chip-set><mat-chip class="stat">
-                {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}} 
-                @if (playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorType) {
-                    with {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorEntity}}
-                }
-                [{{statDCDifficulty(1)}}]
-            </mat-chip></mat-chip-set>
-            <mat-form-field class="full-width">
-                <mat-label>Option Two</mat-label>
-                <input matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo">
-            </mat-form-field>
-        </section>
+        @if(phase === WritePhase.OPTION_ONE) {
+            <mat-chip-set><mat-chip class="progress">0/2 Options Written</mat-chip></mat-chip-set><br>
+            <section>
+                <div class="instructions">
+                    <div class="writing-stats">
+                        <span>{{getInstructionPhraseString(0)}}</span> 
+                            
+                        <mat-chip-set><mat-chip class="stat">
+                            {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.label}}
+                            @if (playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorType) {
+                                with {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorEntity}}
+                            }
+                            [{{statDCDifficulty(0)}} difficulty]
+                        </mat-chip></mat-chip-set>
+                    </div>
+                </div><br>
+
+                <mat-form-field class="full-width">
+                    <mat-label>{{ playerStories[currentStoryIndex].mainPlotStory ? "I could..." : "They could..." }}</mat-label>
+                    <input matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne" maxlength="30">
+                    <mat-hint align="end">{{optionOne.value?.length || 0}}/30</mat-hint>
+                </mat-form-field>
+            </section>
+        }
+        @if(phase === WritePhase.OPTION_TWO) {
+            <mat-chip-set><mat-chip class="progress">1/2 Options Written</mat-chip></mat-chip-set><br>
+            <section>
+                <div class="instructions">
+                    <div class="writing-stats">
+                        <span>{{getInstructionPhraseString(1)}}</span>
+                        <mat-chip-set><mat-chip class="stat">
+                            {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}} 
+                            @if (playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorType) {
+                                with {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorEntity}}
+                            }
+                            [{{statDCDifficulty(1)}} difficulty]
+                        </mat-chip></mat-chip-set>
+                    </div>
+                </div><br>
+                <mat-form-field class="full-width">
+                    <mat-label>{{ playerStories[currentStoryIndex].mainPlotStory ? "I could..." : "They could..." }}</mat-label>
+                    <input matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo" maxlength="30">
+                    <mat-hint align="end">{{optionTwo.value?.length || 0}}/30</mat-hint>
+                </mat-form-field>
+            </section>
+        }
     }
-    <button mat-flat-button (click)="submitWriting()">Submit</button>
+
+    @if (prompt.value || optionOne.value || optionTwo.value) {
+        <mat-divider></mat-divider><br>
+        <div>Your Story:</div><br>
+        @if (prompt.value) {
+            <mat-card class="story">{{prompt.value}}</mat-card><br>
+        }
+
+        @if (optionOne.value || optionTwo.value) {
+            <div class="writing-button-container">
+                <div class="writing-buttons">
+                    @if (optionOne.value) {
+                        <button mat-flat-button disabled>{{optionOne.value}}</button>
+                    }
+                    @if (optionTwo.value) {
+                        <button mat-flat-button disabled>{{optionTwo.value}}</button>
+                    }
+                </div><br>
+            </div>
+            <br>
+        }
+        <mat-divider></mat-divider><br>
+    }
+
+    <div class="writing-button-container">
+        <div class="writing-buttons">
+            @if (writingHasProgressed) {
+                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+            }
+            <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">{{aboutToSubmit ? "Submit" : "Next >"}}</button>
+        </div>
+    </div>
 }

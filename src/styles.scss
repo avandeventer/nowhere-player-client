@@ -58,8 +58,22 @@ mat-chip.stat {
 }
 
 mat-chip.progress {
-  float: right !important;
+  margin-left: auto !important; /* Push to the right */
   background-color: #85b0e2 !important;
+}
+
+
+.writing-button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.writing-stats,
+.writing-buttons {
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  margin-left: auto !important; /* Push to the right */
 }
 
 .loading-overlay {
@@ -71,4 +85,25 @@ mat-chip.progress {
   background: rgba(255, 255, 255, 0.8); // optional, light overlay
   padding: 10px;
   border-radius: 8px;
+}
+
+.instructions {
+  font-size: clamp(0.9rem, 2.0vw, 2.0rem) !important;
+  padding: 16px !important;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  line-height: 1.6;
+  background-color: var(--mat-stepper-header-done-state-icon-foreground-color)
+}
+
+/* Make textareas taller and more user-friendly */
+textarea.mat-mdc-input-element {
+  min-height: 120px !important;
+  resize: vertical !important;
+}
+
+/* Ensure the textarea container also respects the height */
+.mat-mdc-form-field textarea {
+  min-height: 120px !important;
+  resize: vertical !important;
 }

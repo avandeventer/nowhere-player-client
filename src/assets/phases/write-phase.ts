@@ -1,5 +1,6 @@
 export enum WritePhase {
     PROMPT = 'PROMPT',
-    OPTIONS = 'OPTIONS',
+    OPTION_ONE = 'OPTION_ONE',
+    OPTION_TWO = 'OPTION_TWO',
     DONE = 'DONE'
 }

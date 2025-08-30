@@ -5,7 +5,7 @@ import { Player } from 'src/assets/player';
 import { Location } from 'src/assets/location';
 import { ResponseObject } from 'src/assets/response-object';
 import { Story } from 'src/assets/story';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { firstValueFrom } from 'rxjs';
@@ -46,13 +46,15 @@ export class WritePromptComponent implements OnInit {
   currentStoryIndex: number = 0;
   outcomeDisplay: string[] = [];
   promptSubmitted: boolean = false;
+  writingHasProgressed: boolean = false;
 
-  prompt = new FormControl();
-  optionOne = new FormControl();
-  optionTwo = new FormControl();
+  prompt = new FormControl('', { validators: [Validators.maxLength(300)] });
+  optionOne = new FormControl('', { validators: [Validators.maxLength(30)] });
+  optionTwo = new FormControl('', { validators: [Validators.maxLength(30)] });
   numberOfPromptsWritten: number = 0;
   numberOfPromptsToWrite: number = 0;
   favorStat: StatType = new StatType();
+  aboutToSubmit: boolean = false;
 
   phase: WritePhase = WritePhase.PROMPT;
   protected WritePhase = WritePhase;
@@ -61,7 +63,8 @@ export class WritePromptComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getPlayerStories(this.player.authorId);
+    this.getAuthorStories(this.player.authorId);
+    this.setFavorStat(this.player);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -80,7 +83,7 @@ export class WritePromptComponent implements OnInit {
     }
   }
 
-  getPlayerStories(authorId: string) {
+  getAuthorStories(authorId: string) {
     const params = {
       gameCode: this.gameCode,
       authorId: authorId,
@@ -95,6 +98,9 @@ export class WritePromptComponent implements OnInit {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
           this.numberOfPromptsToWrite = this.playerStories.length;
+          if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
+            this.phase = WritePhase.OPTION_ONE;
+          }
           console.log('Player stories', this.playerStories);
         },
         error: (error) => {
@@ -131,12 +137,22 @@ export class WritePromptComponent implements OnInit {
           this.phase = WritePhase.DONE;
           this.submitStory();
         } else {
-          this.phase = WritePhase.OPTIONS;
+          this.phase = WritePhase.OPTION_ONE;
+          this.writingHasProgressed = true;
         }
         break;
-      case WritePhase.OPTIONS:
+      case WritePhase.OPTION_ONE:
+        this.phase = WritePhase.OPTION_TWO;
+        if (isMainPlotStory) {
+          this.writingHasProgressed = true;
+        } else {
+          this.aboutToSubmit = true;
+        }
+        break;
+      case WritePhase.OPTION_TWO:
         if (isMainPlotStory) {
           this.phase = WritePhase.PROMPT;
+          this.aboutToSubmit = true;
         } else {
           this.phase = WritePhase.DONE;
           this.submitStory();
@@ -145,6 +161,46 @@ export class WritePromptComponent implements OnInit {
       default:
         this.phase = WritePhase.DONE;
         break;
+    }
+  }
+
+  goBack() {
+    const isMainPlotStory = this.playerStories[this.currentStoryIndex].mainPlotStory;
+    this.aboutToSubmit = false;
+
+    switch (this.phase) {
+      case WritePhase.PROMPT:
+        if (isMainPlotStory) {
+          this.phase = WritePhase.OPTION_TWO;
+        }
+        break;
+      case WritePhase.OPTION_TWO:
+        this.phase = WritePhase.OPTION_ONE;
+        if (isMainPlotStory) {
+          this.writingHasProgressed = false;
+        }
+        break;
+      case WritePhase.OPTION_ONE:
+        if (!isMainPlotStory) {
+          this.phase = WritePhase.PROMPT;
+          this.writingHasProgressed = false;
+        }
+        break;
+      default:
+        this.phase = WritePhase.PROMPT;
+        break;
+    }
+  }
+
+  getInstructionPhraseString(optionIndex: number) {
+    if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
+      let moralChoice: string = "strengthen";
+      if (optionIndex === 1) {
+        moralChoice = "weaken";
+      }
+      return `Invent something you would do to try to ${moralChoice} ${this.favorStat.favorEntity} using`;
+  } else {
+      return `Invent something they could do to try to resolve the prompt you've written using`;
     }
   }
 
@@ -191,6 +247,13 @@ export class WritePromptComponent implements OnInit {
     if (this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(ComponentType.WRITE_PROMPTS);
     }
+
+    if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
+      this.phase = WritePhase.OPTION_ONE;
+    } else {
+      this.phase = WritePhase.PROMPT;
+    }
+
     console.log(this.currentStoryIndex);
   }
 
@@ -209,18 +272,25 @@ export class WritePromptComponent implements OnInit {
     }
   }
 
-  public isAFavorStory(currentStory: Story): boolean {
-
-    let favorStat: StatType | undefined = currentStory.options
-        .flatMap(option => [...(option.successResults || []), ...(option.failureResults || [])])
-        .map(outcomeStat => outcomeStat.playerStat.statType)
-        .find(statType => statType.favorType);
+  public setFavorStat(player: Player) {
+    let favorStat: StatType | undefined = player
+          .playerStats.find(stat => stat.statType.favorType)?.statType;
 
     if (favorStat !== undefined) {
       this.favorStat = favorStat;
-      return true;
     }
+  }
 
-    return false;
+  canSubmit(): boolean {
+    switch (this.phase) {
+      case WritePhase.PROMPT:
+        return !!(this.prompt.value && this.prompt.value.trim().length > 0);
+      case WritePhase.OPTION_ONE:
+        return !!(this.optionOne.value && this.optionOne.value.trim().length > 0);
+      case WritePhase.OPTION_TWO:
+        return !!(this.optionTwo.value && this.optionTwo.value.trim().length > 0);
+      default:
+        return false;
+    }
   }
 }
