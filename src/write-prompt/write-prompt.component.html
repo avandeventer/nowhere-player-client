@@ -7,7 +7,7 @@
         @if(playerStories[currentStoryIndex].mainPlotStory) {
             <div class="instructions">Now describe an an encounter with {{favorStat.favorEntity}} at the {{playerStories[currentStoryIndex].location.label}} where you must choose to help or harm them!</div><br>
         } @else {
-            <div class="instructions">Create a one to two sentence description of an encounter in the {{playerStories[currentStoryIndex].location.label}}. Someone else will get encounter on their turn!</div><br>
+            <div class="instructions">Create a one to two sentence description of an encounter in the {{playerStories[currentStoryIndex].location.label}}. Someone else will get this encounter on their turn!</div><br>
         }
 
         <prequel-story-display
