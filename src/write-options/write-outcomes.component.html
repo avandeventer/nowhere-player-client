@@ -6,13 +6,11 @@
     <div class="instructions-question">
         @if (playerStories[currentStoryIndex].mainPlotStory) {
             <div class="writing-stats">
-                What would happen if you encountered {{favorStat.favorEntity}}, tried to "{{playerOption.optionText}}" 
-                , and {{this.outcomeOneSubmitted ? "failed" : "managed"}} to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
+                What would happen if you encountered {{favorStat.favorEntity}}, tried to "{{playerOption.optionText}}", and {{this.outcomeOneSubmitted ? "failed" : "managed"}} to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
             </div>
         } @else {
             <div class="writing-stats">
-                What would happen if you encountered the story below, tried to "{{playerOption.optionText}}"
-                , and {{this.outcomeOneSubmitted ? "failed" : "succeeded"}}"?
+                What would happen if you encountered the story below, tried to "{{playerOption.optionText}}", and {{this.outcomeOneSubmitted ? "failed" : "succeeded"}}?
             </div>
         }
     </div>
@@ -25,8 +23,32 @@
 
     <mat-chip-set><mat-chip class="progress">{{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Completed</mat-chip></mat-chip-set><br>
 
-    <br><mat-divider></mat-divider><br>
+    <div>
+        @if (!outcomeOneSubmitted) {
+            <section>
+                <mat-form-field class="full-width">
+                    <mat-label>Option Success</mat-label>
+                    <textarea matInput
+                        placeholder="Ex (if you were to gain charisma). You leap over the chasm to the sound of applause! Your heroism makes you very popular!"
+                        type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150"></textarea>
+                    <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </section>
+        } @else {
 
+            <section>
+                <mat-form-field class="full-width">
+                    <mat-label>Option Failure</mat-label>
+                    <textarea matInput
+                        placeholder="Ex (if you were to lose dexterity). You try to jump the chasm, but you fail and fall a long distance and crack your butt bones. You can't run as fast anymore."
+                        type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150"></textarea>
+                    <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </section>
+        }
+    </div>
+
+    <br><mat-divider></mat-divider><br>
     @if (!playerStories[currentStoryIndex].mainPlotStory) {
         <div>Story Preview:</div><br>
         <mat-card class="story">{{playerStories[this.currentStoryIndex].prompt}}</mat-card>
@@ -73,33 +95,6 @@
     }
     <br><mat-divider></mat-divider><br>
 
-    <div>
-        <br>
-        @if (!outcomeOneSubmitted) {
-            <section>
-                <mat-form-field class="full-width">
-                    <mat-label>Option Success</mat-label>
-                    <textarea matInput
-                        placeholder="Ex (if you were to gain charisma). You leap over the chasm to the sound of applause! Your heroism makes you very popular!"
-                        type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150"></textarea>
-                    <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
-                </mat-form-field>
-            </section>
-        } @else {
-
-            <section>
-                <mat-form-field class="full-width">
-                    <mat-label>Option Failure</mat-label>
-                    <textarea matInput
-                        placeholder="Ex (if you were to lose dexterity). You try to jump the chasm, but you fail and fall a long distance and crack your butt bones. You can't run as fast anymore."
-                        type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150"></textarea>
-                    <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
-                </mat-form-field>
-            </section>
-        }
-        <br>
-    </div>
-    <br>
     <div class="writing-button-container">
         <div class="writing-buttons">
             <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
