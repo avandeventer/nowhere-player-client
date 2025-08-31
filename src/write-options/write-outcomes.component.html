@@ -5,9 +5,15 @@
     <div class="instructions">Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}} so you just write the possible outcomes!</div><br>
     <div class="instructions-question">
         @if (playerStories[currentStoryIndex].mainPlotStory) {
-            What will happen when the player {{this.outcomeOneSubmitted ? "manages" : "fails"}} to {{ sideAgainstEntity ? "weaken" : "impress" }} {{favorStat.favorEntity}} when they "{{playerOption.optionText}}"?
+            <div class="writing-stats">
+                What would happen if you encountered {{favorStat.favorEntity}}, tried to "{{playerOption.optionText}}" 
+                , and {{this.outcomeOneSubmitted ? "failed" : "managed"}} to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
+            </div>
         } @else {
-            What will happen when the player encounters the story below and {{this.outcomeOneSubmitted ? "succeeds" : "fails"}} at "{{playerOption.optionText}}"?
+            <div class="writing-stats">
+                What would happen if you encountered the story below, tried to "{{playerOption.optionText}}"
+                , and {{this.outcomeOneSubmitted ? "failed" : "succeeded"}}"?
+            </div>
         }
     </div>
 
@@ -21,17 +27,16 @@
 
     <br><mat-divider></mat-divider><br>
 
-    @if (playerStories[currentStoryIndex].mainPlotStory) {
+    @if (!playerStories[currentStoryIndex].mainPlotStory) {
         <div>Story Preview:</div><br>
         <mat-card class="story">{{playerStories[this.currentStoryIndex].prompt}}</mat-card>
         <br>
     }
-    @else {
-        <div>If the player selected:</div><br>
-    }
 
-    <div>This will happen:</div>
+    <div>If the player selected this and {{this.outcomeOneSubmitted ? "failed" : "succeeded"}}:</div><br>
     <button mat-flat-button disabled>{{playerOption.optionText}}</button><br><br>
+
+    <div>This would happen:</div><br>
 
     @if (!outcomeOneSubmitted) {
         <mat-card class="story">    
@@ -58,7 +63,7 @@
 
             @for (outcome of playerOption.failureResults; track outcome) {
                 <div>
-                    You {{outcome.playerStat.value  < 0 ? "gain +" : "lose "}}{{outcome.playerStat.value}} {{outcome.playerStat.statType.label}}
+                    You {{outcome.playerStat.value  < 0 ? "gain +" : "lose -"}}{{outcome.playerStat.value}} {{outcome.playerStat.statType.label}}
                     @if (outcome.playerStat.statType.favorType) {
                         with {{outcome.playerStat.statType.favorEntity}}
                     }
