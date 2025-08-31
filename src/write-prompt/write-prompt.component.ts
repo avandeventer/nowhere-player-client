@@ -49,8 +49,8 @@ export class WritePromptComponent implements OnInit {
   writingHasProgressed: boolean = false;
 
   prompt = new FormControl('', { validators: [Validators.maxLength(300)] });
-  optionOne = new FormControl('', { validators: [Validators.maxLength(30)] });
-  optionTwo = new FormControl('', { validators: [Validators.maxLength(30)] });
+  optionOne = new FormControl('', { validators: [Validators.maxLength(40)] });
+  optionTwo = new FormControl('', { validators: [Validators.maxLength(40)] });
   numberOfPromptsWritten: number = 0;
   numberOfPromptsToWrite: number = 0;
   favorStat: StatType = new StatType();

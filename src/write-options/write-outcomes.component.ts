@@ -16,7 +16,6 @@ import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
 import {MatCardModule} from '@angular/material/card';
 import { MatChipSet, MatChip } from '@angular/material/chips'
-import { OutcomeStat } from 'src/assets/outcome-stat';
 import { StatType } from 'src/assets/stat-type';
 
 @Component({
