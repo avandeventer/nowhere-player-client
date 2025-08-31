@@ -96,10 +96,10 @@ export class WriteOutcomesComponent implements OnInit {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
           this.numberOfOutcomesToWrite = this.playerStories.length * 2;
-          const currentOption = this.playerStories[this.currentStoryIndex].options[0];
 
           if(this.playerStories[this.currentStoryIndex].mainPlotStory) {
-            const allResults = [...currentOption.successResults, ...currentOption.failureResults];
+            const weakenOption = this.playerStories[this.currentStoryIndex].options[1];
+            const allResults = [...weakenOption.successResults, ...weakenOption.failureResults];
             const favorResults = allResults.filter(result => result.playerStat.statType.favorType);
             
             if (favorResults.some(result => result.playerStat.value < 0)) {
