@@ -198,9 +198,9 @@ export class WritePromptComponent implements OnInit {
       if (optionIndex === 1) {
         moralChoice = "weaken";
       }
-      return `Invent something you would do to try to ${moralChoice} ${this.favorStat.favorEntity} using`;
+      return `What is something you would do to try to ${moralChoice} ${this.favorStat.favorEntity} using`;
   } else {
-      return `Invent something they could do to try to resolve the prompt you've written using`;
+      return `What is something you could do to try to resolve the prompt you've written using`;
     }
   }
 

@@ -2,73 +2,103 @@
     <p>All stories have been submitted!</p>
 }
 @else {
-    <mat-chip-set><mat-chip class="progress">{{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Written</mat-chip></mat-chip-set><br>
-    <div>Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}} so you just write the possible outcomes!</div><br>
-    
-    <prequel-story-display [gameCode]="gameCode" [story]="playerStories[currentStoryIndex]" [isAdventureMode]="false">
+    <div class="instructions">Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}} so you just write the possible outcomes!</div><br>
+    <div class="instructions">
+        @if (playerStories[currentStoryIndex].mainPlotStory) {
+            What will happen when the player {{this.outcomeOneSubmitted ? "manages" : "fails"}} to {{ sideAgainstEntity ? "weaken" : "impress" }} {{favorStat.favorEntity}} when they "{{playerOption.optionText}}"?
+        } @else {
+            What will happen when the player encounters the story below and {{this.outcomeOneSubmitted ? "succeeds" : "fails"}} at "{{playerOption.optionText}}"?
+        }
+    </div>
+
+    <br><prequel-story-display 
+        [gameCode]="gameCode" 
+        [story]="playerStories[currentStoryIndex]" 
+        [isAdventureMode]="false">
     </prequel-story-display>
 
-    <mat-card class="story">{{playerStories[this.currentStoryIndex].prompt}}</mat-card>
+    <mat-chip-set><mat-chip class="progress">{{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Completed</mat-chip></mat-chip-set><br>
+
     <br><mat-divider></mat-divider><br>
-    <div>
-        The player who gets this story will have two choices with a success and failure outcome each. Type out what happens
-        when they succeed or fail for the below option!
-    </div>
-    <br>
-    <div>
-        <mat-card class="story">{{playerOption.optionText}}</mat-card>
-        <mat-chip-set><mat-chip class="stat">
-            {{playerOption.playerStatDCs[0].statType.label}} [{{statDCDifficulty()}}]<br>
-        </mat-chip></mat-chip-set>
-        <br>
 
-        <section>
-            If they succeed, they gain:
-            <mat-chip-set>
-            @for (outcome of playerOption.successResults; track outcome) {
-                <mat-chip class="stat">        
-                    <div>{{outcome.playerStat.statType.label}}
-                        @if (outcome.playerStat.statType.favorType) {
-                            with {{outcome.playerStat.statType.favorEntity}}
-                        }
-                    </div>
-                </mat-chip>
+    @if (playerStories[currentStoryIndex].mainPlotStory) {
+        <div>Story Preview:</div><br>
+        <mat-card class="story">{{playerStories[this.currentStoryIndex].prompt}}</mat-card>
+        <br>
+    }
+    @else {
+        <div>If the player selected:</div><br>
+    }
+
+    <div>This will happen:</div>
+    <button mat-flat-button disabled>{{playerOption.optionText}}</button><br><br>
+
+    @if (!outcomeOneSubmitted) {
+        <mat-card class="story">    
+            @if (optionSuccess.value) {
+                {{optionSuccess.value}}
             }
-            </mat-chip-set>
 
-            <mat-form-field class="full-width">
-                <mat-label>Option Success</mat-label>
-                <textarea matInput
-                    placeholder="Ex (if you were to gain charisma). You leap over the chasm to the sound of applause! Your heroism makes you very popular!"
-                    type="text" id="optionSuccess" [formControl]="optionSuccess" placeholder="Option Success"></textarea>
-            </mat-form-field>
-        </section>
+            @for (outcome of playerOption.successResults; track outcome) {
+                <div>
+                    You {{outcome.playerStat.value  > 0 ? "gain +" : "lose "}}{{outcome.playerStat.value}} {{outcome.playerStat.statType.label}}
+                    @if (outcome.playerStat.statType.favorType) {
+                        with {{outcome.playerStat.statType.favorEntity}}
+                    }
+                </div>
+            }
+        </mat-card>
+    }
 
-        <mat-divider></mat-divider><br>
+    @else {
+        <mat-card class="story">
+            @if (optionFailure.value) {
+                {{optionFailure.value}}
+            }
 
-        <section>
-            If they fail, they lose:
-            <mat-chip-set>
-                @for (outcome of playerOption.failureResults; track outcome) {
-                    <mat-chip class="stat">        
-                        <div>{{outcome.playerStat.statType.label}}
-                            @if (outcome.playerStat.statType.favorType) {
-                                with {{outcome.playerStat.statType.favorEntity}}
-                            }
-                        </div>
-                    </mat-chip>
-                }
-            </mat-chip-set>
-            <mat-form-field class="full-width">
-                <mat-label>Option Failure</mat-label>
-                <textarea matInput
-                    placeholder="Ex (if you were to lose dexterity). You try to jump the chasm, but you fail and fall a long distance and crack your butt bones. You can't run as fast anymore."
-                    type="text" id="optionFailure" [formControl]="optionFailure" placeholder="Option Failure"></textarea>
-            </mat-form-field>
-        </section>
+            @for (outcome of playerOption.failureResults; track outcome) {
+                <div>
+                    You {{outcome.playerStat.value  < 0 ? "gain +" : "lose "}}{{outcome.playerStat.value}} {{outcome.playerStat.statType.label}}
+                    @if (outcome.playerStat.statType.favorType) {
+                        with {{outcome.playerStat.statType.favorEntity}}
+                    }
+                </div>
+            }
+        </mat-card>
+    }
+    <br><mat-divider></mat-divider><br>
 
+    <div>
+        <br>
+        @if (!outcomeOneSubmitted) {
+            <section>
+                <mat-form-field class="full-width">
+                    <mat-label>Option Success</mat-label>
+                    <textarea matInput
+                        placeholder="Ex (if you were to gain charisma). You leap over the chasm to the sound of applause! Your heroism makes you very popular!"
+                        type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150"></textarea>
+                    <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </section>
+        } @else {
+
+            <section>
+                <mat-form-field class="full-width">
+                    <mat-label>Option Failure</mat-label>
+                    <textarea matInput
+                        placeholder="Ex (if you were to lose dexterity). You try to jump the chasm, but you fail and fall a long distance and crack your butt bones. You can't run as fast anymore."
+                        type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150"></textarea>
+                    <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </section>
+        }
         <br>
     </div>
     <br>
-    <button mat-flat-button (click)="submitOutcomes()">Submit</button>
+    <div class="writing-button-container">
+        <div class="writing-buttons">
+            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+            <button mat-flat-button (click)="submit()"  [disabled]="!canSubmit()">{{outcomeOneSubmitted ? "Submit" : "Next >"}}</button>
+        </div>
+    </div>
 }

@@ -5,7 +5,7 @@ import { Player } from 'src/assets/player';
 import { ResponseObject } from 'src/assets/response-object';
 import { Story } from 'src/assets/story';
 import { Option } from 'src/assets/option';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story-display.component';
 import { ComponentType } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +17,7 @@ import { HttpConstants } from 'src/assets/http-constants';
 import {MatCardModule} from '@angular/material/card';
 import { MatChipSet, MatChip } from '@angular/material/chips'
 import { OutcomeStat } from 'src/assets/outcome-stat';
+import { StatType } from 'src/assets/stat-type';
 
 @Component({
     selector: 'write-outcomes',
@@ -45,18 +46,22 @@ export class WriteOutcomesComponent implements OnInit {
   playerOption: Option = new Option();
   otherOption: Option = new Option();
 
-  optionSuccess = new FormControl('');
-  optionFailure = new FormControl('');
+  optionSuccess = new FormControl('', [Validators.maxLength(150)]);
+  optionFailure = new FormControl('', [Validators.maxLength(150)]);
   submitBothOutcomes: boolean = false;
+  outcomeOneSubmitted: boolean = false;
 
   numberOfOutcomesToWrite: number = 0;
   numberOfOutcomesWritten: number = 0;
+  favorStat: StatType = new StatType();
+  sideAgainstEntity: boolean = false;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.currentStoryIndex = 0;
     this.getPlayerStoryOptions(this.player.authorId);
+    this.setFavorStat(this.player);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -91,7 +96,18 @@ export class WriteOutcomesComponent implements OnInit {
         next: (response) => {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
-          this.numberOfOutcomesToWrite = this.playerStories.length;
+          this.numberOfOutcomesToWrite = this.playerStories.length * 2;
+          const currentOption = this.playerStories[this.currentStoryIndex].options[0];
+
+          if(this.playerStories[this.currentStoryIndex].mainPlotStory) {
+            const allResults = [...currentOption.successResults, ...currentOption.failureResults];
+            const favorResults = allResults.filter(result => result.playerStat.statType.favorType);
+            
+            if (favorResults.some(result => result.playerStat.value < 0)) {
+              this.sideAgainstEntity = true;
+            }
+          }
+
           this.setPlayerOption();
           console.log('Player stories', this.playerStories);
         },
@@ -126,6 +142,21 @@ export class WriteOutcomesComponent implements OnInit {
     };
   }
 
+  submit() {
+    if (!this.outcomeOneSubmitted) {
+      this.outcomeOneSubmitted = true;
+      this.numberOfOutcomesWritten++;
+    } else {
+      this.submitOutcomes();
+      this.outcomeOneSubmitted = false;
+    }
+  }
+
+  goBack() {
+    this.outcomeOneSubmitted = false;
+    this.numberOfOutcomesWritten--;
+  }
+
   submitOutcomes() {
       const requestBody = {
         gameCode: this.gameCode,
@@ -155,6 +186,14 @@ export class WriteOutcomesComponent implements OnInit {
             console.error('Error updating story', error);
           },
         });
+  }
+
+  public canSubmit() {
+    if (!this.outcomeOneSubmitted) {
+      return this.optionSuccess.value && this.optionSuccess.value.trim().length > 0;
+    } else {
+      return this.optionFailure.value && this.optionFailure.value.trim().length > 0;
+    }
   }
 
   public setNextStoryPrompt() {
@@ -188,6 +227,15 @@ export class WriteOutcomesComponent implements OnInit {
 
     else {
       return "EASY";
+    }
+  }
+
+  public setFavorStat(player: Player) {
+    let favorStat: StatType | undefined = player
+          .playerStats.find(stat => stat.statType.favorType)?.statType;
+
+    if (favorStat !== undefined) {
+      this.favorStat = favorStat;
     }
   }
 }

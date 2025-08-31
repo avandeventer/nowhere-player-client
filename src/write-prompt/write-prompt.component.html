@@ -4,7 +4,7 @@
 @else {    
     @if (phase === WritePhase.PROMPT) {
         @if(playerStories[currentStoryIndex].mainPlotStory) {
-            <div class="instructions">Now describe an an encounter with {{favorStat.favorEntity}} at the {{playerStories[currentStoryIndex].location.label}} where you must choose to help or harm them!</div><br>
+            <div class="instructions">Now describe an an encounter with {{favorStat.favorEntity}} at the {{playerStories[currentStoryIndex].location.label}} where you must choose to help or harm them! Someone else will get this encounter on their turn!</div><br>
         } @else {
             <div class="instructions">Create a one to two sentence description of an encounter in the {{playerStories[currentStoryIndex].location.label}}. Someone else will get this encounter on their turn!</div><br>
         }
@@ -54,7 +54,7 @@
                 <mat-chip-set><mat-chip class="progress">0/2 Options Written</mat-chip></mat-chip-set><br>
 
                 <mat-form-field class="full-width">
-                    <mat-label>{{ playerStories[currentStoryIndex].mainPlotStory ? "I could..." : "They could..." }}</mat-label>
+                    <mat-label>You could...</mat-label>
                     <input matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne" maxlength="30">
                     <mat-hint align="end">{{optionOne.value?.length || 0}}/30</mat-hint>
                 </mat-form-field>
@@ -76,7 +76,7 @@
                 </div><br>
                 <mat-chip-set><mat-chip class="progress">1/2 Options Written</mat-chip></mat-chip-set><br>
                 <mat-form-field class="full-width">
-                    <mat-label>{{ playerStories[currentStoryIndex].mainPlotStory ? "I could..." : "They could..." }}</mat-label>
+                    <mat-label>You could...</mat-label>
                     <input matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo" maxlength="30">
                     <mat-hint align="end">{{optionTwo.value?.length || 0}}/30</mat-hint>
                 </mat-form-field>
@@ -86,7 +86,7 @@
 
     @if (prompt.value || optionOne.value || optionTwo.value) {
         <mat-divider></mat-divider><br>
-        <div>Your Story:</div><br>
+        <div>Story Preview:</div><br>
         @if (prompt.value) {
             <mat-card class="story">{{prompt.value}}</mat-card><br>
         }

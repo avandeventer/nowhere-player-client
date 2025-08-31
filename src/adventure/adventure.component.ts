@@ -17,7 +17,6 @@ import { PrequelDisplayComponent } from 'src/prequel-story-display/prequel-story
 import { PlayerStat } from 'src/assets/player-stat';
 import { RepercussionOutput } from 'src/assets/repercussion-output';
 import { FormControl } from '@angular/forms';
-import { MatLabel } from '@angular/material/form-field';
 import { RepercussionsComponent } from 'src/repercussions/repercussions.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -27,8 +26,7 @@ import { MatDialog } from '@angular/material/dialog';
     imports: [
       MatButtonModule, 
       MatCardModule, 
-      PrequelDisplayComponent, 
-      MatLabel
+      PrequelDisplayComponent
   ],
   standalone: true
 })
@@ -264,7 +262,7 @@ export class AdventureComponent implements OnInit {
       if(playerSucceeded) {
         this.outcomeDisplay.push(this.selectedOption.successText);
         this.selectedOption.successResults.forEach(outcome => {
-            const statResult: String = `You gain ${outcome.playerStat.value} ${outcome.playerStat.statType.label}`;
+            const statResult: String = `You ${outcome.playerStat.value  > 0 ? "gain +" : "lose "}${outcome.playerStat.value} ${outcome.playerStat.statType.label}`;
             this.outcomeDisplay.push(statResult);
 
             const impactedStatId = outcome.playerStat.statType.id;
@@ -280,7 +278,7 @@ export class AdventureComponent implements OnInit {
       } else {
         this.outcomeDisplay.push(this.selectedOption.failureText);
         this.selectedOption.failureResults.forEach(outcome => {
-          const statResult: String = `You lose ${outcome.playerStat.value} ${outcome.playerStat.statType.label}`;
+          const statResult: String = `You ${outcome.playerStat.value  < 0 ? "gain +" + outcome.playerStat.value*-1 : "lose -" + outcome.playerStat.value} ${outcome.playerStat.statType.label}`;
           this.outcomeDisplay.push(statResult);
 
           const impactedStatId = outcome.playerStat.statType.id;
