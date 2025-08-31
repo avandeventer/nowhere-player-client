@@ -3,7 +3,7 @@
 }
 @else {
     <div class="instructions">Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}} so you just write the possible outcomes!</div><br>
-    <div class="instructions">
+    <div class="instructions-question">
         @if (playerStories[currentStoryIndex].mainPlotStory) {
             What will happen when the player {{this.outcomeOneSubmitted ? "manages" : "fails"}} to {{ sideAgainstEntity ? "weaken" : "impress" }} {{favorStat.favorEntity}} when they "{{playerOption.optionText}}"?
         } @else {

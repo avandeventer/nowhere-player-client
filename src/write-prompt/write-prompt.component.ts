@@ -192,7 +192,7 @@ export class WritePromptComponent implements OnInit {
     }
   }
 
-  getInstructionPhraseString(optionIndex: number) {
+  getInstructionQuestionString(optionIndex: number) {
     if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
       let moralChoice: string = "strengthen";
       if (optionIndex === 1) {

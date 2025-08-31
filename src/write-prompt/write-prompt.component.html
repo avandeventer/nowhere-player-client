@@ -38,9 +38,9 @@
 
         @if(phase === WritePhase.OPTION_ONE) {
             <section>
-                <div class="instructions">
+                <div class="instructions-question">
                     <div class="writing-stats">
-                        <span>{{getInstructionPhraseString(0)}}</span> 
+                        <span>{{getInstructionQuestionString(0)}}</span> 
                             
                         <mat-chip-set><mat-chip class="stat">
                             {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.label}}
@@ -62,9 +62,9 @@
         }
         @if(phase === WritePhase.OPTION_TWO) {
             <section>
-                <div class="instructions">
+                <div class="instructions-question">
                     <div class="writing-stats">
-                        <span>{{getInstructionPhraseString(1)}}</span>
+                        <span>{{getInstructionQuestionString(1)}}</span>
                         <mat-chip-set><mat-chip class="stat">
                             {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}} 
                             @if (playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorType) {

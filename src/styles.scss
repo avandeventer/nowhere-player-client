@@ -87,14 +87,24 @@ mat-chip.progress {
   border-radius: 8px;
 }
 
+.instructions-question,
 .instructions {
   font-size: clamp(0.9rem, 2.0vw, 2.0rem) !important;
   padding: 16px !important;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   line-height: 1.6;
+}
+
+.instructions-question {
+  background-color: #76a37e !important;
+  font-style: italic;
+}
+
+.instructions {
   background-color: var(--mat-stepper-header-done-state-icon-foreground-color)
 }
+
 
 /* Make textareas taller and more user-friendly */
 textarea.mat-mdc-input-element {
