@@ -10,72 +10,68 @@
 @if(playerTurn && !isDone) {
     @if (storyRetrieved && locations.length > 0) {
         <br>
-            <mat-card class="story">{{locationLabel}}</mat-card>
-        <br>
-
         <prequel-story-display 
             [gameCode]="gameCode" 
             [story]="playerStory"
             [isAdventureMode]="true">
         </prequel-story-display>
+        <br>
+        <mat-card class="story">
+            <div #storyCard class="feed">
+                <!-- Location Section -->
+                <div>{{locationLabel}}</div>
+                <div>{{selectedLocationOption.optionText}}</div>
 
-        @if (locationOutcomeDisplay.length === 0) {
-            <button mat-flat-button (click)="selectLocationOption(0)">{{ location.options[0].optionText }}</button>
-            <br><br>
-            <button mat-flat-button (click)="selectLocationOption(1)">{{ location.options[1].optionText }}</button>
-            <br>
-        }
-        @else {
-            <mat-card class="story">
-                @for (outcome of locationOutcomeDisplay; track outcome) {
-                    <div>{{outcome}} </div>
+                <!-- Location Outcomes -->
+                <p>
+                @if (locationOutcomeDisplay.length > 0) {
+                    @for (outcome of locationOutcomeDisplay; track outcome) {
+                        <div>{{outcome}}</div>
+                    }
                 }
-            </mat-card>
-        }
+                </p>
+
+                @if(
+                    playerStory.storyId != "" 
+                    && selectedLocationOption.successResults.length != 0
+                    && loadStory
+                ) {
+                    <div>{{playerStory.prompt}}</div>
+
+                    @if (outcomeDisplay.length > 0) {
+                        @for (outcome of outcomeDisplay; track outcome) {
+                            <div>{{outcome}}</div>
+                        }
+                    }
+                }
+            </div>
+        </mat-card><br>
     }
 
-    @if(playerStory.storyId != "" && selectedLocationOption.successResults.length != 0) {
-        <mat-card class="story">
-            {{playerStory.prompt}}<br>
-        </mat-card>
-        
-        @if (outcomeDisplay.length === 0) {
-            <br><button mat-flat-button (click)="pickOption(0)">Option 1</button><br>
-            <br>
-        }
-
-        <mat-card class="story">
-            {{playerStory.options[0].optionText}}
-        </mat-card>
-        
-        @if (outcomeDisplay.length === 0) {
-            <br><button mat-flat-button (click)="pickOption(1)">Option 2</button><br>
-            <br>
-        }
-
-        <mat-card class="story">
-            {{playerStory.options[1].optionText}}
-        </mat-card>
-
-        @if (outcomeDisplay.length > 0) {
-            <mat-card class="story">
-                @for (outcome of outcomeDisplay; track outcome) {
-                    <div>{{outcome}}</div><br>
-                }
-            </mat-card>
-
+    @if (locationOutcomeDisplay.length === 0) {
+        <div class="option-buttons">
+            <button mat-flat-button (click)="selectLocationOption(0)" style="margin-right: 10px;">{{ location.options[0].optionText }}</button>
+            <button mat-flat-button (click)="selectLocationOption(1)">{{ location.options[1].optionText }}</button>
+        </div>
+    } @else  {
+        @if (!loadStory) {
+            <div class="option-buttons">
+                <button mat-flat-button (click)="setLoadStory()">Continue</button>
+            </div>
+        } @else if (outcomeDisplay.length === 0) {
+            <div class="option-buttons">
+                <button mat-flat-button (click)="pickOption(0)">{{playerStory.options[0].optionText}}</button>
+                <button mat-flat-button (click)="pickOption(1)">{{playerStory.options[1].optionText}}</button>
+            </div>
+        } @else {
             @if ((repercussionOutput.ending !== null || repercussionOutput.locationDestroyed !== null) && !repercussionsSubmitted) {
-                <br>
                 <button mat-raised-button color="accent" (click)="openRepercussionsModal()">
-                    Huh? Reveal Repercussions
+                    Huh? Reveal Repercussionsf
                 </button>
-                <br>
             } @else {
-                <br>
                 <button mat-flat-button (click)="nextPlayerTurn()">
                     Continue
                 </button>
-                <br>
             }
         }
     }

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild, ElementRef, AfterViewChecked, AfterViewInit } from "@angular/core";
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { GameState } from "src/assets/game-state";
 import { Player } from "src/assets/player";
@@ -23,6 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
     selector: 'adventure',
     templateUrl: './adventure.component.html',
+    styleUrls: ['./adventure.component.scss'],
     imports: [
       MatButtonModule, 
       MatCardModule, 
@@ -36,6 +37,7 @@ export class AdventureComponent implements OnInit {
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
     @Output() playerDone = new EventEmitter<ComponentType>();
+    @ViewChild('storyCard', { static: false }) storyCard!: ElementRef;
 
     locations: Location[] = [];
     location: Location = new Location();
@@ -55,20 +57,25 @@ export class AdventureComponent implements OnInit {
     repercussionOutput: RepercussionOutput = new RepercussionOutput();
     repercussionsSubmitted: boolean = false;
     endingOptionOne = new FormControl();
-    endingOptionTwo = new FormControl();  
+    endingOptionTwo = new FormControl();
+    loadStory: boolean = false;
 
     constructor(private activePlayerSessionService: ActivePlayerSessionService, private http: HttpClient, private dialog: MatDialog) {}
 
     ngOnInit(): void {
       console.log("Adventure Loaded!", this.activePlayerSession, this.player);
       this.tryInitializeTurn();
+      setTimeout(() => this.scrollToBottom(), 0);
     }
           
-
     ngOnChanges(changes: SimpleChanges): void {
       const stateChanged = changes['gameState'];
       const playerSessionChanged = changes['activePlayerSession'];
     
+      if (changes['selectedLocationOption'] || changes['selectedOption']) {
+        setTimeout(() => this.scrollToBottom(), 0);
+      }
+
       if (playerSessionChanged || stateChanged) {
         this.tryInitializeTurn();
       }
@@ -78,6 +85,16 @@ export class AdventureComponent implements OnInit {
         if (currentState !== GameState.ROUND1 && currentState !== GameState.ROUND2) {
           this.isDone = false;
         }
+      }
+    }
+
+    private scrollToBottom(): void {
+      try {
+        if (this.storyCard !== undefined) {
+          this.storyCard.nativeElement.scrollTop = this.storyCard.nativeElement.scrollHeight;
+        }
+      } catch (err) {
+        console.error("Failed to scroll", err);
       }
     }
 
@@ -95,6 +112,31 @@ export class AdventureComponent implements OnInit {
       });
     }
       
+    setLoadStory() {
+      this.loadStory = true;
+
+      this.activePlayerSessionService.updateActivePlayerSession(
+        this.gameCode,
+        this.player.authorId,
+        this.playerStory, 
+        "",
+        [],
+        false,
+        this.activePlayerSession.selectedLocationOptionId,
+        this.locationOutcomeDisplay,
+        this.repercussionOutput
+      ).subscribe({
+        next: (updatedSession) => {
+          console.log("Updated session:", updatedSession);
+          this.activePlayerSession = updatedSession;
+        },
+        error: (err) => {
+          console.error("Error:", err);
+        }
+      });
+  
+    }
+
     private resetTurnState() {
       this.selectedLocation = new Location();
       this.playerTurn = false;
@@ -455,7 +497,7 @@ export class AdventureComponent implements OnInit {
     this.activePlayerSessionService.updateActivePlayerSession(
       this.gameCode,
       this.player.authorId,
-      this.playerStory, 
+      new Story(), 
       "",
       [],
       false,
