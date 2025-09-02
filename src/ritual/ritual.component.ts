@@ -83,7 +83,7 @@ export class RitualComponent implements OnInit {
             this.againstFavorEntityText = `Or will you do the unthinkable and try to oppose them?`;
             let opposeOptions = this.rituals.map(ritual => ritual.options[1].optionText).join(', ');
             
-            this.outcomeDisplay = [`Impress ${this.favorStat.favorEntity}`, impressOptions, '***', `Defy ${this.favorStat.favorEntity}`, opposeOptions];
+            this.outcomeDisplay = ['...', impressOptions, '...', opposeOptions];
 
             this.activePlayerSessionService.updateActivePlayerSession(
               this.gameCode,
@@ -136,7 +136,6 @@ export class RitualComponent implements OnInit {
               this.selectedRitualResponse.failureText;
 
             this.outcomeDisplay = [
-              this.selectedRitualResponse.attemptText,
               this.selectedRitualResponse.optionText,
               outcomeText, 
               this.selectedRitualResponse.successMarginText
