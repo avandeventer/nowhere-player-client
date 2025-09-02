@@ -97,16 +97,6 @@ export class WriteOutcomesComponent implements OnInit {
           this.playerStories = response.responseBody;
           this.numberOfOutcomesToWrite = this.playerStories.length * 2;
 
-          if(this.playerStories[this.currentStoryIndex].mainPlotStory) {
-            const weakenOption = this.playerStories[this.currentStoryIndex].options[1];
-            const allResults = [...weakenOption.successResults, ...weakenOption.failureResults];
-            const favorResults = allResults.filter(result => result.playerStat.statType.favorType);
-            
-            if (favorResults.some(result => result.playerStat.value < 0)) {
-              this.sideAgainstEntity = true;
-            }
-          }
-
           this.setPlayerOption();
           console.log('Player stories', this.playerStories);
         },
@@ -122,9 +112,11 @@ export class WriteOutcomesComponent implements OnInit {
       this.playerOption = this.otherOption;
       this.otherOption = alreadySubmittedOutcome;
       this.submitBothOutcomes = false;
+      this.setSideAgainstEntity(this.playerOption);
     } else {
       this.playerStories[this.currentStoryIndex].options.forEach(option => {
         if (option.outcomeAuthorId === this.player.authorId) {
+          this.setSideAgainstEntity(option);
           if(this.playerOption.optionId === "") {
               this.playerOption = option;
               console.log("Player option: ", this.playerOption);
@@ -139,6 +131,17 @@ export class WriteOutcomesComponent implements OnInit {
         }
       })
     };
+  }
+
+  setSideAgainstEntity(option: Option) {
+    if(this.playerStories[this.currentStoryIndex].mainPlotStory) {
+      const allResults = [...option.successResults, ...option.failureResults];
+      const favorResults = allResults.filter(result => result.playerStat.statType.favorType);
+      
+      if (favorResults.some(result => result.playerStat.value < 0)) {
+        this.sideAgainstEntity = true;
+      }
+    }      
   }
 
   submit() {
