@@ -20,7 +20,7 @@
         }
     }
 
-    @if (authorEnding.associatedRitualOption.optionId != "") {
+    <!-- @if (authorEnding?.associatedRitualOption?.optionId != "") {
         <mat-card class="story">
             <div>{{authorEnding.associatedRitualOption.optionText}}</div>
             <div>{{authorEnding.associatedRitualOption.attemptText}}</div>
@@ -36,7 +36,7 @@
         @if (!legacySelected) {
             <button mat-flat-button (click)="selectRitual(authorEnding.associatedRitualOption)">Choose this event</button><br>
         }
-    }
+    } -->
 
     @if (legacySelected) {
         <div>What happened to {{authorEnding.playerUsername}} after all was said and done? With the legacy you selected in mind, describe a little epilogue for them in the second person.</div><br>

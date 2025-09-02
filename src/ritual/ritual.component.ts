@@ -104,7 +104,8 @@ export class RitualComponent implements OnInit {
               error: (err) => {
                 console.error("Error:", err);
               }
-            });            console.log('Final ritual retrieved', this.rituals);
+            });            
+            console.log('Final ritual retrieved', this.rituals);
           },
           error: (error) => {
             console.error('Error retrieving ritual jobs', error);
