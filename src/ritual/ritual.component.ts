@@ -13,6 +13,7 @@ import { Option } from 'src/assets/option';
 import { ActivePlayerSessionService } from 'src/services/active-player-session.service';
 import { MatCardModule } from '@angular/material/card';
 import { RepercussionOutput } from 'src/assets/repercussion-output';
+import { StatType } from 'src/assets/stat-type';
 
 @Component({
     selector: 'ritual',
@@ -31,11 +32,15 @@ export class RitualComponent implements OnInit {
     isDone: boolean = false;
     playerTurn: boolean = false;
     outcomeDisplay: string[] = [];
+    favorStat: StatType = new StatType();
+    proFavorEntityText: string = "";
+    againstFavorEntityText: string = "";
 
     constructor(private http: HttpClient, private activePlayerSessionService: ActivePlayerSessionService) {}
 
     ngOnInit(): void {
         console.log("Rituals Loaded!", this.activePlayerSession);
+        this.setFavorStat(this.player);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -44,7 +49,7 @@ export class RitualComponent implements OnInit {
           if(!this.playerTurn && !this.isDone) {
               this.playerTurn = true;
               this.getRitualJobs(this.gameCode);
-          } 
+          }
         }
         else {
           this.playerTurn = false;
@@ -73,7 +78,33 @@ export class RitualComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.rituals = response;
-            console.log('Final ritual retrieved', this.rituals);
+            this.proFavorEntityText =` What will you choose to do in the final encounter? Will you attempt to impress ${this.favorStat.favorEntity}?`;
+            let impressOptions = this.rituals.map(ritual => ritual.options[0].optionText).join(', ');
+            this.againstFavorEntityText = `Or will you do the unthinkable and try to oppose them?`;
+            let opposeOptions = this.rituals.map(ritual => ritual.options[1].optionText).join(', ');
+            
+            this.outcomeDisplay = [`Impress ${this.favorStat.favorEntity}`, impressOptions, '***', `Defy ${this.favorStat.favorEntity}`, opposeOptions];
+
+            this.activePlayerSessionService.updateActivePlayerSession(
+              this.gameCode,
+              this.player.authorId,
+              new Location(),
+              new Story(),
+              this.selectedRitualResponse.optionId, 
+              this.outcomeDisplay,
+              false,
+              "",
+              [],
+              new RepercussionOutput()
+            ).subscribe({
+              next: (updatedSession) => {
+                console.log("Updated session:", updatedSession);
+                this.activePlayerSession = updatedSession;
+              },
+              error: (err) => {
+                console.error("Error:", err);
+              }
+            });            console.log('Final ritual retrieved', this.rituals);
           },
           error: (error) => {
             console.error('Error retrieving ritual jobs', error);
@@ -168,4 +199,13 @@ export class RitualComponent implements OnInit {
         this.playerDone.emit(ComponentType.RITUAL);
       }
     }
+
+    public setFavorStat(player: Player) {
+      let favorStat: StatType | undefined = player
+            .playerStats.find(stat => stat.statType.favorType)?.statType;
+  
+      if (favorStat !== undefined) {
+        this.favorStat = favorStat;
+      }
+    }  
   }
