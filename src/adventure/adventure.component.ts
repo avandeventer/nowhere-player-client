@@ -186,7 +186,7 @@ export class AdventureComponent implements OnInit {
                   this.gameCode,
                   this.player.authorId,
                   this.location,
-                  this.playerStory,
+                  new Story(),
                   "",
                   [],
                   false,

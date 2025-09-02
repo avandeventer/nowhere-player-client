@@ -18,11 +18,9 @@
         <br>
         <mat-card class="story">
             <div #storyCard class="feed">
-                <!-- Location Section -->
                 <div>{{locationLabel}}</div>
                 <div>{{selectedLocationOption.optionText}}</div>
 
-                <!-- Location Outcomes -->
                 <p>
                 @if (locationOutcomeDisplay.length > 0) {
                     @for (outcome of locationOutcomeDisplay; track outcome) {
