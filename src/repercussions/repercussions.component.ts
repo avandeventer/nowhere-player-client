@@ -94,8 +94,6 @@ export class RepercussionsComponent {
     const { gameCode, repercussionOutput } = this.data;
 
     repercussionOutput.ending.gameCode = gameCode;
-    repercussionOutput.ending.options[0].optionText = this.optionOneRepercussion;
-    repercussionOutput.ending.options[1].optionText = this.optionTwoRepercussion;
 
     console.log("Submitting ending update", repercussionOutput.ending);
 

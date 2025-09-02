@@ -7,6 +7,7 @@ import { ComponentType } from "src/assets/component-type";
 import { Ending } from "src/assets/ending";
 import { GameState } from "src/assets/game-state";
 import { HttpConstants } from "src/assets/http-constants";
+import { Location } from "src/assets/location";
 import { Player } from "src/assets/player";
 import { RepercussionOutput } from "src/assets/repercussion-output";
 import { Story } from "src/assets/story";
@@ -73,6 +74,7 @@ export class EndingComponent implements OnInit {
               this.activePlayerSessionService.updateActivePlayerSession(
                 this.gameCode,
                 this.player.authorId,
+                new Location(),
                 new Story(),
                 "", 
                 [this.player.userName + "'s legacy:", this.playerEnding.endingBody],
@@ -101,6 +103,7 @@ export class EndingComponent implements OnInit {
         this.activePlayerSessionService.updateActivePlayerSession(
           this.gameCode,
           this.player.authorId,
+          new Location(),
           new Story(), 
           "", 
           [],

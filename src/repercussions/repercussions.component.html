@@ -1,48 +1,21 @@
 <div class="repercussions">
-  <h2 mat-dialog-title>Artifact Discovered!</h2>
-
-  <mat-card class="instructions">
-    <div>During your encounter with {{favorStatType.favorEntity}} you managed to get a hold of two new artifacts</div><br>
-    <div>Label two artifacts which are sacred in your culture and which you and your allies may choose to wield to earn {{favorStatType.label}} in the final confrontation!</div>
-  </mat-card>
+  <h2 mat-dialog-title>New Information about {{favorStatType.favorEntity}} Discovered!</h2>
 
   <mat-dialog-content>
+    <mat-card class="instructions">
+      <div>
+        {{repercussions.ending?.prequelStorySucceeded ? "During your encounter with" : "Even though you failed in your encounter with" }} {{favorStatType.favorEntity}} you learned something about them!</div>
+    </mat-card>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Artifact One</mat-label>
-      <input
-        matInput
-        [(ngModel)]="optionOneRepercussion"
-        rows="3"
-        placeholder="Ex. Sacred Gum">
-    </mat-form-field>
+    @if (repercussions.ending?.options?.[0]?.optionText != "") {
+      <div>{{favorStatType.favorEntity}} could be impressed if you successfully were able to...</div>
+      <mat-card class="story">{{repercussions.ending?.options?.[0]?.optionText}}</mat-card><br>
+    }
 
-    <div>Requirements to wield:</div>
-    <mat-chip-set>
-      @for (statType of uniqueArtifactStatTypes[0]; track statType) {
-        <mat-chip class="stat">
-          {{statType.label}}
-        </mat-chip>    
-      }
-    </mat-chip-set><br>
-
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Artifact Two</mat-label>
-      <input
-        matInput
-        [(ngModel)]="optionTwoRepercussion"
-        rows="3"
-        placeholder="Ex. A Unicorn Horn"
-      >
-    </mat-form-field>
-    <div>Requirements to wield:</div>
-    <mat-chip-set>
-      @for (statType of uniqueArtifactStatTypes[1]; track statType) {
-        <mat-chip class="stat">
-          {{statType.label}}
-        </mat-chip>    
-      }
-    </mat-chip-set>
+    @if (repercussions.ending?.options?.[1]?.optionText != "") {
+      <div>{{favorStatType.favorEntity}} could be weakened if you successfully were able to...</div>
+      <mat-card class="story">{{repercussions.ending?.options?.[1]?.optionText}}</mat-card>
+    }
   </mat-dialog-content>
 
   <mat-dialog-actions>

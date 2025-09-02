@@ -5,6 +5,7 @@ import { ActivePlayerSession } from "src/assets/active-player-session";
 import { HttpConstants } from "src/assets/http-constants";
 import { RepercussionOutput } from "src/assets/repercussion-output";
 import { Story } from "src/assets/story";
+import { Location } from "src/assets/location";
 import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: 'root' })
@@ -15,6 +16,7 @@ export class ActivePlayerSessionService {
     public updateActivePlayerSession(
         gameCode: String,
         playerId: String,
+        location: Location,
         playerStory: Story,
         selectedOptionId: String,
         outcomeDisplay: String[],
@@ -25,6 +27,7 @@ export class ActivePlayerSessionService {
       ): Observable<ActivePlayerSession> {
         const newActivePlayerSession: ActivePlayerSession = new ActivePlayerSession();
         newActivePlayerSession.gameCode = gameCode;
+        newActivePlayerSession.location = location;
         newActivePlayerSession.story = playerStory;
         newActivePlayerSession.playerId = playerId;
         newActivePlayerSession.playerChoiceOptionId = selectedOptionId;
@@ -39,5 +42,4 @@ export class ActivePlayerSessionService {
             newActivePlayerSession
         );
     }
-    
 }

@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleCha
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { GameState } from "src/assets/game-state";
 import { Player } from "src/assets/player";
+import { Location } from 'src/assets/location';
 import { Story } from 'src/assets/story';
 import { environment } from 'src/environments/environment';
 import { HttpConstants } from 'src/assets/http-constants';
@@ -113,6 +114,7 @@ export class RitualComponent implements OnInit {
             this.activePlayerSessionService.updateActivePlayerSession(
               this.gameCode,
               this.player.authorId,
+              new Location(),
               new Story(),
               this.selectedRitualResponse.optionId, 
               this.outcomeDisplay,
@@ -141,6 +143,7 @@ export class RitualComponent implements OnInit {
       this.activePlayerSessionService.updateActivePlayerSession(
         this.gameCode,
         this.player.authorId,
+        new Location(),
         new Story(), 
         "", 
         [],

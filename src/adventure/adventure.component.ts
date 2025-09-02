@@ -118,6 +118,7 @@ export class AdventureComponent implements OnInit {
       this.activePlayerSessionService.updateActivePlayerSession(
         this.gameCode,
         this.player.authorId,
+        this.location,
         this.playerStory, 
         "",
         [],
@@ -146,6 +147,7 @@ export class AdventureComponent implements OnInit {
       this.storyRetrieved = false;
       this.playerStories = [];
       this.locationOutcomeDisplay = [];
+      this.loadStory = false;
       this.repercussionOutput = new RepercussionOutput();
     }
 
@@ -183,6 +185,7 @@ export class AdventureComponent implements OnInit {
               this.activePlayerSessionService.updateActivePlayerSession(
                   this.gameCode,
                   this.player.authorId,
+                  this.location,
                   this.playerStory,
                   "",
                   [],
@@ -201,6 +204,7 @@ export class AdventureComponent implements OnInit {
 
   private setCurrentTurnFromActivePlayerSession() {
     this.outcomeDisplay = this.activePlayerSession.outcomeDisplay;
+
     this.locationOutcomeDisplay = this.activePlayerSession.locationOutcomeDisplay;
     this.playerStory = this.activePlayerSession.story;
     const location = this.locations.find(location => location.id === this.playerStory.location.id);
@@ -213,6 +217,15 @@ export class AdventureComponent implements OnInit {
       this.locationOptionOne = this.playerStory.location.options[0].optionText;
       this.locationOptionTwo = this.playerStory.location.options[1].optionText;
       this.storyRetrieved = true;
+
+      if (this.outcomeDisplay.length > 0) {
+        this.loadStory = true;
+  
+        if (!this.activePlayerSession.repercussions.ending) {
+          this.resolveStoryOutcomes(this.playerStory.playerSucceeded, this.player.authorId, this.selectedOption.optionId);
+        }
+      }
+  
       this.repercussionOutput = this.activePlayerSession.repercussions;
     }
   }
@@ -268,7 +281,7 @@ export class AdventureComponent implements OnInit {
                 this.locationOptionOne = this.playerStory.location.options[0].optionText;
                 this.locationOptionTwo = this.playerStory.location.options[1].optionText;
                 this.storyRetrieved = true;
-                this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, "", [], false, "", [], this.repercussionOutput)
+                this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.location, this.playerStory, "", [], false, "", [], this.repercussionOutput)
                   .subscribe({
                     next: (updatedSession) => {
                       console.log("Updated session:", updatedSession);
@@ -348,6 +361,7 @@ export class AdventureComponent implements OnInit {
     this.activePlayerSessionService.updateActivePlayerSession(
       this.gameCode,
       this.player.authorId,
+      this.location,
       this.playerStory,
       this.selectedOption.optionId,
       this.outcomeDisplay,
@@ -399,7 +413,7 @@ export class AdventureComponent implements OnInit {
         next: (response) => {
           console.log('Player story updated!', response);
           this.repercussionOutput = response;
-          this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.playerStory, this.selectedOption.optionId,
+          this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.location, this.playerStory, this.selectedOption.optionId,
             this.outcomeDisplay, false, this.activePlayerSession.selectedLocationOptionId, this.locationOutcomeDisplay, new RepercussionOutput()
           ).subscribe({
             next: (updatedSession) => {
@@ -452,6 +466,7 @@ export class AdventureComponent implements OnInit {
     this.activePlayerSessionService.updateActivePlayerSession(
       this.gameCode,
       this.player.authorId,
+      new Location(),
       new Story(), 
       "", 
       [],
@@ -497,6 +512,7 @@ export class AdventureComponent implements OnInit {
     this.activePlayerSessionService.updateActivePlayerSession(
       this.gameCode,
       this.player.authorId,
+      this.location,
       new Story(), 
       "",
       [],
