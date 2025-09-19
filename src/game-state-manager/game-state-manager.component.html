@@ -3,11 +3,19 @@
 
     @if(player.firstPlayer) {
         <p>If all players have joined, click below!</p>
-        <button mat-flat-button (click)="startGame()">Start game?</button>
+        <button mat-flat-button (click)="nextGamePhase()">Start game?</button>
     }
 }
 
-@if (isGameStarted()) {
+if (isGameInPreamblePhase()) {
+    <p>Have someone read the text on screen!</p>
+    @if(player.firstPlayer) {
+        <p>Push the button below to continue</p>
+        <button mat-flat-button (click)="nextGamePhase()">Continue</button>
+    }
+}
+
+@if (isGameInWritePromptsPhase()) {
     <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-prompt>
 }
 

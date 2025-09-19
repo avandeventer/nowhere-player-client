@@ -59,7 +59,7 @@ export class GameStateManagerComponent implements OnInit {
     });
   }
 
-  startGame() {    
+  nextGamePhase() {    
     this.http
     .put(environment.nowhereBackendUrl + HttpConstants.NEXT_GAME_SESSION_PATH + '?gameCode=' + this.gameCode, {})
     .subscribe({
@@ -97,12 +97,16 @@ export class GameStateManagerComponent implements OnInit {
     return this.gameState === GameState.INIT;
   }
 
-  isGameStarted() {
+  isGameInWritePromptsPhase() {
     return this.gameState === GameState.WRITE_PROMPTS || this.gameState === GameState.WRITE_PROMPTS_AGAIN;
   }
 
   isLocationSelect() {
     return this.gameState === GameState.LOCATION_SELECT || this.gameState === GameState.LOCATION_SELECT_AGAIN;
+  }
+
+  isGameInPreamblePhase() {
+    return this.gameState === GameState.PREAMBLE || this.gameState === GameState.PREAMBLE_AGAIN || this.gameState === GameState.ENDING_PREAMBLE;
   }
 
   isGameInWriteOutcomesPhase() {
