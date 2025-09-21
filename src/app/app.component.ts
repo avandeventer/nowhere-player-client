@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { JoinGameComponent } from '../join-game/join-game.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
     selector: 'app-root',
-    template: `<join-game></join-game>`,
-    imports: [ReactiveFormsModule, JoinGameComponent],
+    template: `<router-outlet></router-outlet>`,
+    imports: [RouterOutlet],
     standalone: true
 })
 export class AppComponent {}

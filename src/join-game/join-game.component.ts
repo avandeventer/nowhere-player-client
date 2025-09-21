@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { GameState } from 'src/assets/game-state';
 import { JoinGameCache } from 'src/assets/join-game-cache';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'join-game',
@@ -18,7 +19,10 @@ import { JoinGameCache } from 'src/assets/join-game-cache';
     standalone: true
 })
 export class JoinGameComponent {
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private route: ActivatedRoute
+  ) {
     console.log('GoinGameComponent initialized');
   }
 
@@ -32,6 +36,25 @@ export class JoinGameComponent {
 
   ngOnInit() {
     console.log(this.gameSessionCreated);
+    
+    this.loadGameCode();
+  }
+
+  private loadGameCode() {
+    this.route.paramMap.subscribe(params => {
+      const gameCodeParam = params.get('gameCode');
+      if (gameCodeParam) {
+        const pathGameCode = gameCodeParam.trim().toUpperCase();
+        this.gameCode.setValue(pathGameCode);
+        this.gameCodeValue = pathGameCode;
+        console.log('Loaded gameCode from path parameter:', pathGameCode);
+      } else {
+        this.loadFromCache();
+      }
+    });
+  }
+
+  private loadFromCache() {
     const cached = localStorage.getItem(this.CACHE_KEY);
     if (cached) {
       const parsed: JoinGameCache = JSON.parse(cached);
@@ -46,9 +69,8 @@ export class JoinGameComponent {
       } else {
         localStorage.removeItem(this.CACHE_KEY);
       }
-    }  
+    }
   }
-
   setGameCode() {
     console.log(this.gameCode.value);
     this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value.trim().toLocaleUpperCase();
