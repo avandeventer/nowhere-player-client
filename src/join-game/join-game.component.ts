@@ -48,29 +48,36 @@ export class JoinGameComponent {
         this.gameCode.setValue(pathGameCode);
         this.gameCodeValue = pathGameCode;
         console.log('Loaded gameCode from path parameter:', pathGameCode);
+        
+        this.handleGameCodeWithCache(pathGameCode);
       } else {
-        this.loadFromCache();
+        this.handleGameCodeWithCache();
       }
     });
   }
 
-  private loadFromCache() {
+  private handleGameCodeWithCache(pathGameCode?: string) {
     const cached = localStorage.getItem(this.CACHE_KEY);
     if (cached) {
       const parsed: JoinGameCache = JSON.parse(cached);
       const now = Date.now();
       const notExpired = now - parsed.timestamp < this.CACHE_DURATION_MS;
-  
-      if (notExpired) {
-        this.gameCode.setValue(parsed.gameCode);
+      
+      if (notExpired && (pathGameCode === undefined || parsed.gameCode === pathGameCode)) {
         this.userName.setValue(parsed.userName);
-        this.gameCodeValue = parsed.gameCode;
-        console.log('Loaded cached values:', parsed);
+        if (pathGameCode === undefined) {
+          this.gameCode.setValue(parsed.gameCode);
+          this.gameCodeValue = parsed.gameCode;
+          console.log('Loaded gameCode from cache:', parsed.gameCode);
+        }
+        console.log('Using cached userName for same game code:', parsed.userName);
       } else {
         localStorage.removeItem(this.CACHE_KEY);
+        console.log('Cleared cache due to different game code or expiration');
       }
     }
   }
+  
   setGameCode() {
     console.log(this.gameCode.value);
     this.gameCodeValue = this.gameCode.value === null ? '' : this.gameCode.value.trim().toLocaleUpperCase();
