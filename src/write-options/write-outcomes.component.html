@@ -29,7 +29,7 @@
                 <mat-form-field class="full-width">
                     <mat-label>Option Success</mat-label>
                     <textarea matInput
-                        placeholder="Ex (if you were to gain charisma). You leap over the chasm to the sound of applause! Your heroism makes you very popular!"
+                        placeholder="{{optionOnePreview}}"
                         type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150"></textarea>
                     <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
                 </mat-form-field>
@@ -40,7 +40,7 @@
                 <mat-form-field class="full-width">
                     <mat-label>Option Failure</mat-label>
                     <textarea matInput
-                        placeholder="Ex (if you were to lose dexterity). You try to jump the chasm, but you fail and fall a long distance and crack your butt bones. You can't run as fast anymore."
+                        placeholder="{{optionTwoPreview}}"
                         type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150"></textarea>
                     <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
                 </mat-form-field>
@@ -64,6 +64,8 @@
         <mat-card class="story">    
             @if (optionSuccess.value) {
                 {{optionSuccess.value}}
+            } @else {
+                {{optionOnePreview}}
             }
 
             @for (outcome of playerOption.successResults; track outcome) {
@@ -81,6 +83,8 @@
         <mat-card class="story">
             @if (optionFailure.value) {
                 {{optionFailure.value}}
+            } @else {
+                {{optionTwoPreview}}
             }
 
             @for (outcome of playerOption.failureResults; track outcome) {

@@ -36,7 +36,7 @@
         
         <mat-form-field class="full-width">
             <mat-label>Prompt</mat-label>
-            <textarea [formControl]="prompt" matInput placeholder="Ex. You see a small child begging for scraps at the {{playerStories[currentStoryIndex].location.label}}" maxlength="300"></textarea>
+            <textarea [formControl]="prompt" matInput placeholder="{{promptExample}}" maxlength="300"></textarea>
             <mat-hint align="end">{{prompt.value?.length || 0}}/300</mat-hint>
         </mat-form-field>
     }
@@ -72,7 +72,7 @@
 
                 <mat-form-field class="full-width">
                     <mat-label>You could...</mat-label>
-                    <input matInput placeholder="Ex. Give the child some coin" id="optionOne" [formControl]="optionOne" maxlength="40">
+                    <input matInput placeholder="{{optionOneExample}}" id="optionOne" [formControl]="optionOne" maxlength="40">
                     <mat-hint align="end">{{optionOne.value?.length || 0}}/40</mat-hint>
                 </mat-form-field>
             </section>
@@ -94,35 +94,42 @@
                 <mat-chip-set><mat-chip class="progress">1/2 Options Written</mat-chip></mat-chip-set><br>
                 <mat-form-field class="full-width">
                     <mat-label>You could...</mat-label>
-                    <input matInput placeholder="Ex. Beat the kid up"  id="optionTwo" [formControl]="optionTwo" maxlength="40">
+                    <input matInput placeholder="{{optionTwoExample}}"  id="optionTwo" [formControl]="optionTwo" maxlength="40">
                     <mat-hint align="end">{{optionTwo.value?.length || 0}}/40</mat-hint>
                 </mat-form-field>
             </section>
         }
     }
 
+    <mat-divider></mat-divider><br>
     @if (prompt.value || optionOne.value || optionTwo.value) {
-        <mat-divider></mat-divider><br>
         <div>Story Preview:</div><br>
-        @if (prompt.value) {
-            <mat-card class="story">{{prompt.value}}</mat-card><br>
-        }
-
-        @if (optionOne.value || optionTwo.value) {
-            <div class="writing-button-container">
-                <div class="writing-buttons">
-                    @if (optionOne.value) {
-                        <button mat-flat-button disabled>{{optionOne.value}}</button>
-                    }
-                    @if (optionTwo.value) {
-                        <button mat-flat-button disabled>{{optionTwo.value}}</button>
-                    }
-                </div><br>
-            </div>
-            <br>
-        }
-        <mat-divider></mat-divider><br>
+    } @else {
+        <div>Story Example:</div><br>
     }
+
+    @if (prompt.value) {
+        <mat-card class="story">{{prompt.value}}</mat-card><br>
+    } @else {
+        <mat-card class="story">{{promptExample}}</mat-card><br>
+    }
+
+    <div class="writing-button-container">
+        <div class="writing-buttons">
+            @if (optionOne.value) {
+                <button mat-flat-button disabled>{{optionOne.value}}</button>
+            } @else {
+                <button mat-flat-button disabled>{{optionOneExample}}</button>
+            }
+            @if (optionTwo.value) {
+                <button mat-flat-button disabled>{{optionTwo.value}}</button>
+            } @else {
+                <button mat-flat-button disabled>{{optionTwoExample}}</button>
+            }
+        </div><br>
+    </div>
+    <br>
+    <mat-divider></mat-divider><br>
 
     <div class="writing-button-container">
         <div class="writing-buttons">

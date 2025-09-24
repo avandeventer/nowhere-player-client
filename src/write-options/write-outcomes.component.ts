@@ -54,7 +54,9 @@ export class WriteOutcomesComponent implements OnInit {
   numberOfOutcomesWritten: number = 0;
   favorStat: StatType = new StatType();
   sideAgainstEntity: boolean = false;
-
+  optionOnePreview: string = "Ex (if you were to gain charisma). You leap over the chasm to the sound of applause! Your heroism makes you very popular!"
+  optionTwoPreview: string = "Ex (if you were to lose dexterity). You try to jump the chasm, but you fail and fall a long distance and crack your butt bones. You can't run as fast anymore."
+  
   constructor(private http: HttpClient) {}
 
   ngOnInit() {

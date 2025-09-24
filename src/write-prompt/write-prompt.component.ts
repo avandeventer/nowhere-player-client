@@ -55,6 +55,9 @@ export class WritePromptComponent implements OnInit {
   numberOfPromptsToWrite: number = 0;
   favorStat: StatType = new StatType();
   aboutToSubmit: boolean = false;
+  promptExample: string = "";
+  optionOneExample: string = "Ex. Give the child some coin";
+  optionTwoExample: string = "Ex. Beat the kid up";
 
   phase: WritePhase = WritePhase.PROMPT;
   protected WritePhase = WritePhase;
@@ -98,6 +101,7 @@ export class WritePromptComponent implements OnInit {
           console.log('Stories retrieved!', response);
           this.playerStories = response.responseBody;
           this.numberOfPromptsToWrite = this.playerStories.length;
+          this.promptExample = `Ex. You see a small child begging for scraps at the ${this.playerStories[this.currentStoryIndex].location.label}.`;
           if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
             this.phase = WritePhase.OPTION_ONE;
           }
@@ -246,12 +250,13 @@ export class WritePromptComponent implements OnInit {
     this.promptSubmitted = false;
     if (this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(ComponentType.WRITE_PROMPTS);
-    }
-
-    if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
-      this.phase = WritePhase.OPTION_ONE;
     } else {
-      this.phase = WritePhase.PROMPT;
+      if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
+        this.phase = WritePhase.OPTION_ONE;
+      } else {
+        this.phase = WritePhase.PROMPT;
+      }
+      this.promptExample = `Ex. You see a small child begging for scraps at the ${this.playerStories[this.currentStoryIndex].location.label}.`;
     }
 
     console.log(this.currentStoryIndex);
