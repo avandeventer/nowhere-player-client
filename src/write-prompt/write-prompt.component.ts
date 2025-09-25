@@ -208,6 +208,10 @@ export class WritePromptComponent implements OnInit {
     }
   }
 
+  getCurrentOptionIndex(): number {
+    return this.phase === WritePhase.OPTION_TWO ? 1 : 0;
+  }
+
   submitStory() {
     const requestBody = {
       gameCode: this.gameCode,
