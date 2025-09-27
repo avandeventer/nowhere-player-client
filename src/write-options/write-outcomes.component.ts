@@ -200,6 +200,12 @@ export class WriteOutcomesComponent implements OnInit {
     }
   }
 
+  public canGoBack() {
+    return this.outcomeOneSubmitted 
+    && this.numberOfOutcomesWritten > 0
+    && this.currentStoryIndex < this.playerStories.length;
+  }
+
   public setNextStoryPrompt() {
     this.optionSuccess.reset('');
     this.optionFailure.reset('');

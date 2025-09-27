@@ -42,8 +42,7 @@
 
             @if (phase === WritePhase.OPTION_ONE || phase === WritePhase.OPTION_TWO) {
                 <div class="writing-stats">
-                    <span>{{getInstructionQuestionString(getCurrentOptionIndex())}}</span> 
-                        
+                    {{getInstructionQuestionString(getCurrentOptionIndex())}}
                     <mat-chip-set><mat-chip class="stat">
                         {{playerStories[currentStoryIndex].options[getCurrentOptionIndex()].playerStatDCs[0].statType.label}}
                         @if (playerStories[currentStoryIndex].options[getCurrentOptionIndex()].playerStatDCs[0].statType.favorType) {

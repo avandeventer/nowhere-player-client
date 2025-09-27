@@ -68,12 +68,31 @@ mat-chip.progress {
   justify-content: space-between;
 }
 
-.writing-stats,
+.writing-stats {
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  margin-left: auto !important; /* Push to the right */
+  flex-wrap: wrap; /* Allow wrapping if needed */
+}
+
 .writing-buttons {
   display: flex; 
   align-items: center; 
   gap: 8px;
   margin-left: auto !important; /* Push to the right */
+}
+
+/* Make mat-chip-set inline so it flows with text */
+.writing-stats mat-chip-set {
+  display: inline-flex !important;
+  margin: 0 4px !important; /* Small margin for spacing */
+}
+
+/* Ensure mat-chip flows inline */
+.writing-stats mat-chip {
+  display: inline-flex !important;
+  margin: 0 !important;
 }
 
 .loading-overlay {
@@ -112,3 +131,4 @@ textarea.mat-mdc-input-element {
   min-height: 120px !important;
   resize: vertical !important;
 }
+

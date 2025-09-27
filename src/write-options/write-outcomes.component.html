@@ -23,31 +23,6 @@
 
     <mat-chip-set><mat-chip class="progress">{{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Completed</mat-chip></mat-chip-set><br>
 
-    <div>
-        @if (!outcomeOneSubmitted) {
-            <section>
-                <mat-form-field class="full-width">
-                    <mat-label>Option Success</mat-label>
-                    <textarea matInput
-                        placeholder="{{optionOnePreview}}"
-                        type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150"></textarea>
-                    <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
-                </mat-form-field>
-            </section>
-        } @else {
-
-            <section>
-                <mat-form-field class="full-width">
-                    <mat-label>Option Failure</mat-label>
-                    <textarea matInput
-                        placeholder="{{optionTwoPreview}}"
-                        type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150"></textarea>
-                    <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
-                </mat-form-field>
-            </section>
-        }
-    </div>
-
     <br><mat-divider></mat-divider><br>
     @if (!playerStories[currentStoryIndex].mainPlotStory) {
         <div>Story Preview:</div><br>
@@ -99,9 +74,36 @@
     }
     <br><mat-divider></mat-divider><br>
 
+    <div>
+        @if (!outcomeOneSubmitted) {
+            <section>
+                <mat-form-field class="full-width">
+                    <mat-label>Option Success</mat-label>
+                    <textarea matInput
+                        placeholder="{{optionOnePreview}}"
+                        type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150"></textarea>
+                    <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </section>
+        } @else {
+
+            <section>
+                <mat-form-field class="full-width">
+                    <mat-label>Option Failure</mat-label>
+                    <textarea matInput
+                        placeholder="{{optionTwoPreview}}"
+                        type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150"></textarea>
+                    <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </section>
+        }
+    </div>
+
     <div class="writing-button-container">
         <div class="writing-buttons">
-            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+            @if (canGoBack()) {
+                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+            }
             <button mat-flat-button (click)="submit()"  [disabled]="!canSubmit()">{{outcomeOneSubmitted ? "Submit" : "Next >"}}</button>
         </div>
     </div>
