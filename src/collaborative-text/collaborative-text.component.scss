@@ -1,0 +1,142 @@
+.collaborative-text-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.phase-header {
+  text-align: center;
+  margin-bottom: 30px;
+
+  h2 {
+    color: #1976d2;
+    margin-bottom: 10px;
+  }
+
+  .instructions {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.submission-card, .submissions-card, .no-submissions-card {
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.submissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.submission-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.selected {
+    border-color: #1976d2;
+    background-color: #f5f5f5;
+  }
+}
+
+.submission-preview {
+  .submission-text {
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    color: #333;
+  }
+
+  .submission-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.addition-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+
+  h4 {
+    margin: 0 0 16px 0;
+    color: #1976d2;
+    font-size: 16px;
+  }
+
+  .addition-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+}
+
+.no-submissions-message {
+  text-align: center;
+  padding: 40px 20px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: #666;
+  }
+
+  p {
+    margin: 0 0 20px 0;
+    color: #999;
+  }
+}
+
+.refresh-section {
+  text-align: center;
+  margin-top: 20px;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .collaborative-text-container {
+    padding: 10px;
+  }
+
+  .submissions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .addition-actions {
+    flex-direction: column;
+  }
+}

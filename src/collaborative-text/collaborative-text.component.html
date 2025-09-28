@@ -1,0 +1,130 @@
+<div class="collaborative-text-container">
+  <div class="phase-header">
+    <h2>{{ phaseQuestion }}</h2>
+    <p class="instructions">{{ phaseInstructions }}</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading collaborative text...</p>
+    </div>
+  } @else {
+    <!-- New Submission Section -->
+    @if (showNewSubmission) {
+      <mat-card class="submission-card">
+        <mat-card-header>
+          <mat-card-title>{{ phaseQuestion }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Your {{ phaseQuestion.toLowerCase() }}</mat-label>
+            <textarea 
+              matInput 
+              [formControl]="newTextControl"
+              placeholder="Be creative and descriptive..."
+              rows="4">
+            </textarea>
+            <mat-hint align="end">{{ newTextControl.value?.length || 0 }} characters</mat-hint>
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions>
+          <button 
+            mat-flat-button 
+            color="primary" 
+            (click)="onSubmitNewText()"
+            [disabled]="newTextControl.invalid || isLoading">
+            Submit
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+
+    <!-- Existing Submissions Section -->
+    @if (hasSubmitted && availableSubmissions.length > 0) {
+      <mat-card class="submissions-card">
+        <mat-card-header>
+          <mat-card-title>Add to Other Players' Ideas</mat-card-title>
+          <mat-card-subtitle>Choose a submission to build upon</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="submissions-grid">
+            @for (submission of availableSubmissions; track submission.submissionId) {
+              <mat-card 
+                class="submission-item"
+                [class.selected]="selectedSubmission?.submissionId === submission.submissionId"
+                (click)="onSelectSubmission(submission)">
+                <mat-card-content>
+                  <div class="submission-preview">
+                    <p class="submission-text">{{ getSubmissionPreview(submission) }}</p>
+                    <div class="submission-meta">
+                      <mat-chip-set>
+                        <!-- <mat-chip>{{ getSubmissionAuthor(submission) }}</mat-chip> -->
+                        <mat-chip>{{ submission.additions.length || 0 }} additions</mat-chip>
+                      </mat-chip-set>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+
+          @if (selectedSubmission) {
+            <div class="addition-section">
+              <h4>Add to: "{{ getSubmissionPreview(selectedSubmission) }}"</h4>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Your addition</mat-label>
+                <textarea 
+                  matInput 
+                  [formControl]="additionTextControl"
+                  placeholder="Add your ideas to build upon this submission..."
+                  rows="3">
+                </textarea>
+                <mat-hint align="end">{{ additionTextControl.value?.length || 0 }} characters</mat-hint>
+              </mat-form-field>
+              <div class="addition-actions">
+                <button 
+                  mat-flat-button 
+                  color="primary" 
+                  (click)="onAddToSubmission()"
+                  [disabled]="additionTextControl.invalid || isLoading">
+                  Add to Submission
+                </button>
+                <button 
+                  mat-button 
+                  (click)="selectedSubmission = null">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- No Submissions Message -->
+    @if (hasSubmitted && availableSubmissions.length === 0) {
+      <mat-card class="no-submissions-card">
+        <mat-card-content>
+          <div class="no-submissions-message">
+            <mat-icon>group_work</mat-icon>
+            <h3>Waiting for other players...</h3>
+            <p>Other players haven't submitted their ideas yet. Check back soon!</p>
+            <button mat-button (click)="onRefresh()">
+              <mat-icon>refresh</mat-icon>
+              Refresh
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Refresh Button -->
+    <div class="refresh-section">
+      <button mat-button (click)="onRefresh()" [disabled]="isLoading">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  }
+</div>

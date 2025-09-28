@@ -4,7 +4,8 @@
     @if(adventureMap) {
         <p>Welcome to {{adventureMap.name}}!</p>
     } @else {
-        <genre [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></genre>
+        <p>Placeholder for genre vote</p>
+        <!-- <genre [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></genre> -->
     }
 
     @if(player.firstPlayer) {
@@ -23,6 +24,10 @@
 
 @if (isGameInWritePromptsPhase()) {
     <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-prompt>
+}
+
+@if (isGameInCollaborativeTextPhase()) {
+    <collaborative-text [gameCode]="gameCode" [gameState]="gameState" [player]="player"></collaborative-text>
 }
 
 @if (isLocationSelect()) {

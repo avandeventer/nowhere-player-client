@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
+import { CollaborativeTextPhase, TextSubmission, TextAddition, PlayerVote } from 'src/assets/collaborative-text-phase';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -32,5 +33,30 @@ export class GameService {
 
   submitGenre(gameCode: string, authorId: string, value: string | null) {
     return this.http.put(environment.nowhereBackendUrl + HttpConstants.GENRE_PATH + "?gameCode=" + gameCode + "&authorId=" + authorId, { genre: value });
+  }
+
+  // Collaborative Text Methods
+  getCollaborativeTextPhase(gameCode: string): Observable<CollaborativeTextPhase> {
+    return this.http.get<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText?gameCode=${gameCode}`);
+  }
+
+  submitTextAddition(gameCode: string, textAddition: TextAddition): Observable<CollaborativeTextPhase> {
+    return this.http.post<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText?gameCode=${gameCode}`, textAddition);
+  }
+
+  submitPlayerVote(gameCode: string, playerVote: PlayerVote): Observable<CollaborativeTextPhase> {
+    return this.http.post<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText/vote?gameCode=${gameCode}`, playerVote);
+  }
+
+  getWinningSubmission(gameCode: string): Observable<string> {
+    return this.http.get<string>(`${environment.nowhereBackendUrl}/collaborativeText/winner?gameCode=${gameCode}`);
+  }
+
+  getAvailableSubmissionsForPlayer(gameCode: string, playerId: string): Observable<TextSubmission[]> {
+    return this.http.get<TextSubmission[]>(`${environment.nowhereBackendUrl}/collaborativeText/available?gameCode=${gameCode}&playerId=${playerId}`);
+  }
+
+  recordSubmissionView(gameCode: string, playerId: string, submissionId: string): Observable<void> {
+    return this.http.post<void>(`${environment.nowhereBackendUrl}/collaborativeText/view?gameCode=${gameCode}&playerId=${playerId}&submissionId=${submissionId}`, {});
   }
 }
