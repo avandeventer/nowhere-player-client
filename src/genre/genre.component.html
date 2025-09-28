@@ -1,0 +1,7 @@
+<p>Describe a genre you'd like to play in!</p>
+<mat-form-field class="full-width">
+    <!-- <mat-label>You could...</mat-label> -->
+    <input matInput placeholder="Ex. 90s Skaterpunk, Sci-fi, Scooby-Doo Style Mystery, etc." id="genre" [formControl]="genre" maxlength="40">
+    <mat-hint align="end">{{genre.value?.length || 0}}/40</mat-hint>
+</mat-form-field>
+<button mat-flat-button (click)="submitGenre()">Submit</button>

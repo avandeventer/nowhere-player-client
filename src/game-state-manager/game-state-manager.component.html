@@ -1,6 +1,12 @@
 @if (isGameInitialized()) {
     <p>Hello {{player.userName}}!</p>
 
+    @if(adventureMap) {
+        <p>Welcome to {{adventureMap.name}}!</p>
+    } @else {
+        <genre [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></genre>
+    }
+
     @if(player.firstPlayer) {
         <p>If all players have joined, click below!</p>
         <button mat-flat-button (click)="nextGamePhase()">Start game?</button>

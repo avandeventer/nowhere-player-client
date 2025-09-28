@@ -1,17 +1,21 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { HttpConstants } from 'src/assets/http-constants';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private http: HttpClient) {}
 
   listenForGameStateChanges(gameCode: string): Observable<{ 
     gameState: string | null; 
     activePlayerSession: any | null; 
     storiesToWritePerRound: number | null; 
-    storiesToPlayPerRound: number | null 
+    storiesToPlayPerRound: number | null;
+    adventureMap: any | null;
   }> {
     const gameDocRef = doc(this.firestore, `gameSessions/${gameCode}`);
   
@@ -20,8 +24,13 @@ export class GameService {
         gameState: data?.gameState ?? null,
         activePlayerSession: data?.activePlayerSession ?? null,
         storiesToWritePerRound: data?.storiesToWritePerRound ?? null,
-        storiesToPlayPerRound: data?.storiesToPlayPerRound ?? null
+        storiesToPlayPerRound: data?.storiesToPlayPerRound ?? null,
+        adventureMap: data?.adventureMap ?? null
       }))
     );
+  }
+
+  submitGenre(gameCode: string, authorId: string, value: string | null) {
+    return this.http.put(environment.nowhereBackendUrl + HttpConstants.GENRE_PATH + "?gameCode=" + gameCode + "&authorId=" + authorId, { genre: value });
   }
 }

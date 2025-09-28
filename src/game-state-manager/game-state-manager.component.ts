@@ -14,12 +14,14 @@ import { RitualComponent } from 'src/ritual/ritual.component';
 import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 import { WriteEndingsComponent } from 'src/write-endings/write-endings.component';
+import { GenreComponent } from 'src/genre/genre.component';
 import { EndingComponent } from 'src/ending/ending.component';
+import { AdventureMap } from 'src/assets/adventure-map';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule],
+    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule, GenreComponent],
     standalone: true
 })
 export class GameStateManagerComponent implements OnInit {
@@ -38,6 +40,7 @@ export class GameStateManagerComponent implements OnInit {
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   storiesToWritePerRound: number = 1;
   storiesToPlayPerRound: number = 1;
+  adventureMap: AdventureMap | null = null;
 
   constructor(
     private gameService: GameService,
@@ -54,7 +57,7 @@ export class GameStateManagerComponent implements OnInit {
       this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
       this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       this.storiesToPlayPerRound = newState.storiesToPlayPerRound as unknown as number;
-      
+      this.adventureMap = newState.adventureMap as unknown as AdventureMap;
       console.log('New gameState:', this.gameState);
     });
   }

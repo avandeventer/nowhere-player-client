@@ -13,4 +13,5 @@ export abstract class HttpConstants {
     static readonly ENDING_PATH: string = "/ending";
     static readonly PLAYER_ENDING_PATH: string = "/adventure-ending";
     static readonly ADVENTURE_REPERCUSSIONS_PATH: string = '/adventure/repercussions';
+    static readonly GENRE_PATH: string = '/display/genre';
 }
