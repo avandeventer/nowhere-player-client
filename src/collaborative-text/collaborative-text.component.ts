@@ -51,7 +51,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   isLoading = false;
   hasSubmitted = false;
   showNewSubmission = true;
-
+  
+  // Track the last known submissions to detect actual changes
+  private lastKnownSubmissions: TextSubmission[] = [];
+  maximumSubmissionsReached = false;
   // Phase-specific properties
   phaseQuestion = '';
   phaseInstructions = '';
@@ -64,9 +67,28 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    // When collaborative text phases change, update the available submissions
-    if (this.collaborativeTextPhases && this.isGameInCollaborativeTextPhase()) {
-      this.updateAvailableSubmissionsFromPhases();
+    // When collaborative text phases change, check if submissions actually changed
+    if (this.collaborativeTextPhases 
+        && this.isGameInCollaborativeTextPhase() 
+        && this.hasSubmitted
+        && !this.maximumSubmissionsReached
+    ) {
+      const phaseId = this.getPhaseIdForGameState();
+      if (!phaseId) return;
+      
+      const phase = this.collaborativeTextPhases[phaseId];
+      if (!phase || !phase.submissions) return;
+      
+      // Check if submissions array has actually changed
+      const currentSubmissions = phase.submissions;
+      const submissionsChanged = this.hasSubmissionsChanged(currentSubmissions);
+      
+      if (submissionsChanged) {
+        console.log('Submissions changed, updating available submissions');
+        this.updateAvailableSubmissions(true); // true = use phases data
+      } else {
+        console.log('No submission changes detected, skipping update');
+      }
     }
   }
 
@@ -99,8 +121,13 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.gameService.getCollaborativeTextPhase(this.gameCode).subscribe({
       next: (phase) => {
         this.collaborativePhase = phase;
-        this.updateAvailableSubmissions();
         this.checkIfPlayerHasSubmitted();
+        
+        // Only load available submissions if player has already submitted
+        if (this.hasSubmitted) {
+          this.updateAvailableSubmissions(); // false = use existing collaborativePhase data
+        }
+        
         this.isLoading = false;
       },
       error: (error) => {
@@ -110,24 +137,36 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     });
   }
 
-  private updateAvailableSubmissions() {
-    if (!this.collaborativePhase) return;
+  private updateAvailableSubmissions(usePhasesData: boolean = false) {
+    // If using phases data, extract the phase first
+    if (usePhasesData) {
+      if (!this.collaborativeTextPhases) return;
+
+      const phaseId = this.getPhaseIdForGameState();
+      if (!phaseId) return;
+
+      const phase = this.collaborativeTextPhases[phaseId];
+      if (!phase || !phase.submissions) return;
+
+      // Update the collaborative phase data
+      this.collaborativePhase = phase;
+
+      // Only load available submissions if player has already submitted
+      if (!this.hasSubmitted) {
+        return;
+      }
+    } else {
+      // Using existing collaborativePhase data
+      if (!this.collaborativePhase) return;
+    }
 
     // Get submissions available to this player (with distribution logic)
     this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId).subscribe({
       next: (submissions) => {
-        // Backend now handles filtering out player's own submissions
-        this.availableSubmissions = submissions;
-        
-        // Record views for all retrieved submissions
-        this.recordViewsForSubmissions(submissions);
+        this.mergeNewSubmissions(submissions);
       },
       error: (error) => {
         console.error('Error getting available submissions:', error);
-        // Fallback to showing all submissions except player's own
-        this.availableSubmissions = this.collaborativePhase!.submissions.filter(submission => 
-          submission.authorId !== this.player.authorId
-        );
       }
     });
   }
@@ -145,56 +184,47 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   private recordViewsForSubmissions(submissions: TextSubmission[]) {
-    // Record views for all submissions that are not the player's own
-    submissions
-      .filter(submission => submission.authorId !== this.player.authorId)
-      .forEach(submission => {
-        this.gameService.recordSubmissionView(this.gameCode, this.player.authorId, submission.submissionId).subscribe({
-          next: () => {
-            console.log(`View recorded for submission: ${submission.submissionId}`);
-          },
-          error: (error) => {
-            console.error(`Error recording view for submission ${submission.submissionId}:`, error);
-          }
-        });
+    submissions.forEach(submission => {
+      this.gameService.recordSubmissionView(this.gameCode, this.player.authorId, submission.submissionId).subscribe({
+        next: () => {
+          console.log(`View recorded for submission: ${submission.submissionId}`);
+        },
+        error: (error) => {
+          console.error(`Error recording view for submission ${submission.submissionId}:`, error);
+        }
       });
-  }
-
-  private updateAvailableSubmissionsFromPhases() {
-    if (!this.collaborativeTextPhases) return;
-
-    // Get the current phase ID
-    const phaseId = this.getPhaseIdForGameState();
-    if (!phaseId) return;
-
-    const phase = this.collaborativeTextPhases[phaseId];
-    if (!phase || !phase.submissions) return;
-
-    // Update the collaborative phase data
-    this.collaborativePhase = phase;
-
-    // Get available submissions using the distribution logic
-    this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId).subscribe({
-      next: (submissions) => {
-        // Backend now handles filtering out player's own submissions
-        this.availableSubmissions = submissions;
-        
-        // Record views for all retrieved submissions
-        this.recordViewsForSubmissions(submissions);
-        
-        // Check if player has submitted
-        this.checkIfPlayerHasSubmitted();
-      },
-      error: (error) => {
-        console.error('Error getting available submissions from phases:', error);
-        // Fallback to showing all submissions except player's own
-        this.availableSubmissions = phase.submissions.filter((submission: any) => 
-          submission.authorId !== this.player.authorId
-        );
-        this.checkIfPlayerHasSubmitted();
-      }
     });
   }
+
+  private mergeNewSubmissions(newSubmissions: TextSubmission[]) {
+    // Create a map of existing submissions by ID for quick lookup
+    const existingSubmissionsMap = new Map(
+      this.availableSubmissions.map(submission => [submission.submissionId, submission])
+    );
+    
+    // Find submissions that are not already in our list
+    const newSubmissionsToAdd = newSubmissions.filter(submission => 
+      !existingSubmissionsMap.has(submission.submissionId)
+    );
+    
+    // Only record views for truly new submissions
+    if (newSubmissionsToAdd.length > 0) {
+      this.recordViewsForSubmissions(newSubmissionsToAdd);
+    }
+    
+    // Add new submissions to the existing list
+    this.availableSubmissions = [...this.availableSubmissions, ...newSubmissionsToAdd];
+    
+    // Limit to 2 submissions maximum
+    if (this.availableSubmissions.length >= 2) {
+      this.availableSubmissions = this.availableSubmissions.slice(0, 2);
+      this.maximumSubmissionsReached = true;
+      console.log('Maximum submissions reached', this.maximumSubmissionsReached);
+    }
+    
+    console.log(`Added ${newSubmissionsToAdd.length} new submissions. Showing ${this.availableSubmissions.length} total submissions (limited to 2)`);
+  }
+
 
   private getPhaseIdForGameState(): string | null {
     switch (this.gameState) {
@@ -218,6 +248,34 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
   }
 
+  private hasSubmissionsChanged(currentSubmissions: TextSubmission[]): boolean {
+    // If we don't have previous submissions, this is a change
+    if (this.lastKnownSubmissions.length === 0) {
+      this.lastKnownSubmissions = [...currentSubmissions];
+      return currentSubmissions.length > 0;
+    }
+    
+    // Check if the number of submissions changed
+    if (this.lastKnownSubmissions.length !== currentSubmissions.length) {
+      this.lastKnownSubmissions = [...currentSubmissions];
+      return true;
+    }
+    
+    // Check if any submission IDs have changed (new submissions added)
+    const currentIds = currentSubmissions.map(s => s.submissionId).sort();
+    const lastIds = this.lastKnownSubmissions.map(s => s.submissionId).sort();
+    
+    const hasNewSubmissions = !currentIds.every((id, index) => id === lastIds[index]);
+    
+    if (hasNewSubmissions) {
+      this.lastKnownSubmissions = [...currentSubmissions];
+      return true;
+    }
+    
+    // No changes detected
+    return false;
+  }
+
   onSubmitNewText() {
     if (this.newTextControl.invalid || !this.newTextControl.value) return;
 
@@ -235,6 +293,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.hasSubmitted = true;
         this.showNewSubmission = false;
         this.newTextControl.reset();
+        this.availableSubmissions = [];
         this.updateAvailableSubmissions();
         this.isLoading = false;
       },
@@ -262,6 +321,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.isLoading = true;
     this.gameService.submitTextAddition(this.gameCode, textAddition).subscribe({
       next: (phase) => {
+        this.maximumSubmissionsReached = false;
         this.collaborativePhase = phase;
         this.additionTextControl.reset();
         this.selectedSubmission = null;
