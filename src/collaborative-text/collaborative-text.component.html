@@ -109,22 +109,10 @@
           <div class="no-submissions-message">
             <mat-icon>group_work</mat-icon>
             <h3>Waiting for other players...</h3>
-            <p>Other players haven't submitted their ideas yet. Check back soon!</p>
-            <button mat-button (click)="onRefresh()">
-              <mat-icon>refresh</mat-icon>
-              Refresh
-            </button>
+            <p>Other players haven't submitted their ideas yet. New submissions will appear automatically!</p>
           </div>
         </mat-card-content>
       </mat-card>
     }
-
-    <!-- Refresh Button -->
-    <div class="refresh-section">
-      <button mat-button (click)="onRefresh()" [disabled]="isLoading">
-        <mat-icon>refresh</mat-icon>
-        Refresh
-      </button>
-    </div>
   }
 </div>

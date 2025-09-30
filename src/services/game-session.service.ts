@@ -17,6 +17,7 @@ export class GameService {
     storiesToWritePerRound: number | null; 
     storiesToPlayPerRound: number | null;
     adventureMap: any | null;
+    collaborativeTextPhases: any | null;
   }> {
     const gameDocRef = doc(this.firestore, `gameSessions/${gameCode}`);
   
@@ -26,7 +27,8 @@ export class GameService {
         activePlayerSession: data?.activePlayerSession ?? null,
         storiesToWritePerRound: data?.storiesToWritePerRound ?? null,
         storiesToPlayPerRound: data?.storiesToPlayPerRound ?? null,
-        adventureMap: data?.adventureMap ?? null
+        adventureMap: data?.adventureMap ?? null,
+        collaborativeTextPhases: data?.collaborativeTextPhases ?? null
       }))
     );
   }

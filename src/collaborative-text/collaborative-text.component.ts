@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,11 +32,13 @@ import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/
   ],
   standalone: true
 })
-export class CollaborativeTextComponent implements OnInit {
+export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() gameCode: string = '';
   @Input() gameState: GameState = GameState.INIT;
   @Input() player: Player = new Player();
+  @Input() collaborativeTextPhases: any = null;
   @Output() playerDone = new EventEmitter<void>();
+  @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
 
   // Form controls
   newTextControl = new FormControl('', [Validators.required, Validators.minLength(1)]);
@@ -59,6 +61,13 @@ export class CollaborativeTextComponent implements OnInit {
   ngOnInit() {
     this.setupPhaseProperties();
     this.loadCollaborativePhase();
+  }
+
+  ngOnChanges() {
+    // When collaborative text phases change, update the available submissions
+    if (this.collaborativeTextPhases && this.isGameInCollaborativeTextPhase()) {
+      this.updateAvailableSubmissionsFromPhases();
+    }
   }
 
   private setupPhaseProperties() {
@@ -107,10 +116,11 @@ export class CollaborativeTextComponent implements OnInit {
     // Get submissions available to this player (with distribution logic)
     this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId).subscribe({
       next: (submissions) => {
-        // Filter out player's own submissions
-        this.availableSubmissions = submissions.filter(submission => 
-          submission.authorId !== this.player.authorId
-        );
+        // Backend now handles filtering out player's own submissions
+        this.availableSubmissions = submissions;
+        
+        // Record views for all retrieved submissions
+        this.recordViewsForSubmissions(submissions);
       },
       error: (error) => {
         console.error('Error getting available submissions:', error);
@@ -132,6 +142,80 @@ export class CollaborativeTextComponent implements OnInit {
 
     // If player has submitted, show the addition interface
     this.showNewSubmission = !this.hasSubmitted;
+  }
+
+  private recordViewsForSubmissions(submissions: TextSubmission[]) {
+    // Record views for all submissions that are not the player's own
+    submissions
+      .filter(submission => submission.authorId !== this.player.authorId)
+      .forEach(submission => {
+        this.gameService.recordSubmissionView(this.gameCode, this.player.authorId, submission.submissionId).subscribe({
+          next: () => {
+            console.log(`View recorded for submission: ${submission.submissionId}`);
+          },
+          error: (error) => {
+            console.error(`Error recording view for submission ${submission.submissionId}:`, error);
+          }
+        });
+      });
+  }
+
+  private updateAvailableSubmissionsFromPhases() {
+    if (!this.collaborativeTextPhases) return;
+
+    // Get the current phase ID
+    const phaseId = this.getPhaseIdForGameState();
+    if (!phaseId) return;
+
+    const phase = this.collaborativeTextPhases[phaseId];
+    if (!phase || !phase.submissions) return;
+
+    // Update the collaborative phase data
+    this.collaborativePhase = phase;
+
+    // Get available submissions using the distribution logic
+    this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId).subscribe({
+      next: (submissions) => {
+        // Backend now handles filtering out player's own submissions
+        this.availableSubmissions = submissions;
+        
+        // Record views for all retrieved submissions
+        this.recordViewsForSubmissions(submissions);
+        
+        // Check if player has submitted
+        this.checkIfPlayerHasSubmitted();
+      },
+      error: (error) => {
+        console.error('Error getting available submissions from phases:', error);
+        // Fallback to showing all submissions except player's own
+        this.availableSubmissions = phase.submissions.filter((submission: any) => 
+          submission.authorId !== this.player.authorId
+        );
+        this.checkIfPlayerHasSubmitted();
+      }
+    });
+  }
+
+  private getPhaseIdForGameState(): string | null {
+    switch (this.gameState) {
+      case GameState.WHERE_ARE_WE:
+        return 'WHERE_ARE_WE';
+      case GameState.WHO_ARE_WE:
+        return 'WHO_ARE_WE';
+      case GameState.WHAT_IS_OUR_GOAL:
+        return 'WHAT_IS_OUR_GOAL';
+      case GameState.WHAT_ARE_WE_CAPABLE_OF:
+        return 'WHAT_ARE_WE_CAPABLE_OF';
+      default:
+        return null;
+    }
+  }
+
+  private isGameInCollaborativeTextPhase(): boolean {
+    return this.gameState === GameState.WHERE_ARE_WE || 
+           this.gameState === GameState.WHO_ARE_WE || 
+           this.gameState === GameState.WHAT_IS_OUR_GOAL || 
+           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
   }
 
   onSubmitNewText() {
@@ -163,16 +247,6 @@ export class CollaborativeTextComponent implements OnInit {
 
   onSelectSubmission(submission: TextSubmission) {
     this.selectedSubmission = submission;
-    
-    // Record that this player viewed this submission
-    this.gameService.recordSubmissionView(this.gameCode, this.player.authorId, submission.submissionId).subscribe({
-      next: () => {
-        console.log('Submission view recorded');
-      },
-      error: (error) => {
-        console.error('Error recording submission view:', error);
-      }
-    });
   }
 
   onAddToSubmission() {
@@ -201,9 +275,6 @@ export class CollaborativeTextComponent implements OnInit {
     });
   }
 
-  onRefresh() {
-    this.loadCollaborativePhase();
-  }
 
   getSubmissionPreview(submission: TextSubmission): string {
     return submission.currentText.length > 100 

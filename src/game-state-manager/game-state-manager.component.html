@@ -27,7 +27,13 @@
 }
 
 @if (isGameInCollaborativeTextPhase()) {
-    <collaborative-text [gameCode]="gameCode" [gameState]="gameState" [player]="player"></collaborative-text>
+    <collaborative-text 
+      [gameCode]="gameCode" 
+      [gameState]="gameState" 
+      [player]="player" 
+      [collaborativeTextPhases]="collaborativeTextPhases"
+      (collaborativeTextPhaseChanged)="onCollaborativeTextPhaseChanged($event)">
+    </collaborative-text>
 }
 
 @if (isLocationSelect()) {

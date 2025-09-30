@@ -38,10 +38,12 @@ export class GameStateManagerComponent implements OnInit {
   }
   gameState: GameState = GameState.INIT;
   @Output() gameStateChanged = new EventEmitter<GameState>();
+  @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   storiesToWritePerRound: number = 1;
   storiesToPlayPerRound: number = 1;
   adventureMap: AdventureMap | null = null;
+  collaborativeTextPhases: any = null;
 
   constructor(
     private gameService: GameService,
@@ -59,6 +61,13 @@ export class GameStateManagerComponent implements OnInit {
       this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       this.storiesToPlayPerRound = newState.storiesToPlayPerRound as unknown as number;
       this.adventureMap = newState.adventureMap as unknown as AdventureMap;
+      
+      // Check for collaborative text phase changes
+      if (newState.collaborativeTextPhases && JSON.stringify(this.collaborativeTextPhases) !== JSON.stringify(newState.collaborativeTextPhases)) {
+        this.collaborativeTextPhases = newState.collaborativeTextPhases;
+        this.collaborativeTextPhaseChanged.emit(this.collaborativeTextPhases);
+      }
+      
       console.log('New gameState:', this.gameState);
     });
   }
@@ -96,6 +105,12 @@ export class GameStateManagerComponent implements OnInit {
   isValidGameState (component: ComponentType, state: GameState): boolean {
     return ComponentTypeGameStateMap[component].includes(state);
   };
+
+  onCollaborativeTextPhaseChanged(phases: any) {
+    // This method will be called by the collaborative-text component
+    // when it needs to notify about phase changes
+    this.collaborativeTextPhaseChanged.emit(phases);
+  }
 
   isGameInitialized() {
     return this.gameState === GameState.INIT;
