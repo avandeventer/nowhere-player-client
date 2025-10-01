@@ -160,8 +160,12 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       if (!this.collaborativePhase) return;
     }
 
+    // Calculate how many submissions we need (2 - current count)
+    const currentCount = this.availableSubmissions.length;
+    const requestedCount = Math.max(0, 2 - currentCount);
+    
     // Get submissions available to this player (with distribution logic)
-    this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId).subscribe({
+    this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId, requestedCount).subscribe({
       next: (submissions) => {
         this.mergeNewSubmissions(submissions);
       },
@@ -183,18 +187,6 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.showNewSubmission = !this.hasSubmitted;
   }
 
-  private recordViewsForSubmissions(submissions: TextSubmission[]) {
-    submissions.forEach(submission => {
-      this.gameService.recordSubmissionView(this.gameCode, this.player.authorId, submission.submissionId).subscribe({
-        next: () => {
-          console.log(`View recorded for submission: ${submission.submissionId}`);
-        },
-        error: (error) => {
-          console.error(`Error recording view for submission ${submission.submissionId}:`, error);
-        }
-      });
-    });
-  }
 
   private mergeNewSubmissions(newSubmissions: TextSubmission[]) {
     // Create a map of existing submissions by ID for quick lookup
@@ -206,11 +198,6 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     const newSubmissionsToAdd = newSubmissions.filter(submission => 
       !existingSubmissionsMap.has(submission.submissionId)
     );
-    
-    // Only record views for truly new submissions
-    if (newSubmissionsToAdd.length > 0) {
-      this.recordViewsForSubmissions(newSubmissionsToAdd);
-    }
     
     // Add new submissions to the existing list
     this.availableSubmissions = [...this.availableSubmissions, ...newSubmissionsToAdd];
@@ -294,6 +281,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.showNewSubmission = false;
         this.newTextControl.reset();
         this.availableSubmissions = [];
+        this.maximumSubmissionsReached = false;
         this.updateAvailableSubmissions();
         this.isLoading = false;
       },
@@ -325,6 +313,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.collaborativePhase = phase;
         this.additionTextControl.reset();
         this.selectedSubmission = null;
+        this.availableSubmissions = [];
+
         this.updateAvailableSubmissions();
         this.isLoading = false;
       },

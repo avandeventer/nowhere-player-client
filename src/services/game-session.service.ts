@@ -54,11 +54,7 @@ export class GameService {
     return this.http.get<string>(`${environment.nowhereBackendUrl}/collaborativeText/winner?gameCode=${gameCode}`);
   }
 
-  getAvailableSubmissionsForPlayer(gameCode: string, playerId: string): Observable<TextSubmission[]> {
-    return this.http.get<TextSubmission[]>(`${environment.nowhereBackendUrl}/collaborativeText/available?gameCode=${gameCode}&playerId=${playerId}`);
-  }
-
-  recordSubmissionView(gameCode: string, playerId: string, submissionId: string): Observable<void> {
-    return this.http.post<void>(`${environment.nowhereBackendUrl}/collaborativeText/view?gameCode=${gameCode}&playerId=${playerId}&submissionId=${submissionId}`, {});
+  getAvailableSubmissionsForPlayer(gameCode: string, playerId: string, requestedCount: number = 2): Observable<TextSubmission[]> {
+    return this.http.get<TextSubmission[]>(`${environment.nowhereBackendUrl}/collaborativeText/available?gameCode=${gameCode}&playerId=${playerId}&requestedCount=${requestedCount}`);
   }
 }
