@@ -161,4 +161,10 @@ export class GameStateManagerComponent implements OnInit {
            this.gameState === GameState.WHO_ARE_WE_VOTE || 
            this.gameState === GameState.WHAT_IS_OUR_GOAL_VOTE;
   }
+
+  isGameInCollaborativeTextWinningPhase() {
+    return this.gameState === GameState.WHERE_ARE_WE_VOTE_WINNER || 
+           this.gameState === GameState.WHO_ARE_WE_VOTE_WINNER || 
+           this.gameState === GameState.WHAT_IS_OUR_GOAL_VOTE_WINNER;
+  }
 }

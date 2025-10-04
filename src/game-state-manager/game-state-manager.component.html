@@ -14,7 +14,7 @@
     }
 }
 
-@if (isGameInPreamblePhase()) {
+@if (isGameInPreamblePhase() || isGameInCollaborativeTextWinningPhase()) {
     <p>Have someone read the text on screen!</p>
     @if(player.firstPlayer) {
         <p>Push the button below to continue</p>
