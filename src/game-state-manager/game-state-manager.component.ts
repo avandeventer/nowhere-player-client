@@ -18,11 +18,12 @@ import { GenreComponent } from 'src/genre/genre.component';
 import { EndingComponent } from 'src/ending/ending.component';
 import { AdventureMap } from 'src/assets/adventure-map';
 import { CollaborativeTextComponent } from 'src/collaborative-text/collaborative-text.component';
+import { VotingComponent } from 'src/voting/voting.component';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule, GenreComponent, CollaborativeTextComponent],
+    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule, GenreComponent, CollaborativeTextComponent, VotingComponent],
     standalone: true
 })
 export class GameStateManagerComponent implements OnInit {
@@ -153,5 +154,11 @@ export class GameStateManagerComponent implements OnInit {
            this.gameState === GameState.WHO_ARE_WE || 
            this.gameState === GameState.WHAT_IS_OUR_GOAL || 
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
+  }
+
+  isGameInVotingPhase() {
+    return this.gameState === GameState.WHERE_ARE_WE_VOTE || 
+           this.gameState === GameState.WHO_ARE_WE_VOTE || 
+           this.gameState === GameState.WHAT_IS_OUR_GOAL_VOTE;
   }
 }

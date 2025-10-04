@@ -1,3 +1,5 @@
+import { PlayerVote } from './player-vote';
+
 export interface CollaborativeTextPhase {
   phaseId: string;
   question: string;
@@ -27,12 +29,4 @@ export interface TextAddition {
   authorId: string;
   addedText: string;
   submissionId: string | null; // null for new submissions
-}
-
-export interface PlayerVote {
-  voteId: string;
-  playerId: string;
-  submissionId: string;
-  ranking: number; // 1, 2, or 3
-  timestamp: string;
 }

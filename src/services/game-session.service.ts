@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
-import { CollaborativeTextPhase, TextSubmission, TextAddition, PlayerVote } from 'src/assets/collaborative-text-phase';
+import { CollaborativeTextPhase, TextSubmission, TextAddition } from 'src/assets/collaborative-text-phase';
+import { PlayerVote } from 'src/assets/player-vote';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -56,5 +57,13 @@ export class GameService {
 
   getAvailableSubmissionsForPlayer(gameCode: string, playerId: string, requestedCount: number = 2): Observable<TextSubmission[]> {
     return this.http.get<TextSubmission[]>(`${environment.nowhereBackendUrl}/collaborativeText/available?gameCode=${gameCode}&playerId=${playerId}&requestedCount=${requestedCount}`);
+  }
+
+  getVotingSubmissions(gameCode: string, playerId: string): Observable<TextSubmission[]> {
+    return this.http.get<TextSubmission[]>(`${environment.nowhereBackendUrl}/collaborativeText/voting?gameCode=${gameCode}&playerId=${playerId}`);
+  }
+
+  submitPlayerVotes(gameCode: string, playerVotes: PlayerVote[]): Observable<CollaborativeTextPhase> {
+    return this.http.post<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText/votes?gameCode=${gameCode}`, playerVotes);
   }
 }

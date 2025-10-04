@@ -1,0 +1,82 @@
+<div class="voting-container">
+  <div class="voting-header">
+    <h1 class="phase-question">{{ phaseQuestion }}</h1>
+    <p class="voting-instructions">Click on submissions to rank them from best to worst. The first one you select will be ranked #1, the second will be #2, and so on.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+      <p>Loading submissions for voting...</p>
+    </div>
+  } @else if (submissions.length === 0) {
+    <div class="no-submissions">
+      <mat-icon class="no-submissions-icon">inbox</mat-icon>
+      <p>No submissions available for voting yet.</p>
+    </div>
+  } @else if (hasVoted) {
+    <div class="voted-container">
+      <mat-icon class="voted-icon">check_circle</mat-icon>
+      <h2>Votes Submitted!</h2>
+      <p>Thank you for voting. The results will be calculated when all players have voted.</p>
+    </div>
+  } @else {
+    <div class="submissions-container">
+      <!-- Selection Summary -->
+      @if (selectedSubmissions.length > 0) {
+        <div class="selection-summary">
+          <h3>Your Rankings:</h3>
+          <div class="selection-list">
+            @for (submission of getSelectedSubmissions(); track submission.submissionId; let i = $index) {
+              <div class="selection-item">
+                <span class="ranking-bubble">{{ i + 1 }}</span>
+                <span class="selection-text">{{ submission.currentText }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Submissions for Selection -->
+      <div class="submissions-list">
+        @for (submission of submissions; track submission.submissionId) {
+          <mat-card 
+            class="submission-card" 
+            [class.selected]="isSelected(submission.submissionId)"
+            (click)="onSubmissionToggle(submission.submissionId)">
+            <mat-card-content>
+              <div class="submission-content">
+                @if (isSelected(submission.submissionId)) {
+                  <div class="ranking-badge">
+                    <span class="ranking-number">{{ getRanking(submission.submissionId) }}</span>
+                  </div>
+                }
+                <p class="submission-text">{{ submission.currentText }}</p>
+                <div class="selection-indicator">
+                  @if (isSelected(submission.submissionId)) {
+                    <mat-icon class="selected-icon">check_circle</mat-icon>
+                  } @else {
+                    <mat-icon class="unselected-icon">radio_button_unchecked</mat-icon>
+                  }
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <div class="submit-container">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="submitVotes()"
+          [disabled]="isLoading || selectedSubmissions.length === 0"
+          class="submit-button">
+          <mat-icon>how_to_vote</mat-icon>
+          Submit Votes ({{ selectedSubmissions.length }} selected)
+        </button>
+      </div>
+    </div>
+  }
+</div>

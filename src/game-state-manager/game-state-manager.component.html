@@ -36,6 +36,15 @@
     </collaborative-text>
 }
 
+@if (isGameInVotingPhase()) {
+    <app-voting 
+      [gameCode]="gameCode" 
+      [gameState]="gameState" 
+      [player]="player"
+      (playerDone)="setDone($event)">
+    </app-voting>
+}
+
 @if (isLocationSelect()) {
     <location [gameCode]="gameCode" [gameState]="gameState" [player]="player" [storiesToPlayPerRound]="storiesToPlayPerRound" (playerDone)="setDone($event)"></location>
 }
