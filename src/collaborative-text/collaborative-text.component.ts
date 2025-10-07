@@ -58,6 +58,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   // Phase-specific properties
   phaseQuestion = '';
   phaseInstructions = '';
+  
+  // Mode detection
+  isSimpleMode = false; // For WHAT_DO_WE_FEAR and WHAT_ARE_WE_CAPABLE_OF
+  isCollaborativeMode = false; // For WHERE_ARE_WE, WHO_ARE_WE, WHAT_IS_OUR_GOAL
 
   constructor(private gameService: GameService) {}
 
@@ -93,22 +97,35 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   private setupPhaseProperties() {
+    // Reset mode flags
+    this.isSimpleMode = false;
+    this.isCollaborativeMode = false;
+    
     switch (this.gameState) {
       case GameState.WHERE_ARE_WE:
+        this.isCollaborativeMode = true;
         this.phaseQuestion = 'Where are we?';
         this.phaseInstructions = 'Describe the setting where your story takes place. Be creative and specific!';
         break;
+      case GameState.WHAT_DO_WE_FEAR:
+        this.isSimpleMode = true;
+        this.phaseQuestion = 'What do we fear?';
+        this.phaseInstructions = 'There is an entity here that strikes fear and awe in the hearts of all that come across it. We fear and respect this person, force, or group more than anything else. Name them. List as many ideas as you have!';
+        break;
       case GameState.WHO_ARE_WE:
+        this.isCollaborativeMode = true;
         this.phaseQuestion = 'Who are we?';
-        this.phaseInstructions = 'Describe the characters in your story. Who are the protagonists?';
+        this.phaseInstructions = 'Describe who we are together. What are we like and what is our goal?';
         break;
       case GameState.WHAT_IS_OUR_GOAL:
-        this.phaseQuestion = 'What is our goal?';
-        this.phaseInstructions = 'What are the characters trying to achieve? What is their mission or objective?';
+        this.isCollaborativeMode = true;
+        this.phaseQuestion = 'What is coming?';
+        this.phaseInstructions = 'What are our characters trying to achieve? What is their mission or objective?';
         break;
       case GameState.WHAT_ARE_WE_CAPABLE_OF:
+        this.isSimpleMode = true;
         this.phaseQuestion = 'What are we capable of?';
-        this.phaseInstructions = 'What special abilities, skills, or resources do the characters have?';
+        this.phaseInstructions = 'List the skill we need in this world to succeed when the season ends. List as many ideas as you have!';
         break;
       default:
         this.phaseQuestion = 'Collaborative Writing';
@@ -123,9 +140,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.collaborativePhase = phase;
         this.checkIfPlayerHasSubmitted();
         
-        // Only load available submissions if player has already submitted
-        if (this.hasSubmitted) {
-          this.updateAvailableSubmissions(); // false = use existing collaborativePhase data
+        if (this.isSimpleMode) {
+          // For simple mode (WHAT_DO_WE_FEAR, WHAT_ARE_WE_CAPABLE_OF), don't show other submissions
+          this.availableSubmissions = [];
+          this.maximumSubmissionsReached = false;
+        } else {
+          // For collaborative mode, only load available submissions if player has already submitted
+          if (this.hasSubmitted) {
+            this.updateAvailableSubmissions(); // false = use existing collaborativePhase data
+          }
         }
         
         this.isLoading = false;
@@ -228,11 +251,68 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
   }
 
-  private isGameInCollaborativeTextPhase(): boolean {
+  private   isGameInCollaborativeTextPhase(): boolean {
     return this.gameState === GameState.WHERE_ARE_WE || 
+           this.gameState === GameState.WHAT_DO_WE_FEAR ||
            this.gameState === GameState.WHO_ARE_WE || 
            this.gameState === GameState.WHAT_IS_OUR_GOAL || 
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
+  }
+
+  // Helper methods for simple mode
+  getSimpleModeLabel(): string {
+    switch (this.gameState) {
+      case GameState.WHAT_DO_WE_FEAR:
+        return 'Your fear (short phrase)';
+      case GameState.WHAT_ARE_WE_CAPABLE_OF:
+        return 'Your capability (short phrase)';
+      default:
+        return 'Your submission';
+    }
+  }
+
+  getSimpleModePlaceholder(): string {
+    switch (this.gameState) {
+      case GameState.WHAT_DO_WE_FEAR:
+        return 'e.g., The Shadow King, The Corporate Overlords, The AI...';
+      case GameState.WHAT_ARE_WE_CAPABLE_OF:
+        return 'e.g., Stealth, Leadership, Magic, Technology...';
+      default:
+        return 'Enter your submission...';
+    }
+  }
+
+  getSubmitButtonText(): string {
+    switch (this.gameState) {
+      case GameState.WHAT_DO_WE_FEAR:
+        return 'Submit Fear';
+      case GameState.WHAT_ARE_WE_CAPABLE_OF:
+        return 'Submit Capability';
+      default:
+        return 'Submit';
+    }
+  }
+
+  getSimpleModeSubmittedTitle(): string {
+    switch (this.gameState) {
+      case GameState.WHAT_DO_WE_FEAR:
+        return 'Your fear has been submitted!';
+      case GameState.WHAT_ARE_WE_CAPABLE_OF:
+        return 'Your capability has been submitted!';
+      default:
+        return 'Your submission has been submitted!';
+    }
+  }
+
+  getSimpleModeSubmittedMessage(): string {
+    switch (this.gameState) {
+      case GameState.WHAT_DO_WE_FEAR:
+        return 'Wait for other players to submit their ideas, then we\'ll vote on them.';
+      case GameState.WHAT_ARE_WE_CAPABLE_OF:
+        return 'Wait for other players to submit their capabilities, then we\'ll vote on them.';
+      default:
+        return 'Wait for other players to submit their ideas, then we\'ll vote on them.';
+    }
   }
 
   private hasSubmissionsChanged(currentSubmissions: TextSubmission[]): boolean {

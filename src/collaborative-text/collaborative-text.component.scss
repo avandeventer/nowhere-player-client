@@ -140,3 +140,34 @@
     flex-direction: column;
   }
 }
+
+// Simple mode submitted state
+.submitted-card {
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+  border: 2px solid #4caf50;
+}
+
+.submitted-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.check-icon {
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.submitted-text h3 {
+  margin: 0 0 5px 0;
+  color: #2e7d32;
+  font-size: 1.2rem;
+}
+
+.submitted-text p {
+  margin: 0;
+  color: #4caf50;
+  font-size: 1rem;
+}

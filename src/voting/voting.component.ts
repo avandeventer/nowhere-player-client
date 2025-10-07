@@ -61,11 +61,17 @@ export class VotingComponent implements OnInit, OnDestroy {
       case GameState.WHERE_ARE_WE_VOTE:
         this.phaseQuestion = 'Where are we?';
         break;
+      case GameState.WHAT_DO_WE_FEAR_VOTE:
+        this.phaseQuestion = 'What do we fear?';
+        break;
       case GameState.WHO_ARE_WE_VOTE:
         this.phaseQuestion = 'Who are we?';
         break;
       case GameState.WHAT_IS_OUR_GOAL_VOTE:
         this.phaseQuestion = 'What is our goal?';
+        break;
+      case GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE:
+        this.phaseQuestion = 'What are we capable of?';
         break;
       default:
         this.phaseQuestion = 'Vote on submissions';

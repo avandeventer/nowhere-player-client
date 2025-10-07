@@ -19,5 +19,5 @@ export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
     [ComponentType.RITUAL]: [GameState.RITUAL],
     [ComponentType.WRITE_ENDINGS]: [GameState.WRITE_ENDINGS],
     [ComponentType.ENDING]: [GameState.ENDING],
-    [ComponentType.VOTING]: [GameState.WHERE_ARE_WE_VOTE, GameState.WHO_ARE_WE_VOTE, GameState.WHAT_IS_OUR_GOAL_VOTE, GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE]
+    [ComponentType.VOTING]: [GameState.WHERE_ARE_WE_VOTE, GameState.WHO_ARE_WE_VOTE, GameState.WHAT_IS_OUR_GOAL_VOTE, GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE, GameState.WHAT_DO_WE_FEAR_VOTE]
 };
