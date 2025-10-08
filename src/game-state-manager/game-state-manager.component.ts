@@ -152,7 +152,7 @@ export class GameStateManagerComponent implements OnInit {
   isGameInCollaborativeTextPhase() {
     return this.gameState === GameState.WHERE_ARE_WE || 
            this.gameState === GameState.WHO_ARE_WE || 
-           this.gameState === GameState.WHAT_IS_OUR_GOAL || 
+           this.gameState === GameState.WHAT_IS_COMING || 
            this.gameState === GameState.WHAT_DO_WE_FEAR ||
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
   }
@@ -160,7 +160,7 @@ export class GameStateManagerComponent implements OnInit {
   isGameInVotingPhase() {
     return this.gameState === GameState.WHERE_ARE_WE_VOTE || 
            this.gameState === GameState.WHO_ARE_WE_VOTE || 
-           this.gameState === GameState.WHAT_IS_OUR_GOAL_VOTE ||
+           this.gameState === GameState.WHAT_IS_COMING_VOTE ||
            this.gameState === GameState.WHAT_DO_WE_FEAR_VOTE ||
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE;
   }
@@ -168,7 +168,7 @@ export class GameStateManagerComponent implements OnInit {
   isGameInCollaborativeTextWinningPhase() {
     return this.gameState === GameState.WHERE_ARE_WE_VOTE_WINNER || 
            this.gameState === GameState.WHO_ARE_WE_VOTE_WINNER || 
-           this.gameState === GameState.WHAT_IS_OUR_GOAL_VOTE_WINNER ||
+           this.gameState === GameState.WHAT_IS_COMING_VOTE_WINNER ||
            this.gameState === GameState.WHAT_DO_WE_FEAR_VOTE_WINNER ||
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE_WINNERS;
   }

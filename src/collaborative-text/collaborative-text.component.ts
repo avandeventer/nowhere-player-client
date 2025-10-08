@@ -61,7 +61,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   
   // Mode detection
   isSimpleMode = false; // For WHAT_DO_WE_FEAR and WHAT_ARE_WE_CAPABLE_OF
-  isCollaborativeMode = false; // For WHERE_ARE_WE, WHO_ARE_WE, WHAT_IS_OUR_GOAL
+  isCollaborativeMode = false; // For WHERE_ARE_WE, WHO_ARE_WE, WHAT_IS_COMING
 
   constructor(private gameService: GameService) {}
 
@@ -112,15 +112,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.phaseQuestion = 'What do we fear?';
         this.phaseInstructions = 'There is an entity here that strikes fear and awe in the hearts of all that come across it. We fear and respect this person, force, or group more than anything else. Name them. List as many ideas as you have!';
         break;
+      case GameState.WHAT_IS_COMING:
+        this.isCollaborativeMode = true;
+        this.phaseQuestion = 'What is coming?';
+        this.phaseInstructions = 'At the end of the season an event will occur and we will be judged by the Entity. What event is coming and how will we be judged there?';
+        break;
       case GameState.WHO_ARE_WE:
         this.isCollaborativeMode = true;
         this.phaseQuestion = 'Who are we?';
         this.phaseInstructions = 'Describe who we are together. What are we like and what is our goal?';
-        break;
-      case GameState.WHAT_IS_OUR_GOAL:
-        this.isCollaborativeMode = true;
-        this.phaseQuestion = 'What is coming?';
-        this.phaseInstructions = 'What are our characters trying to achieve? What is their mission or objective?';
         break;
       case GameState.WHAT_ARE_WE_CAPABLE_OF:
         this.isSimpleMode = true;
@@ -242,8 +242,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         return 'WHERE_ARE_WE';
       case GameState.WHO_ARE_WE:
         return 'WHO_ARE_WE';
-      case GameState.WHAT_IS_OUR_GOAL:
-        return 'WHAT_IS_OUR_GOAL';
+      case GameState.WHAT_IS_COMING:
+        return 'WHAT_IS_COMING';
       case GameState.WHAT_ARE_WE_CAPABLE_OF:
         return 'WHAT_ARE_WE_CAPABLE_OF';
       default:
@@ -255,7 +255,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     return this.gameState === GameState.WHERE_ARE_WE || 
            this.gameState === GameState.WHAT_DO_WE_FEAR ||
            this.gameState === GameState.WHO_ARE_WE || 
-           this.gameState === GameState.WHAT_IS_OUR_GOAL || 
+           this.gameState === GameState.WHAT_IS_COMING || 
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
   }
 

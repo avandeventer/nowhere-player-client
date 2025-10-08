@@ -67,8 +67,8 @@ export class VotingComponent implements OnInit, OnDestroy {
       case GameState.WHO_ARE_WE_VOTE:
         this.phaseQuestion = 'Who are we?';
         break;
-      case GameState.WHAT_IS_OUR_GOAL_VOTE:
-        this.phaseQuestion = 'What is our goal?';
+      case GameState.WHAT_IS_COMING_VOTE:
+        this.phaseQuestion = 'What is coming?';
         break;
       case GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE:
         this.phaseQuestion = 'What are we capable of?';
@@ -84,6 +84,9 @@ export class VotingComponent implements OnInit, OnDestroy {
       next: (submissions) => {
         this.submissions = submissions;
         this.initializeRankings();
+        if (this.submissions.length === 0) {
+          this.playerDone.emit(ComponentType.VOTING);
+        }
         this.isLoading = false;
       },
       error: (error) => {
