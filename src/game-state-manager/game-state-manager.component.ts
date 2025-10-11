@@ -19,11 +19,12 @@ import { EndingComponent } from 'src/ending/ending.component';
 import { AdventureMap } from 'src/assets/adventure-map';
 import { CollaborativeTextComponent } from 'src/collaborative-text/collaborative-text.component';
 import { VotingComponent } from 'src/voting/voting.component';
+import { WriteLocationPromptComponent } from 'src/write-location-prompt/write-location-prompt.component';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule, GenreComponent, CollaborativeTextComponent, VotingComponent],
+    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule, GenreComponent, CollaborativeTextComponent, VotingComponent, WriteLocationPromptComponent],
     standalone: true
 })
 export class GameStateManagerComponent implements OnInit {
@@ -171,5 +172,9 @@ export class GameStateManagerComponent implements OnInit {
            this.gameState === GameState.WHAT_IS_COMING_VOTE_WINNER ||
            this.gameState === GameState.WHAT_DO_WE_FEAR_VOTE_WINNER ||
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE_WINNERS;
+  }
+
+  isGameInLocationCreationPhase() {
+    return this.gameState === GameState.WHERE_CAN_WE_GO;
   }
 }

@@ -35,6 +35,15 @@
     </collaborative-text>
 }
 
+@if (isGameInLocationCreationPhase()) {
+    <write-location-prompt 
+      [gameCode]="gameCode" 
+      [gameState]="gameState" 
+      [player]="player"
+      (playerDone)="setDone($event)">
+    </write-location-prompt>
+}
+
 @if (isGameInVotingPhase()) {
     <app-voting 
       [gameCode]="gameCode" 
