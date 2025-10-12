@@ -9,7 +9,8 @@ export enum ComponentType {
     WRITE_ENDINGS = "WRITE_ENDINGS",
     ENDING = "ENDING",
     VOTING = "VOTING",
-    WRITE_LOCATION_PROMPT = "WRITE_LOCATION_PROMPT"
+    WRITE_LOCATION_PROMPT = "WRITE_LOCATION_PROMPT",
+    WRITE_LOCATION_OUTCOMES = "WRITE_LOCATION_OUTCOMES"
 }  
 
 export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
@@ -21,5 +22,6 @@ export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
     [ComponentType.WRITE_ENDINGS]: [GameState.WRITE_ENDINGS],
     [ComponentType.ENDING]: [GameState.ENDING],
     [ComponentType.VOTING]: [GameState.WHERE_ARE_WE_VOTE, GameState.WHO_ARE_WE_VOTE, GameState.WHAT_IS_COMING_VOTE, GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE, GameState.WHAT_DO_WE_FEAR_VOTE],
-    [ComponentType.WRITE_LOCATION_PROMPT]: [GameState.WHERE_CAN_WE_GO]
+    [ComponentType.WRITE_LOCATION_PROMPT]: [GameState.WHERE_CAN_WE_GO],
+    [ComponentType.WRITE_LOCATION_OUTCOMES]: [GameState.WHAT_OCCUPATIONS_ARE_THERE]
 };

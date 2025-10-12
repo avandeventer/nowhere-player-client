@@ -20,6 +20,7 @@ import { WritePhase } from 'src/assets/phases/write-phase';
 @Component({
   selector: 'write-location-prompt',
   templateUrl: './write-location-prompt.component.html',
+  styleUrls: ['./write-location-prompt.component.scss'],
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -45,6 +46,9 @@ export class WriteLocationPromptComponent implements OnInit {
   
   phase: WritePhase = WritePhase.PROMPT;
   protected WritePhase = WritePhase;
+  
+  availableImages: string[] = [];
+  selectedImage: string = '';
 
   locationLabel = new FormControl('', { validators: [Validators.required, Validators.maxLength(50)] });
   optionOneText = new FormControl('', { validators: [Validators.required, Validators.maxLength(100)] });
@@ -55,6 +59,7 @@ export class WriteLocationPromptComponent implements OnInit {
 
   ngOnInit() {
     this.getLocationByAuthor(this.player.authorId);
+    this.loadAvailableImages();
   }
 
   async getLocationByAuthor(authorId: string) {
@@ -106,27 +111,25 @@ export class WriteLocationPromptComponent implements OnInit {
 
   submitLocation() {
     const requestBody = {
-      gameCode: this.gameCode,
-      location: {
-        ...this.location,
-        label: this.locationLabel.value,
-        options: [
-          {
-            ...this.location.options[0],
-            optionText: this.optionOneText.value
-          },
-          {
-            ...this.location.options[1],
-            optionText: this.optionTwoText.value
-          }
-        ]
-      }
+      ...this.location,
+      label: this.locationLabel.value,
+      iconDirectory: this.selectedImage,
+      options: [
+        {
+          ...this.location.options[0],
+          optionText: this.optionOneText.value
+        },
+        {
+          ...this.location.options[1],
+          optionText: this.optionTwoText.value
+        }
+      ]
     };
 
     console.log("Submitting location update", requestBody);
 
     this.http
-      .put(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, requestBody)
+      .put(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH + "?gameCode=" + this.gameCode, requestBody)
       .subscribe({
         next: (response) => {
           console.log('Location updated!', response);
@@ -142,6 +145,10 @@ export class WriteLocationPromptComponent implements OnInit {
     this.aboutToSubmit = false;
     
     switch (this.phase) {
+      case WritePhase.ADD_IMAGE:
+        this.phase = WritePhase.OPTION_TWO;
+        this.aboutToSubmit = false;
+        break;
       case WritePhase.OPTION_TWO:
         this.phase = WritePhase.OPTION_ONE;
         break;
@@ -164,9 +171,12 @@ export class WriteLocationPromptComponent implements OnInit {
         break;
       case WritePhase.OPTION_ONE:
         this.phase = WritePhase.OPTION_TWO;
-        this.aboutToSubmit = true;
         break;
       case WritePhase.OPTION_TWO:
+        this.phase = WritePhase.ADD_IMAGE;
+        this.aboutToSubmit = true;
+        break;
+      case WritePhase.ADD_IMAGE:
         this.phase = WritePhase.DONE;
         this.submitLocation();
         break;
@@ -183,6 +193,9 @@ export class WriteLocationPromptComponent implements OnInit {
   getInstructionQuestionString() {
     if (this.phase === WritePhase.PROMPT) {
       return `What is this place called? This location will allow your friends to improve their`;
+    }
+    if (this.phase === WritePhase.ADD_IMAGE) {
+      return `What icon represents your location on the map?`;
     }
     return `What is something your friends could do here to improve their`;
   }
@@ -212,6 +225,33 @@ export class WriteLocationPromptComponent implements OnInit {
     return "NORMAL";
   }
 
+  loadAvailableImages() {
+    this.http
+      .get<string[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_IMAGES_PATH)
+      .subscribe({
+        next: (images) => {
+          console.log('Available images loaded:', images);
+          this.availableImages = images;
+          if (images.length > 0) {
+            this.selectedImage = images[0];
+          }
+        },
+        error: (error) => {
+          console.error('Error loading images', error);
+        },
+      });
+  }
+
+  selectImage(imageUrl: string) {
+    this.selectedImage = imageUrl;
+  }
+
+  getImageName(imageUrl: string): string {
+    const urlParts = imageUrl.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    return fileName.replace('.png', '').replace(/_/g, ' ');
+  }
+
   canSubmit(): boolean {
     switch (this.phase) {
       case WritePhase.PROMPT:
@@ -220,6 +260,8 @@ export class WriteLocationPromptComponent implements OnInit {
         return !!(this.optionOneText.value && this.optionOneText.value.trim().length > 0);
       case WritePhase.OPTION_TWO:
         return !!(this.optionTwoText.value && this.optionTwoText.value.trim().length > 0);
+      case WritePhase.ADD_IMAGE:
+        return !!(this.selectedImage && this.selectedImage.trim().length > 0);
       default:
         return false;
     }

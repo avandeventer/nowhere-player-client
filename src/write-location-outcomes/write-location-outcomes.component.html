@@ -1,0 +1,69 @@
+@if(currentLocationIndex >= playerLocations.length) {
+    <p>All location outcomes have been submitted!</p>
+}
+@else {
+    <div class="instructions">Someone else has made a location called {{playerLocations[currentLocationIndex].label}} so you describe what your friends do there!</div><br>
+    <div class="instructions-question">
+        <div class="writing-stats">
+            {{getInstructionQuestionString()}}
+            @for (stat of getOptionStats(0); track stat.id) {
+                <mat-chip-set><mat-chip class="stat">
+                    {{stat.label}}
+                    @if (stat.favorType) {
+                        with {{stat.favorEntity}}
+                    }
+                </mat-chip></mat-chip-set>
+            }
+        </div>
+    </div>
+
+    <br><mat-card class="story">
+        <strong>You travel to the {{playerLocations[currentLocationIndex].label}}</strong>
+    </mat-card>
+
+    <mat-chip-set><mat-chip class="progress">{{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Completed</mat-chip></mat-chip-set><br>
+
+    <br><mat-divider></mat-divider><br>
+
+    <div>If the player selected this, describe how they spent their time:</div><br>
+    <button mat-flat-button disabled>{{playerOption.optionText}}</button><br><br>
+
+    <mat-card class="story">    
+        @if (attemptText.value) {
+            {{attemptText.value}}
+        } @else {
+            {{attemptPreview}}
+        }
+
+        @for (outcome of playerOption.successResults; track outcome) {
+            <div>
+                You {{outcome.playerStat.value  > 0 ? "gain +" : "lose "}}{{outcome.playerStat.value}} {{outcome.playerStat.statType.label}}
+                @if (outcome.playerStat.statType.favorType) {
+                    with {{outcome.playerStat.statType.favorEntity}}
+                }
+            </div>
+        }
+    </mat-card>
+    <br><mat-divider></mat-divider><br>
+
+    <div>
+        <section>
+            <mat-form-field class="full-width">
+                <mat-label>Outcome Description</mat-label>
+                <textarea matInput
+                    placeholder="{{attemptPreview}}"
+                    type="text" id="attemptText" [formControl]="attemptText" maxlength="150"></textarea>
+                <mat-hint align="end">{{attemptText.value?.length || 0}}/150</mat-hint>
+            </mat-form-field>
+        </section>
+    </div>
+
+    <div class="writing-button-container">
+        <div class="writing-buttons">
+            @if (canGoBack()) {
+                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+            }
+            <button mat-flat-button (click)="submit()"  [disabled]="!canSubmit()">Submit</button>
+        </div>
+    </div>
+}

@@ -19,7 +19,7 @@
             }
             @if (phase === WritePhase.OPTION_ONE || phase === WritePhase.OPTION_TWO) {
                 <div class="writing-stats">
-                    {{getInstructionQuestionString(getCurrentOptionIndex())}}
+                    {{getInstructionQuestionString()}}
                     @for (stat of getOptionStats(getCurrentOptionIndex()); track stat.id) {
                         <mat-chip-set><mat-chip class="stat">
                             {{stat.label}}
@@ -28,6 +28,11 @@
                             }
                         </mat-chip></mat-chip-set>
                     }
+                </div>
+            }
+            @if (phase === WritePhase.ADD_IMAGE) {
+                <div class="writing-stats">
+                    {{getInstructionQuestionString()}}
                 </div>
             }
         </div><br>
@@ -88,13 +93,28 @@
         </mat-form-field>
     }
 
+    @if (phase === WritePhase.ADD_IMAGE) {
+        <div>Select an image below:</div>
+        <div class="image-picker-container">
+            <div class="image-grid">
+                @for (imageUrl of availableImages; track imageUrl) {
+                    <div class="image-option" 
+                         [class.selected]="selectedImage === imageUrl"
+                         (click)="selectImage(imageUrl)">
+                        <img [src]="imageUrl" [alt]="'Location icon'" class="location-icon">
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
     <div class="writing-button-container">
         <div class="writing-buttons">
-            @if (phase !== WritePhase.PROMPT) {
+            @if (hasProgressed) {
                 <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
             }
             <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">
-                {{phase === WritePhase.OPTION_TWO ? "Submit" : "Next >"}}
+                {{aboutToSubmit ? "Submit" : "Next >"}}
             </button>
         </div>
     </div>

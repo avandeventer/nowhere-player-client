@@ -20,11 +20,26 @@ import { AdventureMap } from 'src/assets/adventure-map';
 import { CollaborativeTextComponent } from 'src/collaborative-text/collaborative-text.component';
 import { VotingComponent } from 'src/voting/voting.component';
 import { WriteLocationPromptComponent } from 'src/write-location-prompt/write-location-prompt.component';
+import { WriteLocationOutcomesComponent } from 'src/write-location-outcomes/write-location-outcomes.component';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
-    imports: [WritePromptComponent, WriteOutcomesComponent, AdventureComponent, LocationComponent, RitualComponent, WriteEndingsComponent, EndingComponent, MatButtonModule, GenreComponent, CollaborativeTextComponent, VotingComponent, WriteLocationPromptComponent],
+    imports: [
+      WritePromptComponent, 
+      WriteOutcomesComponent, 
+      AdventureComponent, 
+      LocationComponent, 
+      RitualComponent, 
+      WriteEndingsComponent,
+      EndingComponent, 
+      MatButtonModule, 
+      GenreComponent, 
+      CollaborativeTextComponent, 
+      VotingComponent, 
+      WriteLocationPromptComponent,
+      WriteLocationOutcomesComponent
+    ],
     standalone: true
 })
 export class GameStateManagerComponent implements OnInit {
@@ -176,5 +191,9 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameInLocationCreationPhase() {
     return this.gameState === GameState.WHERE_CAN_WE_GO;
+  }
+
+  isGameInLocationOutcomesCreationPhase() {
+    return this.gameState === GameState.WHAT_OCCUPATIONS_ARE_THERE;
   }
 }

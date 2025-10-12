@@ -9,6 +9,7 @@ export abstract class HttpConstants {
     static readonly NEXT_GAME_SESSION_PATH = "/game/next";
     static readonly ACTIVE_GAME_STATE_SESSION_PATH: string = "/activeGameStateSession";
     static readonly LOCATION_PATH: string = "/location";
+    static readonly LOCATION_IMAGES_PATH: string = "/location-images";
     static readonly RITUAL_PATH: string = "/ritual";
     static readonly ENDING_PATH: string = "/ending";
     static readonly PLAYER_ENDING_PATH: string = "/adventure-ending";

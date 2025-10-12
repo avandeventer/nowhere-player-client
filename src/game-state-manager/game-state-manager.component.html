@@ -44,6 +44,15 @@
     </write-location-prompt>
 }
 
+@if (isGameInLocationOutcomesCreationPhase()) {
+    <write-location-outcomes 
+      [gameCode]="gameCode" 
+      [gameState]="gameState" 
+      [player]="player"
+      (playerDone)="setDone($event)">
+    </write-location-outcomes>
+}
+
 @if (isGameInVotingPhase()) {
     <app-voting 
       [gameCode]="gameCode" 
