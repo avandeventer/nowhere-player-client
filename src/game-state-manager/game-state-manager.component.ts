@@ -170,7 +170,8 @@ export class GameStateManagerComponent implements OnInit {
            this.gameState === GameState.WHO_ARE_WE || 
            this.gameState === GameState.WHAT_IS_COMING || 
            this.gameState === GameState.WHAT_DO_WE_FEAR ||
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
+           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF ||
+           this.gameState === GameState.WRITE_ENDING_TEXT;
   }
 
   isGameInVotingPhase() {

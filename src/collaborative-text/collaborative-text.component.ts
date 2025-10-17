@@ -127,6 +127,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.phaseQuestion = 'What are we capable of?';
         this.phaseInstructions = 'List the skill we need in this world to succeed when the season ends. List as many ideas as you have!';
         break;
+      case GameState.WRITE_ENDING_TEXT:
+        this.isCollaborativeMode = true;
+        this.phaseQuestion = 'How will our story end?';
+        this.phaseInstructions = 'Based on how well we have done as a group, write the ending text that will be displayed. This will determine how our story concludes.';
+        break;
       default:
         this.phaseQuestion = 'Collaborative Writing';
         this.phaseInstructions = 'Work together to build your story!';
@@ -246,6 +251,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         return 'WHAT_IS_COMING';
       case GameState.WHAT_ARE_WE_CAPABLE_OF:
         return 'WHAT_ARE_WE_CAPABLE_OF';
+      case GameState.WRITE_ENDING_TEXT:
+        return 'WRITE_ENDING_TEXT';
       default:
         return null;
     }
@@ -256,7 +263,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
            this.gameState === GameState.WHAT_DO_WE_FEAR ||
            this.gameState === GameState.WHO_ARE_WE || 
            this.gameState === GameState.WHAT_IS_COMING || 
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
+           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF ||
+           this.gameState === GameState.WRITE_ENDING_TEXT;
   }
 
   // Helper methods for simple mode
