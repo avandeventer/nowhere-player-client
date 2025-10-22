@@ -116,21 +116,6 @@
       </mat-card>
     }
 
-    <!-- Simple Mode Submitted State
-    @if (isSimpleMode && hasSubmitted) {
-      <mat-card class="submitted-card">
-        <mat-card-content>
-          <div class="submitted-content">
-            <mat-icon class="check-icon" color="primary">check_circle</mat-icon>
-            <div class="submitted-text">
-              <h3>{{ getSimpleModeSubmittedTitle() }}</h3>
-              <p>{{ getSimpleModeSubmittedMessage() }}</p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    } -->
-
     <!-- No Submissions Message (collaborative mode only) -->
     @if (isCollaborativeMode && hasSubmitted && availableSubmissions.length === 0) {
       <mat-card class="no-submissions-card">

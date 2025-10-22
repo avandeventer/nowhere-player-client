@@ -105,27 +105,27 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       case GameState.WHERE_ARE_WE:
         this.isCollaborativeMode = true;
         this.phaseQuestion = 'Where are we?';
-        this.phaseInstructions = 'Describe the setting where your story takes place. Be creative and specific!';
+        this.phaseInstructions = 'We will begin by describing our world.';
         break;
       case GameState.WHAT_DO_WE_FEAR:
         this.isSimpleMode = true;
         this.phaseQuestion = 'What do we fear?';
-        this.phaseInstructions = 'There is an entity here that strikes fear and awe in the hearts of all that come across it. We fear and respect this person, force, or group more than anything else. Name them. List as many ideas as you have!';
+        this.phaseInstructions = 'What do we fear? What person, group, or entity holds power in this world?';
         break;
       case GameState.WHAT_IS_COMING:
         this.isCollaborativeMode = true;
         this.phaseQuestion = 'What is coming?';
-        this.phaseInstructions = 'At the end of the season an event will occur and we will be judged by the Entity. What event is coming and how will we be judged there?';
+        this.phaseInstructions = 'An event will occur at the end of the season where we will be judged by the Entity. What must we each do when they arrive to ensure our success or survival?';
         break;
       case GameState.WHO_ARE_WE:
         this.isCollaborativeMode = true;
         this.phaseQuestion = 'Who are we?';
-        this.phaseInstructions = 'Describe who we are together. What are we like and what is our goal?';
+        this.phaseInstructions = 'Define who we are together. What is our goal?';
         break;
       case GameState.WHAT_ARE_WE_CAPABLE_OF:
         this.isSimpleMode = true;
         this.phaseQuestion = 'What are we capable of?';
-        this.phaseInstructions = 'List the skill we need in this world to succeed when the season ends. List as many ideas as you have!';
+        this.phaseInstructions = 'We will need certain skills in order to overcome. List anything you think we will need to be good at to survive.';
         break;
       case GameState.WRITE_ENDING_TEXT:
         this.isCollaborativeMode = true;
@@ -413,11 +413,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     });
   }
 
-
   getSubmissionPreview(submission: TextSubmission): string {
-    return submission.currentText.length > 100 
-      ? submission.currentText.substring(0, 100) + '...'
-      : submission.currentText;
+    return submission.currentText;
   }
 
   getSubmissionAuthor(submission: TextSubmission): string {
