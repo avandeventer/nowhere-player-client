@@ -21,6 +21,12 @@
     }
 }
 
+@if (isGameInWritingPhase()) {
+    @if(player.firstPlayer && !activePlayerSession.startTimer) {
+        <button mat-flat-button (click)="startTimer()">Start Timer</button>
+    }
+}
+
 @if (isGameInWritePromptsPhase()) {
     <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-prompt>
 }

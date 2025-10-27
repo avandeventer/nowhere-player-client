@@ -102,6 +102,24 @@ export class GameStateManagerComponent implements OnInit {
     });
   }
 
+  startTimer() {
+    const activePlayerSession = new ActivePlayerSession();
+    activePlayerSession.gameCode = this.gameCode;
+    activePlayerSession.playerId = this.player.authorId;
+    activePlayerSession.startTimer = true;
+
+    this.http
+      .put(environment.nowhereBackendUrl + HttpConstants.ACTIVE_PLAYER_SESSION_PATH, activePlayerSession)
+      .subscribe({
+        next: (response) => {
+          console.log('Timer start request sent', response);
+        },
+        error: (error) => {
+          console.error('Error starting timer', error);
+        },
+      });
+  }
+
   playerIsDone() {
     const url = `${environment.nowhereBackendUrl}${HttpConstants.ACTIVE_GAME_STATE_SESSION_PATH}?gameCode=${this.gameCode}&gamePhase=${this.gameState.toString()}&authorId=${this.player.authorId}&isDone=${true}`;
 
@@ -139,6 +157,15 @@ export class GameStateManagerComponent implements OnInit {
 
   isLocationSelect() {
     return this.gameState === GameState.LOCATION_SELECT || this.gameState === GameState.LOCATION_SELECT_AGAIN;
+  }
+
+  isGameInWritingPhase() {
+    return this.isGameInWritePromptsPhase()
+    || this.isGameInWriteOutcomesPhase()
+    || this.isGameInWriteEndingsPhase()
+    || this.isGameInCollaborativeTextPhase()
+    || this.isGameInLocationCreationPhase()
+    || this.isGameInLocationOutcomesCreationPhase()
   }
 
   isGameInPreamblePhase() {

@@ -13,6 +13,7 @@ export class ActivePlayerSession {
     gameCode: String;
     outcomeDisplay: String[];
     repercussions: RepercussionOutput;
+    startTimer: boolean;
 
     constructor() {
             this.playerId = "";
@@ -25,5 +26,6 @@ export class ActivePlayerSession {
             this.outcomeDisplay = [];
             this.locationOutcomeDisplay = [];
             this.repercussions = new RepercussionOutput();
+            this.startTimer = false;
     }
 }
