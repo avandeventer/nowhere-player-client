@@ -4,16 +4,16 @@
   <mat-dialog-content>
     <mat-card class="instructions">
       <div>
-        {{repercussions.ending?.prequelStorySucceeded ? "During your encounter with" : "Even though you failed in your encounter with" }} {{favorStatType.favorEntity}} you learned something about them!</div>
+        You have learned things about {{favorStatType.favorEntity}}!</div>
     </mat-card>
 
     @if (repercussions.ending?.options?.[0]?.optionText != "") {
-      <div>{{favorStatType.favorEntity}} could be impressed if you successfully were able to...</div>
+      <div>If you wanted to try to impress them you could {{favorStatType.favorEntity}}</div>
       <mat-card class="story">{{repercussions.ending?.options?.[0]?.optionText}}</mat-card><br>
     }
 
     @if (repercussions.ending?.options?.[1]?.optionText != "") {
-      <div>{{favorStatType.favorEntity}} could be weakened if you successfully were able to...</div>
+      <div>If you wanted to try to weaken them you could {{favorStatType.favorEntity}}</div>
       <mat-card class="story">{{repercussions.ending?.options?.[1]?.optionText}}</mat-card>
     }
   </mat-dialog-content>
