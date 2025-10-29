@@ -18,16 +18,41 @@
   margin-bottom: 20px;
 }
 
+.story-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  
+  .story {
+    width: 100%;
+  }
+  
+  .writing-button-container {
+    align-self: flex-end;
+    margin-top: 8px;
+    
+    .writing-buttons {
+      display: flex;
+      gap: 8px;
+    }
+  }
+}
+
 .writing-section {
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  position: relative;
 
-  .instructions-box {
+  .instructions-box,
+  .instructions {
     flex: 1;
-    min-width: 300px;
+    min-width: 250px;
+    width: 300px;
+    max-width: 350px;
     padding: 16px;
-    background-color: var(--mat-sys-surface-container);
     border-radius: 8px;
     min-height: 60px;
     transition: opacity 0.3s ease;
@@ -43,13 +68,35 @@
 
   .writing-input-box {
     flex: 1;
-    min-width: 300px;
+    min-width: 350px;
+    position: relative;
+  }
+
+  .writing-button-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 2;
   }
 }
 
 mat-form-field.disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+.difficulty-badge {
+  background-color: #85b0e2 !important;
+  color: whitesmoke;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: 4px;
+  display: inline-block;
+  min-width: 16px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -60,6 +107,23 @@ mat-form-field.disabled {
   .writing-section {
     flex-direction: column;
     gap: 8px;
+    
+    .instructions-box,
+    .instructions {
+      width: 100%;
+      min-width: unset;
+    }
+
+    .writing-input-box {
+      min-width: unset;
+      width: 100%;
+    }
+
+    .writing-button-container {
+      position: static;
+      margin-top: 36px;
+      align-self: flex-end;
+    }
   }
 
   .writing-section:not(:last-child) {

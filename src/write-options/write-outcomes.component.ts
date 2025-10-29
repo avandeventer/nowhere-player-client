@@ -18,6 +18,11 @@ import {MatCardModule} from '@angular/material/card';
 import { MatChipSet, MatChip } from '@angular/material/chips'
 import { StatType } from 'src/assets/stat-type';
 
+enum OutcomePhase {
+  SUCCESS = 'SUCCESS',
+  FAILURE = 'FAILURE'
+}
+
 @Component({
     selector: 'write-outcomes',
     templateUrl: './write-outcomes.component.html',
@@ -57,6 +62,11 @@ export class WriteOutcomesComponent implements OnInit {
   sideAgainstEntity: boolean = false;
   optionOnePreview: string = "Ex (if you were to gain charisma). You leap over the chasm to the sound of applause! Your heroism makes you very popular!"
   optionTwoPreview: string = "Ex (if you were to lose dexterity). You try to jump the chasm, but you fail and fall a long distance and crack your butt bones. You can't run as fast anymore."
+  
+  hasPrequelContent: boolean = true;
+  
+  phase: OutcomePhase = OutcomePhase.SUCCESS;
+  protected OutcomePhase = OutcomePhase;
   
   constructor(private http: HttpClient) {}
 
@@ -157,11 +167,6 @@ export class WriteOutcomesComponent implements OnInit {
     }
   }
 
-  goBack() {
-    this.outcomeOneSubmitted = false;
-    this.numberOfOutcomesWritten--;
-  }
-
   submitOutcomes() {
       const requestBody = {
         gameCode: this.gameCode,
@@ -248,5 +253,36 @@ export class WriteOutcomesComponent implements OnInit {
     if (favorStat !== undefined) {
       this.favorStat = favorStat;
     }
+  }
+
+  public setHasPrequelContent(hasContent: boolean) {
+    this.hasPrequelContent = hasContent;
+  }
+
+  public goToNextPhase() {
+    if (this.phase === OutcomePhase.SUCCESS) {
+      this.phase = OutcomePhase.FAILURE;
+    }
+    this.scrollToActiveSection();
+  }
+
+  public goBack() {
+    if (this.phase === OutcomePhase.FAILURE) {
+      this.phase = OutcomePhase.SUCCESS;
+    }
+    this.scrollToActiveSection();
+  }
+
+  private scrollToActiveSection() {
+    setTimeout(() => {
+      const activeSection = document.querySelector('.writing-section .instructions-box.active');
+      if (activeSection) {
+        activeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  }
+
+  public abs(value: number): number {
+    return Math.abs(value);
   }
 }

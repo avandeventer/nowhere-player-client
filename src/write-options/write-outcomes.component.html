@@ -3,98 +3,155 @@
 }
 @else {
     <!-- Story so Far Section -->
-    <div class="story-so-far-section">
+    <div class="story-so-far-section" [style.display]="hasPrequelContent ? 'block' : 'none'">
         <h3>Story so Far</h3>
-        @if (!playerStories[currentStoryIndex].mainPlotStory) {
-            <mat-card class="story">{{playerStories[currentStoryIndex].prompt}}</mat-card>
-        }
         <prequel-story-display 
             [gameCode]="gameCode" 
             [story]="playerStories[currentStoryIndex]" 
-            [isAdventureMode]="false">
+            [isAdventureMode]="false"
+            (hasPrequelContent)="setHasPrequelContent($event)">
         </prequel-story-display>
+        @if (!playerStories[currentStoryIndex].mainPlotStory) {
+            {{hasPrequelContent ? "Then:" : "Your friend wrote"}}
+            <div class="story-container">
+                <mat-card class="story">{{playerStories[currentStoryIndex].prompt}}</mat-card>
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        <button mat-flat-button disabled>{{playerOption.optionText}}</button>
+                        <button mat-flat-button disabled>{{otherOption.optionText}}</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="story-container">
+        @if (optionSuccess.value) {
+            <mat-card class="story">
+                {{optionSuccess.value}}
+                @if (playerOption.successResults && playerOption.successResults.length > 0) {
+                    <span>
+                        @for (outcomeStat of playerOption.successResults; track outcomeStat) {
+                            {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                            @if (!$last) {, }
+                        }
+                    </span>
+                }
+            </mat-card>
+        }
+
+        @if (optionFailure.value) {
+            <mat-card class="story">
+                {{optionFailure.value}}
+                @if (playerOption.failureResults && playerOption.failureResults.length > 0) {
+                    <span>
+                        @for (outcomeStat of playerOption.failureResults; track outcomeStat) {
+                            {{outcomeStat.playerStat.value <= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                            @if (!$last) {, }
+                        }
+                    </span>
+                }
+            </mat-card>
+        }
     </div>
 
     <!-- Writing Sections with Instructions beside each input -->
     <div class="writing-container">
         
-        <!-- First Outcome Phase -->
+        <!-- SUCCESS Phase -->
         <div class="writing-section">
-            @if (!outcomeOneSubmitted) {
-                <div class="instructions-box" [class.active]="!outcomeOneSubmitted">
-                    <div class="instructions">
-                        Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}} so you just write the possible outcomes!
-                    </div>
-                    @if (playerStories[currentStoryIndex].mainPlotStory) {
-                        <div class="writing-stats">
-                            What would happen if you encountered {{favorStat.favorEntity}}, tried to "{{playerOption.optionText}}", and managed to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
-                        </div>
-                    } @else {
-                        <div class="writing-stats">
-                            What would happen if you encountered the story below, tried to "{{playerOption.optionText}}", and succeeded?
-                        </div>
-                    }
+            @if (phase === OutcomePhase.SUCCESS) {
+                <div class="instructions" [class.active]="phase === OutcomePhase.SUCCESS">
+                        Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}}
+                        @if (playerStories[currentStoryIndex].mainPlotStory) {
+                            <div class="writing-stats">
+                                What would happen if you encountered 
+                                <mat-chip-set><mat-chip class="entity">
+                                {{favorStat.favorEntity}}
+                                </mat-chip></mat-chip-set>
+                                tried to <button mat-flat-button>{{playerOption.optionText}}</button>, and managed to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
+                            </div>
+                        } @else {
+                            <div class="writing-stats">
+                                What would happen if you encountered the story above, tried to <button mat-flat-button>{{playerOption.optionText}}</button>, and succeeded?
+                            </div>
+                        }
+                        @if (playerOption.successResults && playerOption.successResults.length > 0) {
+                            <mat-chip-set>
+                                @for (outcomeStat of playerOption.successResults; track outcomeStat) {
+                                    <mat-chip class="stat">
+                                        {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                    </mat-chip>
+                                }
+                            </mat-chip-set>
+                        }
                 </div>
             }
-            <div class="writing-input-box">
-                <div>
-                    <div>If the player selected this and succeeded:</div><br>
-                    <button mat-flat-button disabled>{{playerOption.optionText}}</button><br><br>
+
+            @if (phase === OutcomePhase.SUCCESS) {
+                <div class="writing-input-box">
+                    <mat-form-field class="full-width" [class.disabled]="phase !== OutcomePhase.SUCCESS">
+                        <mat-label>Option Success</mat-label>
+                        <textarea matInput
+                            placeholder="{{optionOnePreview}}"
+                            type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150" [disabled]="phase !== OutcomePhase.SUCCESS"></textarea>
+                        <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
+                    </mat-form-field>
                 </div>
-                <mat-form-field class="full-width" [class.disabled]="outcomeOneSubmitted">
-                    <mat-label>Option Success</mat-label>
-                    <textarea matInput
-                        placeholder="{{optionOnePreview}}"
-                        type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150" [disabled]="outcomeOneSubmitted"></textarea>
-                    <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
-                </mat-form-field>
-            </div>
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        <button mat-flat-button (click)="goToNextPhase()" [disabled]="!optionSuccess.value">Next ></button>
+                    </div>
+                </div>
+            }
         </div>
 
-        <!-- Second Outcome Phase -->
+        <!-- FAILURE Phase -->
         <div class="writing-section">
-            @if (outcomeOneSubmitted) {
-                <div class="instructions-box" [class.active]="outcomeOneSubmitted">
-                    <div class="instructions">
+            @if (phase === OutcomePhase.FAILURE) {
+                <div class="instructions" [class.active]="phase === OutcomePhase.FAILURE">
                         Now write the failure outcome for the same option!
-                    </div>
-                    @if (playerStories[currentStoryIndex].mainPlotStory) {
-                        <div class="writing-stats">
-                            What would happen if you encountered {{favorStat.favorEntity}}, tried to "{{playerOption.optionText}}", and failed to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
-                        </div>
-                    } @else {
-                        <div class="writing-stats">
-                            What would happen if you encountered the story below, tried to "{{playerOption.optionText}}", and failed?
-                        </div>
-                    }
+                        @if (playerStories[currentStoryIndex].mainPlotStory) {
+                            <div class="writing-stats">
+                                What would happen if you encountered <mat-chip-set><mat-chip class="entity">
+                                {{favorStat.favorEntity}}
+                                </mat-chip></mat-chip-set>, tried to <button mat-flat-button>{{playerOption.optionText}}</button>, and failed to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
+                            </div>
+                        } @else {
+                            <div class="writing-stats">
+                                What would happen if you encountered the story below, tried to <button mat-flat-button>{{playerOption.optionText}}</button>, and failed?
+                            </div>
+                        }
+                        @if (playerOption.failureResults && playerOption.failureResults.length > 0) {
+                            <mat-chip-set>
+                                @for (outcomeStat of playerOption.failureResults; track outcomeStat) {
+                                    <mat-chip class="stat">
+                                        {{outcomeStat.playerStat.value <= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                    </mat-chip>
+                                }
+                            </mat-chip-set>
+                        }
                 </div>
             }
-            <div class="writing-input-box">
-                <div style="margin-top: 24px;">
-                    <div>If the player selected this and failed:</div><br>
-                    <button mat-flat-button disabled>{{playerOption.optionText}}</button><br><br>
+            @if (phase === OutcomePhase.FAILURE) {
+                <div class="writing-input-box">
+                    <mat-form-field class="full-width" [class.disabled]="phase !== OutcomePhase.FAILURE">
+                        <mat-label>Option Failure</mat-label>
+                        <textarea matInput
+                            placeholder="{{optionTwoPreview}}"
+                            type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150" [disabled]="phase !== OutcomePhase.FAILURE"></textarea>
+                        <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
+                    </mat-form-field>
                 </div>
-                <mat-form-field class="full-width" [class.disabled]="!outcomeOneSubmitted">
-                    <mat-label>Option Failure</mat-label>
-                    <textarea matInput
-                        placeholder="{{optionTwoPreview}}"
-                        type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150" [disabled]="!outcomeOneSubmitted"></textarea>
-                    <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
-                </mat-form-field>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="writing-button-container">
-            <div class="writing-buttons">
-                @if (canGoBack()) {
-                    <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
-                }
-                <button mat-flat-button (click)="submit()" [disabled]="!canSubmit()">
-                    {{outcomeOneSubmitted ? "Submit" : "Next >"}}
-                </button>
-            </div>
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        @if (optionSuccess.value) {
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                        }
+                        <button mat-flat-button (click)="submit()" [disabled]="!canSubmit()">Submit</button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 

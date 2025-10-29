@@ -67,7 +67,6 @@ mat-chip.stat {
 mat-chip.player {
   background-color: #9f76a3 !important;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-
 }  
 
 mat-chip.progress {
@@ -75,6 +74,11 @@ mat-chip.progress {
   background-color: #85b0e2 !important;
 }
 
+mat-chip.entity {
+  background-color: #292527 !important;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  color: var(--mat-option-selected-state-layer-color) !important;
+}
 
 .writing-button-container {
   display: flex;
@@ -145,3 +149,24 @@ textarea.mat-mdc-input-element {
   resize: vertical !important;
 }
 
+.story-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  
+  .story {
+    width: 100%;
+  }
+  
+  .writing-button-container {
+    align-self: flex-end;
+    margin-top: 8px;
+    
+    .writing-buttons {
+      display: flex;
+      gap: 8px;
+    }
+  }
+}
