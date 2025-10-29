@@ -25,7 +25,9 @@
 
   .instructions-box {
     flex: 1;
-    min-width: 300px;
+    min-width: 250px;
+    width: 300px;
+    max-width: 350px;
     padding: 16px;
     background-color: var(--mat-sys-surface-container);
     border-radius: 8px;
@@ -43,7 +45,7 @@
 
   .writing-input-box {
     flex: 1;
-    min-width: 300px;
+    min-width: 350px;
   }
 }
 
