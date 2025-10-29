@@ -147,6 +147,7 @@ export class WritePromptComponent implements OnInit {
         } else {
           this.phase = WritePhase.OPTION_ONE;
           this.writingHasProgressed = true;
+          this.scrollToActiveSection();
         }
         break;
       case WritePhase.OPTION_ONE:
@@ -156,11 +157,13 @@ export class WritePromptComponent implements OnInit {
         } else {
           this.aboutToSubmit = true;
         }
+        this.scrollToActiveSection();
         break;
       case WritePhase.OPTION_TWO:
         if (isMainPlotStory) {
           this.phase = WritePhase.PROMPT;
           this.aboutToSubmit = true;
+          this.scrollToActiveSection();
         } else {
           this.phase = WritePhase.DONE;
           this.submitStory();
@@ -198,6 +201,7 @@ export class WritePromptComponent implements OnInit {
         this.phase = WritePhase.PROMPT;
         break;
     }
+    this.scrollToActiveSection();
   }
 
   getInstructionQuestionString(optionIndex: number) {
@@ -206,9 +210,9 @@ export class WritePromptComponent implements OnInit {
       if (optionIndex === 1) {
         moralChoice = "weaken";
       }
-      return `What is something your friend could do to try to ${moralChoice} ${this.favorStat.favorEntity} using`;
+      return `What is something your friend could do to try to ${moralChoice} ${this.favorStat.favorEntity}`;
   } else {
-      return `What is something your friend could do to try to resolve the prompt you've written using`;
+      return `What is something your friend could do to try to resolve the prompt you've written`;
     }
   }
 
@@ -265,6 +269,7 @@ export class WritePromptComponent implements OnInit {
         this.phase = WritePhase.PROMPT;
       }
       this.promptExample = `Ex. You see a small child begging for scraps at the ${this.playerStories[this.currentStoryIndex].location.label}.`;
+      this.scrollToActiveSection();
     }
 
     console.log(this.currentStoryIndex);
@@ -313,5 +318,17 @@ export class WritePromptComponent implements OnInit {
       default:
         return false;
     }
+  }
+
+  private scrollToActiveSection() {
+    setTimeout(() => {
+      const activeSection = document.querySelector('.writing-section .instructions-box.active')?.closest('.writing-section');
+      if (activeSection) {
+        activeSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
+    }, 100); // Small delay to ensure DOM updates
   }
 }

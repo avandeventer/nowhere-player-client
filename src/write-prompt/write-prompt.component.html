@@ -52,10 +52,18 @@
                                     </mat-chip></mat-chip-set> 
                                 }
                                 @if(prequelPlayer.userName != "") {
-                                    @if (isPlayerSequel) {
-                                        as a result of {{prequelPlayer.userName}}'s choice above
+                                    @if (!isPlayerSequel) {
+                                        as a result of 
+                                        <mat-chip-set><mat-chip class="player">
+                                        {{prequelPlayer.userName}}'s 
+                                        </mat-chip></mat-chip-set>
+                                        choice above
                                     } @else {
-                                        if you had made {{prequelPlayer.userName}}'s choice above
+                                        if you had made 
+                                        <mat-chip-set><mat-chip class="player">
+                                        {{prequelPlayer.userName}}'s 
+                                        </mat-chip></mat-chip-set>
+                                        choice above
                                     }
                                 }
                                 ?
@@ -72,10 +80,18 @@
                                     </mat-chip></mat-chip-set>
                                 }
                                 @if(prequelPlayer.userName != "") {
-                                    @if (isPlayerSequel) {
-                                        as a result of {{prequelPlayer.userName}}'s choice above
+                                    @if (!isPlayerSequel) {
+                                        as a result of 
+                                        <mat-chip-set><mat-chip class="player">
+                                        {{prequelPlayer.userName}}'s 
+                                        </mat-chip></mat-chip-set>
+                                        choice above
                                     } @else {
-                                        if you had made {{prequelPlayer.userName}}'s choice above
+                                        if you had made 
+                                        <mat-chip-set><mat-chip class="player">
+                                        {{prequelPlayer.userName}}'s
+                                        </mat-chip></mat-chip-set>
+                                        choice above
                                     }
                                 }
                                 ?
@@ -124,7 +140,7 @@
                                 with {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorEntity}}
                             }
                             <span class="difficulty-badge">{{statDCDifficulty(0)}}</span>
-                        </mat-chip></mat-chip-set>
+                        </mat-chip></mat-chip-set><br>
                     </div>
                 }
                 <mat-form-field class="full-width" [class.disabled]="phase !== WritePhase.OPTION_ONE">

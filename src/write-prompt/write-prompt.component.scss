@@ -60,7 +60,6 @@
       
       .using-text {
         font-size: 12px;
-        color: var(--mat-sys-on-surface-variant);
         font-weight: 500;
         background-color: var(--mat-stepper-header-done-state-icon-foreground-color);
         padding: 4px 8px;
@@ -87,7 +86,7 @@ mat-form-field.disabled {
   display: inline-block;
   margin-left: 8px;
   padding: 2px 6px;
-  background-color: var(--mdc-linear-progress-active-indicator-color) !important;
+  background-color: #85b0e2 !important;
   color: whitesmoke;
   border-radius: 12px;
   font-size: 10px;
@@ -106,6 +105,22 @@ mat-form-field.disabled {
   .writing-section {
     flex-direction: column;
     gap: 8px;
+    
+    .writing-button-container {
+      position: static;
+      margin-top: 36px;
+      align-self: flex-end;
+    }
+    
+    .writing-input-box {
+      min-width: unset;
+      width: 100%;
+      
+      .stat-chip-container {
+        right: 0;
+        // bottom: -40px;
+      }
+    }
   }
 
   .writing-section:not(:last-child) {

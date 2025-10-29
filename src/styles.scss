@@ -64,6 +64,12 @@ mat-chip.stat {
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+mat-chip.player {
+  background-color: #9f76a3 !important;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+
+}  
+
 mat-chip.progress {
   margin-left: auto !important; /* Push to the right */
   background-color: #85b0e2 !important;
