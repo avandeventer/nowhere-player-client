@@ -91,6 +91,16 @@
                     <mat-hint align="end">{{prompt.value?.length || 0}}/300</mat-hint>
                 </mat-form-field>
             </div>
+            @if (phase === WritePhase.PROMPT) {
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        @if (writingHasProgressed) {
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                        }
+                        <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">{{aboutToSubmit ? "Submit" : "Next >"}}</button>
+                    </div>
+                </div>
+            }
         </div>
 
         <!-- OPTION_ONE Phase -->
@@ -99,25 +109,40 @@
                 <div class="instructions-box" [class.active]="phase === WritePhase.OPTION_ONE">
                     <div class="instructions">
                         <div class="writing-stats">
-                            {{getInstructionQuestionString(0)}}
-                            <mat-chip-set><mat-chip class="stat">
-                                {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.label}}
-                                @if (playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorType) {
-                                    with {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorEntity}}
-                                }
-                                [{{statDCDifficulty(0)}} difficulty]
-                            </mat-chip></mat-chip-set>?
+                            {{getInstructionQuestionString(0)}}?
                         </div>
                     </div>
                 </div>
             }
             <div class="writing-input-box">
+                @if (phase === WritePhase.OPTION_ONE) {
+                    <div class="stat-chip-container">
+                        <span class="using-text">using</span>
+                        <mat-chip-set><mat-chip class="stat">
+                            {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.label}}
+                            @if (playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorType) {
+                                with {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorEntity}}
+                            }
+                            <span class="difficulty-badge">{{statDCDifficulty(0)}}</span>
+                        </mat-chip></mat-chip-set>
+                    </div>
+                }
                 <mat-form-field class="full-width" [class.disabled]="phase !== WritePhase.OPTION_ONE">
                     <mat-label>You could...</mat-label>
                     <input matInput placeholder="{{optionOneExample}}" id="optionOne" [formControl]="optionOne" maxlength="40" [disabled]="phase !== WritePhase.OPTION_ONE">
                     <mat-hint align="end">{{optionOne.value?.length || 0}}/40</mat-hint>
                 </mat-form-field>
             </div>
+            @if (phase === WritePhase.OPTION_ONE) {
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        @if (writingHasProgressed) {
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                        }
+                        <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">{{aboutToSubmit ? "Submit" : "Next >"}}</button>
+                    </div>
+                </div>
+            }
         </div>
 
         <!-- OPTION_TWO Phase -->
@@ -126,36 +151,41 @@
                 <div class="instructions-box" [class.active]="phase === WritePhase.OPTION_TWO">
                     <div class="instructions">
                         <div class="writing-stats">
-                            {{getInstructionQuestionString(1)}}
-                            <mat-chip-set><mat-chip class="stat">
-                                {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}}
-                                @if (playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorType) {
-                                    with {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorEntity}}
-                                }
-                                [{{statDCDifficulty(1)}} difficulty]
-                            </mat-chip></mat-chip-set>?
+                            {{getInstructionQuestionString(1)}}?
                         </div>
                     </div>
                 </div>
             }
             <div class="writing-input-box">
+                @if (phase === WritePhase.OPTION_TWO) {
+                    <div class="stat-chip-container">
+                        <span class="using-text">using</span>
+                        <mat-chip-set><mat-chip class="stat">
+                            {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}}
+                            @if (playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorType) {
+                                with {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorEntity}}
+                            }
+                            <span class="difficulty-badge">{{statDCDifficulty(1)}}</span>
+                        </mat-chip></mat-chip-set>
+                    </div>
+                }
                 <mat-form-field class="full-width" [class.disabled]="phase !== WritePhase.OPTION_TWO">
                     <mat-label>Or you could...</mat-label>
                     <input matInput placeholder="{{optionTwoExample}}" id="optionTwo" [formControl]="optionTwo" maxlength="40" [disabled]="phase !== WritePhase.OPTION_TWO">
                     <mat-hint align="end">{{optionTwo.value?.length || 0}}/40</mat-hint>
                 </mat-form-field>
             </div>
+            @if (phase === WritePhase.OPTION_TWO) {
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        @if (writingHasProgressed) {
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                        }
+                        <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">{{aboutToSubmit ? "Submit" : "Next >"}}</button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
-    <div>
-        <div class="writing-button-container">
-            <div class="writing-buttons">
-                @if (writingHasProgressed) {
-                    <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
-                }
-                <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">{{aboutToSubmit ? "Submit" : "Next >"}}</button>
-            </div>
-        </div>
-    </div>
 }

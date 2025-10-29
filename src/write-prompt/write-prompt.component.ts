@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChip, MatChipSet } from '@angular/material/chips';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatCardModule } from '@angular/material/card';
 import { StatType } from 'src/assets/stat-type';
 import { WritePhase } from 'src/assets/phases/write-phase';
@@ -34,7 +35,8 @@ import { WritePhase } from 'src/assets/phases/write-phase';
     MatDividerModule,
     MatChipSet,
     MatChip,
-    MatCardModule
+    MatCardModule,
+    MatBadgeModule
   ],
   standalone: true
 })
