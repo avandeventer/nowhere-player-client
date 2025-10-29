@@ -21,6 +21,7 @@ import { StatType } from 'src/assets/stat-type';
 @Component({
     selector: 'write-outcomes',
     templateUrl: './write-outcomes.component.html',
+    styleUrl: './write-outcomes.component.scss',
     imports: [
       ReactiveFormsModule, 
       PrequelDisplayComponent,

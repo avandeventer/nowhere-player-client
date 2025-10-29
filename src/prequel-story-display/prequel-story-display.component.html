@@ -4,9 +4,9 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             @if(isAdventureMode) {
-              <div>This story is a sequel:</div><br>
+              <div>This was triggered by {{prequelPlayer.userName || 'someone'}}'s choices:</div><br>
             } @else {
-              <div>Write this one as a sequel to the story here:</div>
+              <div>{{prequelPlayer.userName || 'Someone'}} chose this:</div>
             }
           </mat-panel-title>
         </mat-expansion-panel-header>
@@ -17,9 +17,9 @@
           }
         </mat-card><br>
 
-        @if (!isAdventureMode) {
-          <div>{{sequelTypeClarifier}}</div><br>
-        }
+        <!-- @if (!isAdventureMode) {
+          <p [innerHTML]="sequelTypeClarifier"></p><br>
+        } -->
       </mat-expansion-panel>
     </mat-accordion><br>
 }

@@ -23,6 +23,7 @@ import { WritePhase } from 'src/assets/phases/write-phase';
 @Component({
   selector: 'write-prompt',
   templateUrl: './write-prompt.component.html',
+  styleUrl: './write-prompt.component.scss',
   imports: [
     ReactiveFormsModule,
     PrequelDisplayComponent,
@@ -47,7 +48,7 @@ export class WritePromptComponent implements OnInit {
   outcomeDisplay: string[] = [];
   promptSubmitted: boolean = false;
   writingHasProgressed: boolean = false;
-
+  isPlayerSequel: boolean = false;
   prompt = new FormControl('', { validators: [Validators.maxLength(300)] });
   optionOne = new FormControl('', { validators: [Validators.maxLength(40)] });
   optionTwo = new FormControl('', { validators: [Validators.maxLength(40)] });
@@ -58,6 +59,7 @@ export class WritePromptComponent implements OnInit {
   promptExample: string = "";
   optionOneExample: string = "Ex. Give the child some coin";
   optionTwoExample: string = "Ex. Beat the kid up";
+  prequelPlayer: Player = new Player();
 
   phase: WritePhase = WritePhase.PROMPT;
   protected WritePhase = WritePhase;
@@ -202,9 +204,9 @@ export class WritePromptComponent implements OnInit {
       if (optionIndex === 1) {
         moralChoice = "weaken";
       }
-      return `What is something you would do to try to ${moralChoice} ${this.favorStat.favorEntity} using`;
+      return `What is something your friend could do to try to ${moralChoice} ${this.favorStat.favorEntity} using`;
   } else {
-      return `What is something you could do to try to resolve the prompt you've written using`;
+      return `What is something your friend could do to try to resolve the prompt you've written using`;
     }
   }
 
@@ -288,6 +290,14 @@ export class WritePromptComponent implements OnInit {
     if (favorStat !== undefined) {
       this.favorStat = favorStat;
     }
+  }
+
+  public setPrequelPlayer(prequelPlayer: Player) {
+    this.prequelPlayer = prequelPlayer;
+  }
+
+  public setIsPlayerSequel(isPlayerSequel: boolean) {
+    this.isPlayerSequel = isPlayerSequel;
   }
 
   canSubmit(): boolean {

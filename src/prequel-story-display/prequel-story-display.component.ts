@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Story } from 'src/assets/story';
 import { Option } from 'src/assets/option';
@@ -21,9 +21,12 @@ export class PrequelDisplayComponent implements OnChanges {
   @Input() gameCode: string = '';
   @Input() story: Story = new Story();
   @Input() isAdventureMode: boolean = false;
+  @Output() prequelPlayerOutput = new EventEmitter<Player>();
+  @Output() isPlayerSequel = new EventEmitter<boolean>();
   sequelTypeClarifier: string = "";
 
   prequelOutcomeDisplay: string[] = [];
+  prequelPlayer: Player = new Player();
 
   constructor(private http: HttpClient) {}
 
@@ -57,14 +60,19 @@ export class PrequelDisplayComponent implements OnChanges {
         this.prequelOutcomeDisplay = this.setOutcomeDisplay(prequelStory);
 
         // Handle special case for player-specific outcomes
+        this.prequelPlayer = await this.fetchPrequelStoryPlayer(
+          prequelStory.playerId
+        );
+
+        this.prequelPlayerOutput.emit(this.prequelPlayer);
+
         if (story.prequelStoryPlayerId) {
-          const prequelPlayer = await this.fetchPrequelStoryPlayer(
-            story.prequelStoryPlayerId
-          );
+          this.isPlayerSequel.emit(true);
           this.sequelTypeClarifier = 
-            this.createSequelPlayerDisplay(prequelPlayer);
+            this.createSequelPlayerDisplay(this.prequelPlayer);
         } else {
           const gameLocations = await this.fetchLocations(this.gameCode);
+          this.isPlayerSequel.emit(false);
           this.sequelTypeClarifier = 
             this.createOutcomeLocationDisplay(
               this.story.location,
@@ -150,7 +158,7 @@ export class PrequelDisplayComponent implements OnChanges {
     gameLocations: Location[]
   ): string {
     const gameLocation = gameLocations.find(gameLocation => gameLocation.id === location.id);
-    return `This sequel story does not follow a specific player. It will trigger when anyone travels to the ${gameLocation?.label}`;
+    return `This sequel story does not follow a specific player. It will trigger when anyone travels to the <mat-chip-set><mat-chip class="stat">${gameLocation?.label}</mat-chip></mat-chip-set>`;
   }
 
   private createSequelPlayerDisplay(prequelPlayer: Player): string {
