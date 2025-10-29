@@ -23,6 +23,7 @@ export class PrequelDisplayComponent implements OnChanges {
   @Input() isAdventureMode: boolean = false;
   @Output() prequelPlayerOutput = new EventEmitter<Player>();
   @Output() isPlayerSequel = new EventEmitter<boolean>();
+  @Output() hasPrequelContent = new EventEmitter<boolean>();
   sequelTypeClarifier: string = "";
 
   prequelOutcomeDisplay: string[] = [];
@@ -37,6 +38,7 @@ export class PrequelDisplayComponent implements OnChanges {
             this.fetchPrequelStory(this.story);
         } else {
             this.prequelOutcomeDisplay = [];
+            this.hasPrequelContent.emit(false);
         }
     }
   }
@@ -79,9 +81,15 @@ export class PrequelDisplayComponent implements OnChanges {
               gameLocations
             );
         }
+        
+        // Emit that we have prequel content to display
+        this.hasPrequelContent.emit(this.prequelOutcomeDisplay.length > 0);
+      } else {
+        this.hasPrequelContent.emit(false);
       }
     } catch (error) {
       console.error('Error fetching prequel story:', error);
+      this.hasPrequelContent.emit(false);
     }
   }
 

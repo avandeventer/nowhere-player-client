@@ -62,6 +62,7 @@ export class WritePromptComponent implements OnInit {
   optionOneExample: string = "Ex. Give the child some coin";
   optionTwoExample: string = "Ex. Beat the kid up";
   prequelPlayer: Player = new Player();
+  hasPrequelContent: boolean = true;
 
   phase: WritePhase = WritePhase.PROMPT;
   protected WritePhase = WritePhase;
@@ -210,9 +211,9 @@ export class WritePromptComponent implements OnInit {
       if (optionIndex === 1) {
         moralChoice = "weaken";
       }
-      return `What is something your friend could do to try to ${moralChoice} ${this.favorStat.favorEntity}`;
+      return `What could you do to try to ${moralChoice} ${this.favorStat.favorEntity}`;
   } else {
-      return `What is something your friend could do to try to resolve the prompt you've written`;
+      return `What could you do to try to resolve the prompt you've written`;
     }
   }
 
@@ -301,6 +302,10 @@ export class WritePromptComponent implements OnInit {
 
   public setPrequelPlayer(prequelPlayer: Player) {
     this.prequelPlayer = prequelPlayer;
+  }
+
+  public setHasPrequelContent(hasContent: boolean) {
+    this.hasPrequelContent = hasContent;
   }
 
   public setIsPlayerSequel(isPlayerSequel: boolean) {
