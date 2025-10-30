@@ -85,6 +85,40 @@ mat-form-field.disabled {
   pointer-events: none;
 }
 
+.outcome-box {
+  border-left: 4px solid transparent;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: rgba(0,0,0,0.02);
+  width: 100%;
+
+  .outcome-label {
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+  }
+
+  &.success {
+    border-color: #2e7d32;
+    background: rgba(46, 125, 50, 0.08);
+
+    .outcome-label {
+      color: #2e7d32;
+    }
+  }
+
+  &.failure {
+    border-color: var(--mat-sys-error);
+    background: rgba(211, 47, 47, 0.08);
+
+    .outcome-label {
+      color: var(--mat-sys-error);
+    }
+  }
+}
+
 .difficulty-badge {
   background-color: #85b0e2 !important;
   color: whitesmoke;
