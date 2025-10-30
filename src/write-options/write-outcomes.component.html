@@ -26,7 +26,7 @@
     </div>
 
     <div class="story-container">
-        @if (optionSuccess.value) {
+        @if (optionSuccess.value && (phase === OutcomePhase.SUCCESS || phase === OutcomePhase.FAILURE)) {
             <mat-card class="story">
                 {{optionSuccess.value}}
                 @if (playerOption.successResults && playerOption.successResults.length > 0) {
@@ -40,7 +40,7 @@
             </mat-card>
         }
 
-        @if (optionFailure.value) {
+        @if (optionFailure.value && phase === OutcomePhase.FAILURE) {
             <mat-card class="story">
                 {{optionFailure.value}}
                 @if (playerOption.failureResults && playerOption.failureResults.length > 0) {
@@ -59,10 +59,10 @@
     <div class="writing-container">
         
         <!-- SUCCESS Phase -->
+        @if (phase === OutcomePhase.SUCCESS) {
         <div class="writing-section">
             @if (phase === OutcomePhase.SUCCESS) {
                 <div class="instructions" [class.active]="phase === OutcomePhase.SUCCESS">
-                        Someone else has written the prompt for this one at the {{playerStories[currentStoryIndex].location.label}}
                         @if (playerStories[currentStoryIndex].mainPlotStory) {
                             <div class="writing-stats">
                                 What would happen if you encountered 
@@ -87,17 +87,16 @@
                         }
                 </div>
             }
-
+            <div class="writing-input-box">
+                <mat-form-field class="full-width" [class.disabled]="phase !== OutcomePhase.SUCCESS">
+                    <mat-label>Option Success</mat-label>
+                    <textarea matInput
+                        placeholder="{{optionOnePreview}}"
+                        type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150" [disabled]="phase !== OutcomePhase.SUCCESS"></textarea>
+                    <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </div>
             @if (phase === OutcomePhase.SUCCESS) {
-                <div class="writing-input-box">
-                    <mat-form-field class="full-width" [class.disabled]="phase !== OutcomePhase.SUCCESS">
-                        <mat-label>Option Success</mat-label>
-                        <textarea matInput
-                            placeholder="{{optionOnePreview}}"
-                            type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150" [disabled]="phase !== OutcomePhase.SUCCESS"></textarea>
-                        <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
-                    </mat-form-field>
-                </div>
                 <div class="writing-button-container">
                     <div class="writing-buttons">
                         <button mat-flat-button (click)="goToNextPhase()" [disabled]="!optionSuccess.value">Next ></button>
@@ -105,6 +104,7 @@
                 </div>
             }
         </div>
+        }
 
         <!-- FAILURE Phase -->
         <div class="writing-section">
@@ -133,16 +133,16 @@
                         }
                 </div>
             }
+            <div class="writing-input-box">
+                <mat-form-field class="full-width" [class.disabled]="phase !== OutcomePhase.FAILURE">
+                    <mat-label>Option Failure</mat-label>
+                    <textarea matInput
+                        placeholder="{{optionTwoPreview}}"
+                        type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150" [disabled]="phase !== OutcomePhase.FAILURE"></textarea>
+                    <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
+                </mat-form-field>
+            </div>
             @if (phase === OutcomePhase.FAILURE) {
-                <div class="writing-input-box">
-                    <mat-form-field class="full-width" [class.disabled]="phase !== OutcomePhase.FAILURE">
-                        <mat-label>Option Failure</mat-label>
-                        <textarea matInput
-                            placeholder="{{optionTwoPreview}}"
-                            type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150" [disabled]="phase !== OutcomePhase.FAILURE"></textarea>
-                        <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
-                    </mat-form-field>
-                </div>
                 <div class="writing-button-container">
                     <div class="writing-buttons">
                         @if (optionSuccess.value) {

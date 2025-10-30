@@ -59,6 +59,13 @@ mat-card.stat-board {
 
 mat-chip.stat {
   color: var(--mat-option-selected-state-layer-color) !important;
+  background-color: #85b0e2 !important;
+  float: right !important;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+mat-chip.location {
+  color: var(--mat-option-selected-state-layer-color) !important;
   background-color: #76a37e !important;
   float: right !important;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
@@ -75,6 +82,12 @@ mat-chip.progress {
 }
 
 mat-chip.entity {
+  background-color: #292527 !important;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  color: var(--mat-option-selected-state-layer-color) !important;
+}
+
+mat-chip.option {
   background-color: #292527 !important;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
   color: var(--mat-option-selected-state-layer-color) !important;
