@@ -238,11 +238,9 @@ export class WriteOutcomesComponent implements OnInit {
     this.optionTwoSuccess.reset('');
     this.optionTwoFailure.reset('');
 
-    if(!this.submitBothOutcomes) {
-      this.currentStoryIndex++;
-      this.playerOption = new Option();
-      this.otherOption = new Option();
-    }
+    this.currentStoryIndex++;
+    this.playerOption = new Option();
+    this.otherOption = new Option();
    
     if(this.currentStoryIndex >= this.playerStories.length) {
       this.playerDone.emit(ComponentType.WRITE_OUTCOMES);
