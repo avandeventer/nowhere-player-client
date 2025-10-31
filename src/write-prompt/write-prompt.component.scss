@@ -48,6 +48,7 @@
     flex: 1;
     min-width: 350px;
     position: relative;
+    padding-bottom: 48px; // Space for mat-hint and button container
     
     .stat-chip-container {
       position: absolute;

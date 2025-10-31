@@ -75,6 +75,7 @@
     flex: 1;
     min-width: 350px;
     position: relative;
+    padding-bottom: 48px; // Space for mat-hint and button container
   }
 
   .writing-button-container {
@@ -94,9 +95,11 @@ mat-form-field.disabled {
   border-left: 4px solid transparent;
   border-radius: 8px;
   padding: 12px;
+  padding-bottom: 52px; // Extra space for button container to avoid overlap with mat-hint
   margin-bottom: 12px;
   background: rgba(0,0,0,0.02);
   width: 100%;
+  position: relative;
 
   .outcome-label {
     margin-bottom: 8px;
