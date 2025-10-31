@@ -36,6 +36,11 @@
     .writing-buttons {
       display: flex;
       gap: 8px;
+
+      .active-option {
+        border: 2px solid var(--mat-sys-primary);
+        background: rgba(0,0,0,0.06);
+      }
     }
   }
 }

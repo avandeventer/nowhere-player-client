@@ -3,7 +3,7 @@
 }
 @else {
     <!-- Story so Far Section -->
-    <div class="story-so-far-section" [style.display]="hasPrequelContent ? 'block' : 'none'">
+    <div class="story-so-far-section">
         <h3>Story so Far</h3>
         <prequel-story-display 
             [gameCode]="gameCode" 
@@ -11,29 +11,29 @@
             [isAdventureMode]="false"
             (hasPrequelContent)="setHasPrequelContent($event)">
         </prequel-story-display>
-        @if (!playerStories[currentStoryIndex].mainPlotStory) {
-            {{hasPrequelContent ? "Then:" : "Your friend wrote"}}
-            <div class="story-container">
+        {{hasPrequelContent ? "Then (write your outcomes based on this):" : "Your friend wrote"}}
+        <div class="story-container">
+            @if (!playerStories[currentStoryIndex].mainPlotStory) {
                 <mat-card class="story">{{playerStories[currentStoryIndex].prompt}}</mat-card>
-                <div class="writing-button-container">
-                    <div class="writing-buttons">
-                        <button mat-flat-button disabled>{{playerOption.optionText}}</button>
-                        <button mat-flat-button disabled>{{otherOption.optionText}}</button>
-                    </div>
+            }
+            <div class="writing-button-container">
+                <div class="writing-buttons">
+                    <button mat-flat-button [class.active-option]="currentOptionIndex === 1">{{playerOption.optionText}}</button>
+                    <button mat-flat-button [class.active-option]="currentOptionIndex === 0">{{otherOption.optionText}}</button>
                 </div>
             </div>
-        }
+        </div>
     </div>
 
     <div class="story-container">
-        @if (optionSuccess.value && (phase === OutcomePhase.SUCCESS || phase === OutcomePhase.FAILURE)) {
+        @if (((currentOptionIndex === 0 ? optionOneSuccess.value : optionTwoSuccess.value)) && (phase === OutcomePhase.SUCCESS || phase === OutcomePhase.FAILURE)) {
             <div class="outcome-box success">
                 <div class="outcome-label"><strong>success</strong></div>
                 <mat-card class="story">
-                    {{optionSuccess.value}}
-                    @if (playerOption.successResults && playerOption.successResults.length > 0) {
+                    {{currentOptionIndex === 0 ? optionOneSuccess.value : optionTwoSuccess.value}}
+                    @if (currentOption().successResults && currentOption().successResults.length > 0) {
                         <span>
-                            @for (outcomeStat of playerOption.successResults; track outcomeStat) {
+                            @for (outcomeStat of currentOption().successResults; track outcomeStat) {
                                 {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
                                 @if (!$last) {, }
                             }
@@ -43,14 +43,14 @@
             </div>
         }
 
-        @if (optionFailure.value && phase === OutcomePhase.FAILURE) {
+        @if (((currentOptionIndex === 0 ? optionOneFailure.value : optionTwoFailure.value)) && phase === OutcomePhase.FAILURE) {
             <div class="outcome-box failure">
                 <div class="outcome-label"><strong>failure</strong></div>
                 <mat-card class="story">
-                    {{optionFailure.value}}
-                    @if (playerOption.failureResults && playerOption.failureResults.length > 0) {
+                    {{currentOptionIndex === 0 ? optionOneFailure.value : optionTwoFailure.value}}
+                    @if (currentOption().failureResults && currentOption().failureResults.length > 0) {
                         <span>
-                            @for (outcomeStat of playerOption.failureResults; track outcomeStat) {
+                            @for (outcomeStat of currentOption().failureResults; track outcomeStat) {
                                 {{outcomeStat.playerStat.value <= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
                                 @if (!$last) {, }
                             }
@@ -75,11 +75,11 @@
                                 <mat-chip-set><mat-chip class="entity">
                                 {{favorStat.favorEntity}}
                                 </mat-chip></mat-chip-set>
-                                tried to <button mat-flat-button>{{playerOption.optionText}}</button>, and managed to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
+                                tried to <button mat-flat-button>{{currentOption().optionText}}</button>, and managed to {{ sideAgainstEntity ? "weaken" : "impress" }} them?
                             </div>
                         } @else {
                             <div class="writing-stats">
-                                What would happen if you encountered the story above, tried to <button mat-flat-button>{{playerOption.optionText}}</button>, and succeeded?
+                                What would happen if you encountered the story above, tried to <button mat-flat-button>{{currentOption().optionText}}</button>, and succeeded?
                             </div>
                         }
                         @if (playerOption.successResults && playerOption.successResults.length > 0) {
@@ -100,14 +100,17 @@
                         <mat-label>Option Success</mat-label>
                         <textarea matInput
                             placeholder="{{optionOnePreview}}"
-                            type="text" id="optionSuccess" [formControl]="optionSuccess" maxlength="150" [disabled]="phase !== OutcomePhase.SUCCESS"></textarea>
-                        <mat-hint align="end">{{optionSuccess.value?.length || 0}}/150</mat-hint>
+                            type="text" id="optionSuccess" [formControl]="currentOptionIndex === 0 ? optionOneSuccess : optionTwoSuccess" maxlength="150" [disabled]="phase !== OutcomePhase.SUCCESS"></textarea>
+                        <mat-hint align="end">{{(currentOptionIndex === 0 ? optionOneSuccess.value : optionTwoSuccess.value)?.length || 0}}/150</mat-hint>
                     </mat-form-field>
                 </div>
                 @if (phase === OutcomePhase.SUCCESS) {
                     <div class="writing-button-container">
                         <div class="writing-buttons">
-                            <button mat-flat-button (click)="goToNextPhase()" [disabled]="!optionSuccess.value">Next ></button>
+                            @if (currentOptionIndex > 0) {
+                                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                            }
+                            <button mat-flat-button (click)="goToNextPhase()" [disabled]="!(currentOptionIndex === 0 ? optionOneSuccess.value : optionTwoSuccess.value)">Next ></button>
                         </div>
                     </div>
                 }
@@ -122,9 +125,9 @@
                         <div class="writing-stats">
                             What about if you failed?
                         </div>
-                        @if (playerOption.failureResults && playerOption.failureResults.length > 0) {
+                        @if (currentOption().failureResults && currentOption().failureResults.length > 0) {
                             <mat-chip-set>
-                                @for (outcomeStat of playerOption.failureResults; track outcomeStat) {
+                                @for (outcomeStat of currentOption().failureResults; track outcomeStat) {
                                     <mat-chip class="stat">
                                         {{outcomeStat.playerStat.value <= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
                                     </mat-chip>
@@ -140,17 +143,15 @@
                         <mat-label>Option Failure</mat-label>
                         <textarea matInput
                             placeholder="{{optionTwoPreview}}"
-                            type="text" id="optionFailure" [formControl]="optionFailure" maxlength="150" [disabled]="phase !== OutcomePhase.FAILURE"></textarea>
-                        <mat-hint align="end">{{optionFailure.value?.length || 0}}/150</mat-hint>
+                            type="text" id="optionFailure" [formControl]="currentOptionIndex === 0 ? optionOneFailure : optionTwoFailure" maxlength="150" [disabled]="phase !== OutcomePhase.FAILURE"></textarea>
+                        <mat-hint align="end">{{(currentOptionIndex === 0 ? optionOneFailure.value : optionTwoFailure.value)?.length || 0}}/150</mat-hint>
                     </mat-form-field>
                 </div>
                 @if (phase === OutcomePhase.FAILURE) {
                     <div class="writing-button-container">
                         <div class="writing-buttons">
-                            @if (optionSuccess.value) {
-                                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
-                            }
-                            <button mat-flat-button (click)="submit()" [disabled]="!canSubmit()">Submit</button>
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                            <button mat-flat-button (click)="goToNextPhase()" [disabled]="!canGoToNextPhase()">{{canSubmit() ? "Submit" : "Next >"}}</button>
                         </div>
                     </div>
                 }

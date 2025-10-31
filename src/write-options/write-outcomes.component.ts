@@ -50,9 +50,12 @@ export class WriteOutcomesComponent implements OnInit {
   currentStoryIndex: number = 0;
   playerOption: Option = new Option();
   otherOption: Option = new Option();
+  currentOptionIndex: number = 0; // 0: playerOption, 1: otherOption
 
-  optionSuccess = new FormControl('', [Validators.maxLength(150)]);
-  optionFailure = new FormControl('', [Validators.maxLength(150)]);
+  optionOneSuccess = new FormControl('', [Validators.maxLength(150)]);
+  optionOneFailure = new FormControl('', [Validators.maxLength(150)]);
+  optionTwoSuccess = new FormControl('', [Validators.maxLength(150)]);
+  optionTwoFailure = new FormControl('', [Validators.maxLength(150)]);
   submitBothOutcomes: boolean = false;
   outcomeOneSubmitted: boolean = false;
 
@@ -175,11 +178,14 @@ export class WriteOutcomesComponent implements OnInit {
           {
             optionId: this.playerOption.optionId,
             outcomeAuthorId: this.player.authorId,
-            successText: this.optionSuccess.value,
-            failureText: this.optionFailure.value
+            successText: this.optionOneSuccess.value,
+            failureText: this.optionOneFailure.value
           },
           {
-            optionId: this.otherOption.optionId
+            optionId: this.otherOption.optionId,
+            outcomeAuthorId: this.player.authorId,
+            successText: this.optionTwoSuccess.value,
+            failureText: this.optionTwoFailure.value
           }
         ]
       };
@@ -198,12 +204,26 @@ export class WriteOutcomesComponent implements OnInit {
         });
   }
 
-  public canSubmit() {
-    if (!this.outcomeOneSubmitted) {
-      return this.optionSuccess.value && this.optionSuccess.value.trim().length > 0;
+  public canGoToNextPhase() {
+    if (this.phase === OutcomePhase.SUCCESS) {
+      const v = this.currentOptionIndex === 0 ? this.optionOneSuccess.value : this.optionTwoSuccess.value;
+      return !!v && v.trim().length > 0;
     } else {
-      return this.optionFailure.value && this.optionFailure.value.trim().length > 0;
+      const v = this.currentOptionIndex === 0 ? this.optionOneFailure.value : this.optionTwoFailure.value;
+      return !!v && v.trim().length > 0;
     }
+  }
+
+  public canSubmit() {
+    return this.currentOptionIndex === 1 
+    && this.optionOneSuccess.value 
+    && this.optionOneSuccess.value.trim().length > 0 
+    && this.optionTwoSuccess.value 
+    && this.optionTwoSuccess.value.trim().length > 0 
+    && this.optionOneFailure.value 
+    && this.optionOneFailure.value.trim().length > 0 
+    && this.optionTwoFailure.value 
+    && this.optionTwoFailure.value.trim().length > 0;
   }
 
   public canGoBack() {
@@ -213,8 +233,10 @@ export class WriteOutcomesComponent implements OnInit {
   }
 
   public setNextStoryPrompt() {
-    this.optionSuccess.reset('');
-    this.optionFailure.reset('');
+    this.optionOneSuccess.reset('');
+    this.optionOneFailure.reset('');
+    this.optionTwoSuccess.reset('');
+    this.optionTwoFailure.reset('');
 
     if(!this.submitBothOutcomes) {
       this.currentStoryIndex++;
@@ -262,6 +284,20 @@ export class WriteOutcomesComponent implements OnInit {
   public goToNextPhase() {
     if (this.phase === OutcomePhase.SUCCESS) {
       this.phase = OutcomePhase.FAILURE;
+    } else {
+      // finished failure for current option
+      if (this.currentOptionIndex === 0) {
+        this.currentOptionIndex = 1; // move to option 2
+        this.phase = OutcomePhase.SUCCESS;
+        this.numberOfOutcomesWritten++;
+      } else {
+        // finished option 2 failure -> submit all
+        this.submitOutcomes();
+        // reset for next story
+        this.currentOptionIndex = 0;
+        this.phase = OutcomePhase.SUCCESS;
+        return;
+      }
     }
     this.scrollToActiveSection();
   }
@@ -269,6 +305,13 @@ export class WriteOutcomesComponent implements OnInit {
   public goBack() {
     if (this.phase === OutcomePhase.FAILURE) {
       this.phase = OutcomePhase.SUCCESS;
+    } else {
+      // going back from success of option 2 -> to failure of option 1
+      if (this.currentOptionIndex === 1) {
+        this.currentOptionIndex = 0;
+        this.phase = OutcomePhase.FAILURE;
+        this.numberOfOutcomesWritten--;
+      }
     }
     this.scrollToActiveSection();
   }
@@ -284,5 +327,9 @@ export class WriteOutcomesComponent implements OnInit {
 
   public abs(value: number): number {
     return Math.abs(value);
+  }
+
+  public currentOption(): Option {
+    return this.currentOptionIndex === 0 ? this.playerOption : this.otherOption;
   }
 }
