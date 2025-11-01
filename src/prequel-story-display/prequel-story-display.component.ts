@@ -10,12 +10,13 @@ import { HttpConstants } from 'src/assets/http-constants';
 import { MatCardModule } from '@angular/material/card';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatChipSet, MatChip } from '@angular/material/chips';
 
 @Component({
   selector: 'prequel-story-display',
   templateUrl: './prequel-story-display.component.html',
   standalone: true,
-  imports: [MatCardModule, CdkAccordionModule, MatExpansionModule]
+  imports: [MatCardModule, CdkAccordionModule, MatExpansionModule, MatChipSet, MatChip]
 })
 export class PrequelDisplayComponent implements OnChanges {
   @Input() gameCode: string = '';

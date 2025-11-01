@@ -3,11 +3,14 @@
       <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            @if(isAdventureMode) {
-              <div>This was triggered by {{prequelPlayer.userName || 'someone'}}'s choices:</div><br>
-            } @else {
-              <div>{{prequelPlayer.userName || 'Someone'}} chose this:</div>
-            }
+              <div class="panel-title-content">
+                @if(prequelPlayer.userName) {
+                  <mat-chip-set><mat-chip class="player">{{prequelPlayer.userName}}</mat-chip></mat-chip-set>
+                } @else {
+                  <span>Someone</span>
+                }
+                <span>chose this:</span>
+              </div>
           </mat-panel-title>
         </mat-expansion-panel-header>
 

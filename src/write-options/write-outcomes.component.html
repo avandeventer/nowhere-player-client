@@ -87,6 +87,9 @@
                                 @for (outcomeStat of playerOption.successResults; track outcomeStat) {
                                     <mat-chip class="stat">
                                         {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                        @if (outcomeStat.playerStat.statType.favorType) {
+                                            with {{outcomeStat.playerStat.statType.favorEntity}}
+                                        }
                                     </mat-chip>
                                 }
                             </mat-chip-set>

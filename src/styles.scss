@@ -49,6 +49,13 @@ mat-card.story {
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+.panel-title-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
 mat-card.stat-board {
   font-family: "Courier New", monospace;
   padding: 10px;
@@ -62,6 +69,15 @@ mat-chip.stat {
   background-color: #85b0e2 !important;
   float: right !important;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  max-width: 100% !important;
+  
+  .mdc-evolution-chip__text-label,
+  .mat-mdc-chip-action-label {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+  }
 }
 
 mat-chip.location {
@@ -84,7 +100,17 @@ mat-chip.progress {
 mat-chip.entity {
   background-color: #292527 !important;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-  color: var(--mat-option-selected-state-layer-color) !important;
+  color: white !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  max-width: 100% !important;
+  
+  .mdc-evolution-chip__text-label,
+  .mat-mdc-chip-action-label {
+    color: white !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+  }
 }
 
 mat-chip.option {
@@ -117,12 +143,23 @@ mat-chip.option {
 .writing-stats mat-chip-set {
   display: inline-flex !important;
   margin: 0 4px !important; /* Small margin for spacing */
+  flex-wrap: wrap !important; /* Allow chips to wrap */
 }
 
 /* Ensure mat-chip flows inline */
 .writing-stats mat-chip {
   display: inline-flex !important;
   margin: 0 !important;
+}
+
+/* Ensure entity chips have white text even within writing-stats */
+.writing-stats mat-chip.entity {
+  color: white !important;
+  
+  .mdc-evolution-chip__text-label,
+  .mat-mdc-chip-action-label {
+    color: white !important;
+  }
 }
 
 .loading-overlay {
@@ -144,6 +181,40 @@ mat-chip.option {
   border-radius: 5px;
   line-height: 1.6;
   background-color: var(--mat-stepper-header-done-state-icon-foreground-color);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  
+  .writing-stats {
+    margin-left: 0 !important; // Remove auto margin so it stays inline
+  }
+  
+  .stat-chip-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: static !important; // Override any absolute positioning
+  }
+  
+  mat-chip-set {
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+  
+  mat-chip {
+    max-width: 100% !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    height: auto !important;
+    min-height: fit-content !important;
+    
+    .mdc-evolution-chip__text-label,
+    .mat-mdc-chip-action-label {
+      white-space: normal !important;
+      word-wrap: break-word !important;
+    }
+  }
 }
 
 .instructions-question {

@@ -42,10 +42,11 @@
                     <div class="instructions">
                         @if (playerStories[currentStoryIndex].mainPlotStory) {
                             <div class="writing-stats">
-                                What would happen to you if you encountered {{favorStat.favorEntity}}
+                                What would happen to you if you encountered 
+                                <mat-chip-set><mat-chip class="entity">{{favorStat.favorEntity}}</mat-chip></mat-chip-set>
                                 @if(prequelPlayer.userName == "" || !isPlayerSequel) {
                                     while at the
-                                    <mat-chip-set><mat-chip class="stat">
+                                    <mat-chip-set><mat-chip class="location">
                                     {{playerStories[currentStoryIndex].location.label}}
                                     </mat-chip></mat-chip-set> 
                                 }
@@ -71,9 +72,8 @@
                                 What is something that might happen to you 
                                 @if(prequelPlayer.userName == "" || !isPlayerSequel) {
                                     at the
-                                
-                                    <mat-chip-set><mat-chip class="stat">
-                                    {{playerStories[currentStoryIndex].location.label}}
+                                    <mat-chip-set><mat-chip class="location">
+                                        {{playerStories[currentStoryIndex].location.label}}
                                     </mat-chip></mat-chip-set>
                                 }
                                 @if(prequelPlayer.userName != "") {
@@ -122,18 +122,23 @@
                 @if (phase === WritePhase.OPTION_ONE) {
                     <div class="instructions-box" [class.active]="phase === WritePhase.OPTION_ONE">
                         <div class="instructions">
-                            <div class="writing-stats">
-                                {{getInstructionQuestionString(0)}}?
-                            </div>
                             <div class="stat-chip-container">
-                                <span class="using-text">using</span>
+                                <div class="writing-stats">
+                                    @if (playerStories[currentStoryIndex].mainPlotStory) {
+                                        What could you do to try to impress 
+                                        <mat-chip-set><mat-chip class="entity">{{favorStat.favorEntity}}</mat-chip></mat-chip-set>
+                                    } @else {
+                                        What could you do to try to resolve the prompt you've written
+                                    }
+                                using
                                 <mat-chip-set><mat-chip class="stat">
                                     {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.label}}
                                     @if (playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorType) {
                                         with {{playerStories[currentStoryIndex].options[0].playerStatDCs[0].statType.favorEntity}}
                                     }
                                     <span class="difficulty-badge">{{statDCDifficulty(0)}}</span>
-                                </mat-chip></mat-chip-set>
+                                </mat-chip></mat-chip-set>?
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -164,18 +169,24 @@
             @if (phase === WritePhase.OPTION_TWO) {
                 <div class="instructions-box" [class.active]="phase === WritePhase.OPTION_TWO">
                     <div class="instructions">
-                        <div class="writing-stats">
-                            {{getInstructionQuestionString(1)}}?
-                        </div>
                         <div class="stat-chip-container">
-                            <span class="using-text">using</span>
-                            <mat-chip-set><mat-chip class="stat">
-                                {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}}
-                                @if (playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorType) {
-                                    with {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorEntity}}
+                            <div class="writing-stats">
+                                @if (playerStories[currentStoryIndex].mainPlotStory) {
+                                    What could you do to try to weaken 
+                                    <mat-chip-set><mat-chip class="entity">{{favorStat.favorEntity}}</mat-chip></mat-chip-set>
+                                } @else {
+                                    What could you do to try to resolve the prompt you've written
                                 }
-                                <span class="difficulty-badge">{{statDCDifficulty(1)}}</span>
-                            </mat-chip></mat-chip-set>
+                                using
+                                <mat-chip-set><mat-chip class="stat">
+                                    {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.label}}
+                                    @if (playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorType) {
+                                        with {{playerStories[currentStoryIndex].options[1].playerStatDCs[0].statType.favorEntity}}
+                                    }
+                                    <span class="difficulty-badge">{{statDCDifficulty(1)}}</span>
+                                </mat-chip></mat-chip-set>?
+                            </div>
+
                         </div>
                     </div>
                 </div>
