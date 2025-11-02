@@ -1,3 +1,25 @@
+<div class="action-buttons-container">
+    @if (isGameInitialized() && player.firstPlayer) {
+        <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button">
+            Start game?
+        </button>
+    }
+    
+    @if ((isGameInPreamblePhase() || isGameInCollaborativeTextWinningPhase()) && player.firstPlayer) {
+        <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button">
+            Continue
+        </button>
+    }
+    
+    @if (isGameInWritingPhase() && player.firstPlayer && !activePlayerSession.startTimer) {
+        <button mat-flat-button (click)="startTimer()" class="action-button pulse-button">
+            Start Timer
+        </button>
+    }
+</div>
+
+<app-world-information [gameCode]="gameCode"></app-world-information>
+
 @if (isGameInitialized()) {
     <p>Hello {{player.userName}}!</p>
 
@@ -6,25 +28,10 @@
     } @else {
         <p>We will soon generate our world</p>
     }
-
-    @if(player.firstPlayer) {
-        <p>If all players have joined, click below!</p>
-        <button mat-flat-button (click)="nextGamePhase()">Start game?</button>
-    }
 }
 
 @if (isGameInPreamblePhase() || isGameInCollaborativeTextWinningPhase()) {
     <p>Have someone read the text on screen!</p>
-    @if(player.firstPlayer) {
-        <p>Push the button below to continue</p>
-        <button mat-flat-button (click)="nextGamePhase()">Continue</button>
-    }
-}
-
-@if (isGameInWritingPhase()) {
-    @if(player.firstPlayer && !activePlayerSession.startTimer) {
-        <button mat-flat-button (click)="startTimer()">Start Timer</button>
-    }
 }
 
 @if (isGameInWritePromptsPhase()) {

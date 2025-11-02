@@ -42,15 +42,18 @@ export class WriteLocationOutcomesComponent implements OnInit {
   currentLocationIndex: number = 0;
   playerOption: Option = new Option();
   otherOption: Option = new Option();
+  currentOptionIndex: number = 0; // 0: optionOne (playerOption), 1: optionTwo (otherOption)
 
-  attemptText = new FormControl('', [Validators.maxLength(150)]);
+  optionOneSuccess = new FormControl('', [Validators.maxLength(150)]);
+  optionTwoSuccess = new FormControl('', [Validators.maxLength(150)]);
   submitBothOutcomes: boolean = false;
 
   numberOfOutcomesToWrite: number = 0;
   numberOfOutcomesWritten: number = 0;
   favorStat: StatType = new StatType();
   sideAgainstEntity: boolean = false;
-  attemptPreview: string = "Ex. You spend some time helping the locals learn to scavenge better. You become better at foraging and become a better leader!";
+  optionOnePreview: string = "Ex. You spend some time helping the locals learn to scavenge better. You become better at foraging and become a better leader!";
+  optionTwoPreview: string = "Ex. You spend time practicing your skills and gain new abilities.";
 
   constructor(private http: HttpClient) {}
 
@@ -131,32 +134,74 @@ export class WriteLocationOutcomesComponent implements OnInit {
     }
   }
 
-  submitWriting() {
-    // This method is not used in this component - we use submit() instead
-    this.submit();
+  submit() {
+    if (this.currentOptionIndex === 0) {
+      // Move to option two
+      this.goToNextPhase();
+    } else {
+      // Submit both options
+      this.submitOutcomes();
+    }
   }
 
-  submit() {
-    this.submitOutcomes();
+  goToNextPhase() {
+    if (this.currentOptionIndex === 0) {
+      this.currentOptionIndex = 1;
+      this.scrollToActiveSection();
+    }
   }
 
   goBack() {
-    this.numberOfOutcomesWritten--;
+    if (this.currentOptionIndex === 1) {
+      this.currentOptionIndex = 0;
+      this.scrollToActiveSection();
+    } else if (this.currentLocationIndex > 0) {
+      // Going back to previous location
+      this.currentLocationIndex--;
+      this.setPlayerOption();
+      this.optionOneSuccess.reset('');
+      this.optionTwoSuccess.reset('');
+      this.currentOptionIndex = 0;
+      this.numberOfOutcomesWritten--;
+    }
+  }
+
+  canGoToNext() {
+    if (this.currentOptionIndex === 0) {
+      return !!this.optionOneSuccess.value && this.optionOneSuccess.value.trim().length > 0;
+    } else {
+      return !!this.optionTwoSuccess.value && this.optionTwoSuccess.value.trim().length > 0;
+    }
+  }
+
+  canGoBack() {
+    return this.currentOptionIndex > 0 || this.currentLocationIndex > 0;
+  }
+
+  private scrollToActiveSection() {
+    setTimeout(() => {
+      const activeSection = document.querySelector('.writing-section .instructions.active');
+      if (activeSection) {
+        activeSection.closest('.writing-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }
 
   submitOutcomes() {
     const requestBody = {
       ...this.playerLocations[this.currentLocationIndex],
-        options: [
-          {
-            optionId: this.playerOption.optionId,
-            outcomeAuthorId: this.player.authorId,
-            attemptText: this.attemptText.value
-          },
-          {
-            optionId: this.otherOption.optionId
-          }
-        ]
+      options: [
+        {
+          optionId: this.playerOption.optionId,
+          outcomeAuthorId: this.player.authorId,
+          successText: this.optionOneSuccess.value
+        },
+        {
+          optionId: this.otherOption.optionId,
+          outcomeAuthorId: this.player.authorId,
+          successText: this.optionTwoSuccess.value
+        }
+      ]
     };
 
     this.http
@@ -174,22 +219,21 @@ export class WriteLocationOutcomesComponent implements OnInit {
   }
 
   public canSubmit() {
-    return this.attemptText.value && this.attemptText.value.trim().length > 0;
-  }
-
-  public canGoBack() {
-    return this.numberOfOutcomesWritten > 0
-      && this.currentLocationIndex < this.playerLocations.length;
+    return this.currentOptionIndex === 1
+    && this.optionOneSuccess.value 
+    && this.optionOneSuccess.value.trim().length > 0 
+    && this.optionTwoSuccess.value 
+    && this.optionTwoSuccess.value.trim().length > 0;
   }
 
   public setNextLocationPrompt() {
-    this.attemptText.reset('');
+    this.optionOneSuccess.reset('');
+    this.optionTwoSuccess.reset('');
 
-    if (!this.submitBothOutcomes) {
-      this.currentLocationIndex++;
-      this.playerOption = new Option();
-      this.otherOption = new Option();
-    }
+    this.currentLocationIndex++;
+    this.playerOption = new Option();
+    this.otherOption = new Option();
+    this.currentOptionIndex = 0;
    
     if (this.currentLocationIndex >= this.playerLocations.length) {
       this.playerDone.emit(ComponentType.WRITE_LOCATION_OUTCOMES);
@@ -198,6 +242,18 @@ export class WriteLocationOutcomesComponent implements OnInit {
     }
     
     console.log(this.currentLocationIndex);
+  }
+  
+  currentOption(): Option {
+    return this.currentOptionIndex === 0 ? this.playerOption : this.otherOption;
+  }
+  
+  getOptionOne(): Option {
+    return this.playerOption;
+  }
+  
+  getOptionTwo(): Option {
+    return this.otherOption;
   }
 
   public statDCDifficulty() {
@@ -221,17 +277,23 @@ export class WriteLocationOutcomesComponent implements OnInit {
   }
 
   getCurrentOptionIndex(): number {
-    return 0;
+    return this.currentOptionIndex;
   }
 
   getOptionStats(optionIndex: number) {
-    if (this.playerOption.successResults) {
-      return this.playerOption.successResults.map(result => result.playerStat.statType);
+    const option = optionIndex === 0 ? this.playerOption : this.otherOption;
+    if (option && option.successResults) {
+      return option.successResults.map(result => result.playerStat.statType);
     }
     return [];
   }
 
   getInstructionQuestionString() {
-    return `How would your friend improve these skills if they decided to ${this.playerOption.optionText}?`;
+    const option = this.currentOption();
+    return `How would your friend improve these skills if they decided to ${option.optionText}?`;
+  }
+
+  public abs(value: number): number {
+    return Math.abs(value);
   }
 }

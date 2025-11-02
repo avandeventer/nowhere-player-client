@@ -1,121 +1,180 @@
 <div class="write-location-prompt-container">
-    <div class="instructions">
-        Create a location that is important in this place. You'll describe what this place is and what players can do there.
-    </div><br>
 
-    <section>
-        <div class="instructions-question">
-            @if (phase === WritePhase.PROMPT) {
-                <div class="writing-stats">
-                    {{getInstructionQuestionString()}}
-                    <mat-chip-set><mat-chip class="stat">
-                        {{primaryStat.label}}
-                        @if (primaryStat.favorType) {
-                            with {{primaryStat.favorEntity}}
-                        }
-
-                    </mat-chip></mat-chip-set>
-                </div>
+    @if (phase === WritePhase.DONE) {
+        <p>Location submitted! Wait for other players to submit their locations.</p>
+    }
+    <!-- Location Preview Section -->
+    @if (locationLabel.value || optionOneText.value || optionTwoText.value) {
+        <div class="story-container">
+            @if (phase !== WritePhase.PROMPT && phase !== WritePhase.DONE) {
+                <mat-card class="story"><strong>You travel to the {{locationLabel.value || '[Location Name]'}}</strong></mat-card>
             }
             @if (phase === WritePhase.OPTION_ONE || phase === WritePhase.OPTION_TWO) {
-                <div class="writing-stats">
-                    {{getInstructionQuestionString()}}
-                    @for (stat of getOptionStats(getCurrentOptionIndex()); track stat.id) {
-                        <mat-chip-set><mat-chip class="stat">
-                            {{stat.label}}
-                            @if (stat.favorType) {
-                                with {{stat.favorEntity}}
-                            }
-                        </mat-chip></mat-chip-set>
-                    }
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        @if (optionOneText.value) {
+                            <button mat-flat-button disabled>{{optionOneText.value}}</button>
+                        }
+                        @if (optionTwoText.value) {
+                            <button mat-flat-button disabled>{{optionTwoText.value}}</button>
+                        }
+                    </div>
                 </div>
             }
-            @if (phase === WritePhase.ADD_IMAGE) {
-                <div class="writing-stats">
-                    {{getInstructionQuestionString()}}
-                </div>
-            }
-        </div><br>
-    </section>
-
-    <mat-divider></mat-divider><br>
-
-    @if (locationLabel.value || optionOneText.value || optionTwoText.value) {
-        <div>Location Preview:</div><br>
-    } @else {
-        <div>Location Example:</div><br>
-    }
-    <mat-card class="story">
-        <strong>You travel to the {{locationLabel.value || '[Location Name]'}}</strong>
-    </mat-card><br>
-    <div class="writing-button-container">
-        <div class="writing-buttons">
-            @if (!optionOneText.value) {
-                <strong>You could:</strong>
-            }
-            <button mat-flat-button>
-                {{optionOneText.value || 'Look for clues'}}
-            </button>
-
-            @if (!optionTwoText.value) {
-                <strong>Or you could:</strong>
-            }
-            <button mat-flat-button>
-                {{optionTwoText.value || 'Pickpocket'}}
-            </button>
         </div>
-    </div>
-
-    <br>
-    <mat-divider></mat-divider><br>
-
-    @if (phase === WritePhase.PROMPT) {
-        <mat-form-field class="full-width">
-            <mat-label>You travel to the...</mat-label>
-            <input matInput placeholder="Ex. Sunken Grotto, Library, Dungeon of the Lost" [formControl]="locationLabel" maxlength="50">
-            <mat-hint align="end">{{locationLabel.value?.length || 0}}/50</mat-hint>
-        </mat-form-field>
     }
 
-    @if (phase === WritePhase.OPTION_ONE) {
-        <mat-form-field class="full-width">
-            <mat-label>You could...</mat-label>
-            <input matInput placeholder="Ex. Look for clues, Talk to the locals, Experiment with potion brews" [formControl]="optionOneText" maxlength="40">
-            <mat-hint align="end">{{optionOneText.value?.length || 0}}/40</mat-hint>
-        </mat-form-field>
-    }
+    <!-- Writing Sections with Instructions beside each input -->
+    <div class="writing-container">
+        <!-- PROMPT Phase -->
+        <div class="writing-section">
+            @if (phase === WritePhase.PROMPT) {
+                <div class="instructions-box" [class.active]="phase === WritePhase.PROMPT">
+                    <div class="instructions">
+                        <div class="writing-stats">
+                            {{getInstructionQuestionString()}}
+                            <mat-chip-set><mat-chip class="stat">
+                                {{primaryStat.label}}
+                                @if (primaryStat.favorType) {
+                                    with {{primaryStat.favorEntity}}
+                                }
+                            </mat-chip></mat-chip-set>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (phase === WritePhase.PROMPT) {
+                <div class="writing-input-box">
+                    <mat-form-field class="full-width" [class.disabled]="phase !== WritePhase.PROMPT">
+                        <mat-label>You travel to the...</mat-label>
+                        <input matInput placeholder="Ex. Sunken Grotto, Library, Dungeon of the Lost" [formControl]="locationLabel" maxlength="50" [disabled]="phase !== WritePhase.PROMPT">
+                        <mat-hint align="end">{{locationLabel.value?.length || 0}}/50</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        @if (hasProgressed) {
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                        }
+                        <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">Next ></button>
+                    </div>
+                </div>
+            }
+        </div>
 
-    @if (phase === WritePhase.OPTION_TWO) {
-        <mat-form-field class="full-width">
-            <mat-label>Or you could...</mat-label>
-            <input matInput placeholder="Ex. Perform music for people, Pickpocket, Go diving" [formControl]="optionTwoText" maxlength="40">
-            <mat-hint align="end">{{optionTwoText.value?.length || 0}}/40</mat-hint>
-        </mat-form-field>
-    }
-
-    @if (phase === WritePhase.ADD_IMAGE) {
-        <div>Select an image below:</div>
-        <div class="image-picker-container">
-            <div class="image-grid">
-                @for (imageUrl of availableImages; track imageUrl) {
-                    <div class="image-option" 
-                         [class.selected]="selectedImage === imageUrl"
-                         (click)="selectImage(imageUrl)">
-                        <img [src]="imageUrl" [alt]="'Location icon'" class="location-icon">
+        <!-- OPTION_ONE Phase -->
+        @if (phase === WritePhase.PROMPT || phase === WritePhase.OPTION_ONE) {
+            <div class="writing-section">
+                @if (phase === WritePhase.OPTION_ONE) {
+                    <div class="instructions-box" [class.active]="phase === WritePhase.OPTION_ONE">
+                        <div class="instructions">
+                            <div class="stat-chip-container">
+                                <div class="writing-stats">
+                                    {{getInstructionQuestionString()}}
+                                    @for (stat of getOptionStats(0); track stat.id) {
+                                        <mat-chip-set><mat-chip class="stat">
+                                            {{stat.label}}
+                                            @if (stat.favorType) {
+                                                with {{stat.favorEntity}}
+                                            }
+                                        </mat-chip></mat-chip-set>
+                                    }?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="writing-input-box">
+                    <mat-form-field class="full-width" [class.disabled]="phase !== WritePhase.OPTION_ONE">
+                        <mat-label>You could...</mat-label>
+                        <input matInput placeholder="Ex. Look for clues, Talk to the locals, Experiment with potion brews" [formControl]="optionOneText" maxlength="40" [disabled]="phase !== WritePhase.OPTION_ONE">
+                        <mat-hint align="end">{{optionOneText.value?.length || 0}}/40</mat-hint>
+                    </mat-form-field>
+                </div>
+                @if (phase === WritePhase.OPTION_ONE) {
+                    <div class="writing-button-container">
+                        <div class="writing-buttons">
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                            <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">Next ></button>
+                        </div>
                     </div>
                 }
             </div>
-        </div>
-    }
+        }
 
-    <div class="writing-button-container">
-        <div class="writing-buttons">
-            @if (hasProgressed) {
-                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
-            }
-            <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">
-                {{aboutToSubmit ? "Submit" : "Next >"}}
-            </button>
-        </div>
+        <!-- OPTION_TWO Phase -->
+        @if (phase === WritePhase.PROMPT || phase === WritePhase.OPTION_ONE || phase === WritePhase.OPTION_TWO) {
+            <div class="writing-section">
+                @if (phase === WritePhase.OPTION_TWO) {
+                    <div class="instructions-box" [class.active]="phase === WritePhase.OPTION_TWO">
+                        <div class="instructions">
+                            <div class="stat-chip-container">
+                                <div class="writing-stats">
+                                    {{getInstructionQuestionString()}}
+                                    @for (stat of getOptionStats(1); track stat.id) {
+                                        <mat-chip-set><mat-chip class="stat">
+                                            {{stat.label}}
+                                            @if (stat.favorType) {
+                                                with {{stat.favorEntity}}
+                                            }
+                                        </mat-chip></mat-chip-set>
+                                    }?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="writing-input-box">
+                    <mat-form-field class="full-width" [class.disabled]="phase !== WritePhase.OPTION_TWO">
+                        <mat-label>Or you could...</mat-label>
+                        <input matInput placeholder="Ex. Perform music for people, Pickpocket, Go diving" [formControl]="optionTwoText" maxlength="40" [disabled]="phase !== WritePhase.OPTION_TWO">
+                        <mat-hint align="end">{{optionTwoText.value?.length || 0}}/40</mat-hint>
+                    </mat-form-field>
+                </div>
+                @if (phase === WritePhase.OPTION_TWO) {
+                    <div class="writing-button-container">
+                        <div class="writing-buttons">
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                            <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">Next ></button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- ADD_IMAGE Phase -->
+        @if (phase === WritePhase.ADD_IMAGE) {
+            <div class="writing-section">
+                @if (phase === WritePhase.ADD_IMAGE) {
+                    <div class="instructions-box" [class.active]="phase === WritePhase.ADD_IMAGE">
+                        <div class="instructions">
+                            <div class="writing-stats">
+                                {{getInstructionQuestionString()}}
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="writing-input-box">
+                    <div class="image-picker-container">
+                        <div class="image-grid">
+                            @for (imageUrl of availableImages; track imageUrl) {
+                                <div class="image-option" 
+                                     [class.selected]="selectedImage === imageUrl"
+                                     (click)="selectImage(imageUrl)">
+                                    <img [src]="imageUrl" [alt]="'Location icon'" class="location-icon">
+                                    <div class="image-label">{{getImageName(imageUrl)}}</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="writing-button-container">
+                    <div class="writing-buttons">
+                        <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                        <button mat-flat-button (click)="submitWriting()" [disabled]="!canSubmit()">{{aboutToSubmit ? "Submit" : "Next >"}}</button>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>

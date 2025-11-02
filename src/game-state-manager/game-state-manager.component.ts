@@ -21,10 +21,12 @@ import { CollaborativeTextComponent } from 'src/collaborative-text/collaborative
 import { VotingComponent } from 'src/voting/voting.component';
 import { WriteLocationPromptComponent } from 'src/write-location-prompt/write-location-prompt.component';
 import { WriteLocationOutcomesComponent } from 'src/write-location-outcomes/write-location-outcomes.component';
+import { WorldInformationComponent } from 'src/world-information/world-information.component';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
+    styleUrls: ['./game-state-manager.component.scss'],
     imports: [
       WritePromptComponent, 
       WriteOutcomesComponent, 
@@ -34,7 +36,8 @@ import { WriteLocationOutcomesComponent } from 'src/write-location-outcomes/writ
       WriteEndingsComponent,
       EndingComponent, 
       MatButtonModule, 
-      GenreComponent, 
+      GenreComponent,
+      WorldInformationComponent, 
       CollaborativeTextComponent, 
       VotingComponent, 
       WriteLocationPromptComponent,

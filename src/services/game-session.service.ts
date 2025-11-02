@@ -7,6 +7,7 @@ import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from 'src/assets/collaborative-text-phase';
 import { PlayerVote } from 'src/assets/player-vote';
+import { GameSessionDisplay } from 'src/assets/game-session-display';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -65,5 +66,10 @@ export class GameService {
 
   submitPlayerVotes(gameCode: string, playerVotes: PlayerVote[]): Observable<CollaborativeTextPhase> {
     return this.http.post<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText/votes?gameCode=${gameCode}`, playerVotes);
+  }
+
+  getGameSessionDisplay(gameCode: string): Observable<GameSessionDisplay> {
+    const parameter = "?gameCode=" + gameCode;
+    return this.http.get<GameSessionDisplay>(environment.nowhereBackendUrl + HttpConstants.DISPLAY_PATH + parameter) as Observable<GameSessionDisplay>;
   }
 }

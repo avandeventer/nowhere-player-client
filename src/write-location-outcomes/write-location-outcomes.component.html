@@ -2,68 +2,146 @@
     <p>All location outcomes have been submitted!</p>
 }
 @else {
-    <!-- <div class="instructions">Someone else has made a location called {{playerLocations[currentLocationIndex].label}} so you describe what your friends do there!</div><br> -->
-    <div class="instructions-question">
-        <div class="writing-stats">
-            {{getInstructionQuestionString()}}
-            @for (stat of getOptionStats(0); track stat.id) {
-                <mat-chip-set><mat-chip class="stat">
-                    {{stat.label}}
-                    @if (stat.favorType) {
-                        with {{stat.favorEntity}}
-                    }
-                </mat-chip></mat-chip-set>
-            }
+    <!-- Story so Far Section -->
+    <div class="story-so-far-section">
+        <h3>Story so Far</h3>
+        <div class="story-container">
+            <mat-card class="story"><strong>You travel to the {{playerLocations[currentLocationIndex].label}}</strong></mat-card>
+            <div class="writing-button-container">
+                <div class="writing-buttons">
+                    <button mat-flat-button [class.active-option]="currentOptionIndex === 1">{{playerOption.optionText}}</button>
+                    <button mat-flat-button [class.active-option]="currentOptionIndex === 0">{{otherOption.optionText}}</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <br><mat-card class="story">
-        <strong>You travel to the {{playerLocations[currentLocationIndex].label}}</strong>
-    </mat-card>
-
-    <mat-chip-set><mat-chip class="progress">{{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Completed</mat-chip></mat-chip-set><br>
-
-    <br><mat-divider></mat-divider><br>
-
-    <div>If the player selected this, describe how they spent their time:</div><br>
-    <button mat-flat-button disabled>{{playerOption.optionText}}</button><br><br>
-
-    <mat-card class="story">    
-        @if (attemptText.value) {
-            {{attemptText.value}}
-        } @else {
-            {{attemptPreview}}
-        }
-
-        @for (outcome of playerOption.successResults; track outcome) {
-            <div>
-                You {{outcome.playerStat.value  > 0 ? "gain +" : "lose "}}{{outcome.playerStat.value}} {{outcome.playerStat.statType.label}}
-                @if (outcome.playerStat.statType.favorType) {
-                    with {{outcome.playerStat.statType.favorEntity}}
-                }
+    <div class="story-container">
+        @if (optionOneSuccess.value) {
+            <div class="outcome-box success">
+                <mat-card class="story">
+                    {{optionOneSuccess.value}}
+                    @if (playerOption.successResults && playerOption.successResults.length > 0) {
+                        <span>
+                            @for (outcomeStat of playerOption.successResults; track outcomeStat) {
+                                {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                @if (!$last) {, }
+                            }
+                        </span>
+                    }
+                </mat-card>
             </div>
         }
-    </mat-card>
-    <br><mat-divider></mat-divider><br>
 
-    <div>
-        <section>
-            <mat-form-field class="full-width">
-                <mat-label>Outcome Description</mat-label>
-                <textarea matInput
-                    placeholder="{{attemptPreview}}"
-                    type="text" id="attemptText" [formControl]="attemptText" maxlength="150"></textarea>
-                <mat-hint align="end">{{attemptText.value?.length || 0}}/150</mat-hint>
-            </mat-form-field>
-        </section>
+        @if (optionTwoSuccess.value) {
+            <div class="outcome-box success">
+                <mat-card class="story">
+                    {{optionTwoSuccess.value}}
+                    @if (otherOption.successResults && otherOption.successResults.length > 0) {
+                        <span>
+                            @for (outcomeStat of otherOption.successResults; track outcomeStat) {
+                                {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                @if (!$last) {, }
+                            }
+                        </span>
+                    }
+                </mat-card>
+            </div>
+        }
     </div>
 
-    <div class="writing-button-container">
-        <div class="writing-buttons">
-            @if (canGoBack()) {
-                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+    <!-- Writing Sections with Instructions beside each input -->
+    <div class="writing-container">
+        
+        <!-- Option One Success -->
+        <div class="writing-section">
+            @if (currentOptionIndex === 0) {
+                <div class="instructions" [class.active]="currentOptionIndex === 0">
+                    <div class="writing-stats">
+                        If the player selected <button mat-flat-button>{{playerOption.optionText}}</button> describe how they spent their time and gained
+                    </div>
+                    @if (playerOption.successResults && playerOption.successResults.length > 0) {
+                        <mat-chip-set>
+                            @for (outcomeStat of playerOption.successResults; track outcomeStat) {
+                                <mat-chip class="stat">
+                                    {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                    @if (outcomeStat.playerStat.statType.favorType) {
+                                        with {{outcomeStat.playerStat.statType.favorEntity}}
+                                    }
+                                </mat-chip>
+                            }
+                        </mat-chip-set>
+                    }
+                </div>
             }
-            <button mat-flat-button (click)="submit()"  [disabled]="!canSubmit()">Submit</button>
+            <div class="outcome-box success">
+                <div class="outcome-label"><strong>success</strong></div>
+                <div class="writing-input-box">
+                    <mat-form-field class="full-width" [class.disabled]="currentOptionIndex !== 0">
+                        <mat-label>Option Success</mat-label>
+                        <textarea matInput
+                            placeholder="{{optionOnePreview}}"
+                            type="text" id="optionOneSuccess" [formControl]="optionOneSuccess" maxlength="150" [disabled]="currentOptionIndex !== 0"></textarea>
+                        <mat-hint align="end">{{optionOneSuccess.value?.length || 0}}/150</mat-hint>
+                    </mat-form-field>
+                </div>
+                @if (currentOptionIndex === 0) {
+                    <div class="writing-button-container">
+                        <div class="writing-buttons">
+                            @if (canGoBack()) {
+                                <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                            }
+                            <button mat-flat-button (click)="submit()" [disabled]="!canGoToNext()">Next ></button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Option Two Success -->
+        <div class="writing-section">
+            @if (currentOptionIndex === 1) {
+                <div class="instructions" [class.active]="currentOptionIndex === 1">
+                    <div class="writing-stats">
+                        If the player selected <button mat-flat-button>{{otherOption.optionText}}</button> describe how they spent their time and gained
+                    </div>
+                    @if (otherOption.successResults && otherOption.successResults.length > 0) {
+                        <mat-chip-set>
+                            @for (outcomeStat of otherOption.successResults; track outcomeStat) {
+                                <mat-chip class="stat">
+                                    {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                    @if (outcomeStat.playerStat.statType.favorType) {
+                                        with {{outcomeStat.playerStat.statType.favorEntity}}
+                                    }
+                                </mat-chip>
+                            }
+                        </mat-chip-set>
+                    }
+                </div>
+            }
+            <div class="outcome-box success">
+                <div class="outcome-label"><strong>success</strong></div>
+                <div class="writing-input-box">
+                    <mat-form-field class="full-width" [class.disabled]="currentOptionIndex !== 1">
+                        <mat-label>Option Success</mat-label>
+                        <textarea matInput
+                            placeholder="{{optionTwoPreview}}"
+                            type="text" id="optionTwoSuccess" [formControl]="optionTwoSuccess" maxlength="150" [disabled]="currentOptionIndex !== 1"></textarea>
+                        <mat-hint align="end">{{optionTwoSuccess.value?.length || 0}}/150</mat-hint>
+                    </mat-form-field>
+                </div>
+                @if (currentOptionIndex === 1) {
+                    <div class="writing-button-container">
+                        <div class="writing-buttons">
+                            <button mat-flat-button (click)="goBack()" style="margin-right: 10px;">< Back</button>
+                            <button mat-flat-button (click)="submit()" [disabled]="!canSubmit()">Submit</button>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
+
+    <!-- Progress Indicator -->
+    <mat-chip-set><mat-chip class="progress">{{numberOfOutcomesWritten}} / {{numberOfOutcomesToWrite}} Outcomes Completed</mat-chip></mat-chip-set>
 }

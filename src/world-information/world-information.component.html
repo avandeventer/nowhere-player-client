@@ -1,0 +1,46 @@
+<div class="world-info-container">
+    <button mat-flat-button (click)="toggleWorldInfo()" class="toggle-button">
+        <mat-icon>{{showWorldInfo ? 'expand_less' : 'public'}}</mat-icon>
+        {{showWorldInfo ? 'Hide' : 'View'}} Our World
+    </button>
+    
+    @if (showWorldInfo) {
+        <div class="drawer-backdrop" (click)="toggleWorldInfo()"></div>
+        <div class="world-info-drawer" [class.open]="showWorldInfo && gameSessionDisplay">
+            @if (gameSessionDisplay) {
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>Our World</mat-card-title>
+                    </mat-card-header><br>
+                    <mat-card-content>
+                        <div class="info-content">
+                            <div class="info-item">
+                                <strong>Where are we?</strong>
+                                <p>{{gameSessionDisplay.mapDescription || 'Not yet defined'}}</p>
+                            </div>
+                            <div class="info-item">
+                                <strong>Who are we?</strong>
+                                <p>{{gameSessionDisplay.playerDescription || 'Not yet defined'}}</p>
+                            </div>
+                            <div class="info-item">
+                                <strong>What do we fear?</strong>
+                                <p>{{gameSessionDisplay.entity || 'Not yet defined'}}</p>
+                            </div>
+                            <div class="info-item">
+                                <strong>What is coming?</strong>
+                                <p>{{gameSessionDisplay.goalDescription || 'Not yet defined'}}</p>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            } @else {
+                <mat-card>
+                    <mat-card-content>
+                        <p>Loading world information...</p>
+                    </mat-card-content>
+                </mat-card>
+            }
+        </div>
+    }
+</div>
+

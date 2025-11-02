@@ -161,6 +161,7 @@ export class WriteLocationPromptComponent implements OnInit {
         this.hasProgressed = false;
         break;
     }
+    this.scrollToActiveSection();
   }
 
   submitWriting() {
@@ -168,13 +169,16 @@ export class WriteLocationPromptComponent implements OnInit {
       case WritePhase.PROMPT:
         this.phase = WritePhase.OPTION_ONE;
         this.hasProgressed = true;
+        this.scrollToActiveSection();
         break;
       case WritePhase.OPTION_ONE:
         this.phase = WritePhase.OPTION_TWO;
+        this.scrollToActiveSection();
         break;
       case WritePhase.OPTION_TWO:
         this.phase = WritePhase.ADD_IMAGE;
         this.aboutToSubmit = true;
+        this.scrollToActiveSection();
         break;
       case WritePhase.ADD_IMAGE:
         this.phase = WritePhase.DONE;
@@ -188,6 +192,18 @@ export class WriteLocationPromptComponent implements OnInit {
 
   next() {
     this.submitWriting();
+  }
+
+  private scrollToActiveSection() {
+    setTimeout(() => {
+      const activeSection = document.querySelector('.writing-section .instructions-box.active')?.closest('.writing-section');
+      if (activeSection) {
+        activeSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
+    }, 100); // Small delay to ensure DOM updates
   }
 
   getInstructionQuestionString() {
