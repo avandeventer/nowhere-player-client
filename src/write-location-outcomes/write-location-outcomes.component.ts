@@ -19,6 +19,7 @@ import { StatType } from 'src/assets/stat-type';
 @Component({
   selector: 'write-location-outcomes',
   templateUrl: './write-location-outcomes.component.html',
+  styleUrl: './write-location-outcomes.component.scss',
   imports: [
     ReactiveFormsModule,
     FormsModule,

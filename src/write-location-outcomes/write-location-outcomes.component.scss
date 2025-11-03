@@ -61,6 +61,11 @@
     border-radius: 8px;
     min-height: 60px;
     transition: opacity 0.3s ease;
+    // Override global .instructions styles that interfere with flex layout
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     
     &.active {
       opacity: 1;
@@ -69,6 +74,11 @@
     &:not(.active) {
       visibility: hidden;
     }
+  }
+
+  .outcome-box {
+    flex: 1;
+    min-width: 350px;
   }
 
   .writing-input-box {
@@ -98,7 +108,6 @@ mat-form-field.disabled {
   padding-bottom: 52px; // Extra space for button container to avoid overlap with mat-hint
   margin-bottom: 12px;
   background: rgba(0,0,0,0.02);
-  width: 100%;
   position: relative;
 
   .outcome-label {
@@ -152,6 +161,12 @@ mat-form-field.disabled {
     
     .instructions-box,
     .instructions {
+      width: 100%;
+      min-width: unset;
+      max-width: 100%;
+    }
+
+    .outcome-box {
       width: 100%;
       min-width: unset;
     }

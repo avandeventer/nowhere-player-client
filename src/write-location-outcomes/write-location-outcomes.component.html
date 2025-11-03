@@ -16,39 +16,37 @@
         </div>
     </div>
 
-    <div class="story-container">
-        @if (optionOneSuccess.value) {
-            <div class="outcome-box success">
-                <mat-card class="story">
-                    {{optionOneSuccess.value}}
-                    @if (playerOption.successResults && playerOption.successResults.length > 0) {
-                        <span>
-                            @for (outcomeStat of playerOption.successResults; track outcomeStat) {
-                                {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
-                                @if (!$last) {, }
-                            }
-                        </span>
-                    }
-                </mat-card>
-            </div>
-        }
+    @if (optionOneSuccess.value || optionTwoSuccess.value) {
+        <div class="story-container">
+            @if (optionOneSuccess.value) {
+                    <mat-card class="story">
+                        {{optionOneSuccess.value}}
+                        @if (playerOption.successResults && playerOption.successResults.length > 0) {
+                            <span>
+                                @for (outcomeStat of playerOption.successResults; track outcomeStat) {
+                                    {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                    @if (!$last) {, }
+                                }
+                            </span>
+                        }
+                    </mat-card>
+            }
 
-        @if (optionTwoSuccess.value) {
-            <div class="outcome-box success">
-                <mat-card class="story">
-                    {{optionTwoSuccess.value}}
-                    @if (otherOption.successResults && otherOption.successResults.length > 0) {
-                        <span>
-                            @for (outcomeStat of otherOption.successResults; track outcomeStat) {
-                                {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
-                                @if (!$last) {, }
-                            }
-                        </span>
-                    }
-                </mat-card>
-            </div>
-        }
-    </div>
+            @if (optionTwoSuccess.value) {
+                    <mat-card class="story">
+                        {{optionTwoSuccess.value}}
+                        @if (otherOption.successResults && otherOption.successResults.length > 0) {
+                            <span>
+                                @for (outcomeStat of otherOption.successResults; track outcomeStat) {
+                                    {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
+                                    @if (!$last) {, }
+                                }
+                            </span>
+                        }
+                    </mat-card>
+            }
+        </div>
+    }
 
     <!-- Writing Sections with Instructions beside each input -->
     <div class="writing-container">
@@ -72,13 +70,11 @@
                             }
                         </mat-chip-set>
                     }
-                </div>
+                </div><br>
             }
-            <div class="outcome-box success">
-                <div class="outcome-label"><strong>success</strong></div>
                 <div class="writing-input-box">
                     <mat-form-field class="full-width" [class.disabled]="currentOptionIndex !== 0">
-                        <mat-label>Option Success</mat-label>
+                        <mat-label>You selected {{playerOption.optionText}}</mat-label>
                         <textarea matInput
                             placeholder="{{optionOnePreview}}"
                             type="text" id="optionOneSuccess" [formControl]="optionOneSuccess" maxlength="150" [disabled]="currentOptionIndex !== 0"></textarea>
@@ -95,7 +91,6 @@
                         </div>
                     </div>
                 }
-            </div>
         </div>
 
         <!-- Option Two Success -->
@@ -117,13 +112,11 @@
                             }
                         </mat-chip-set>
                     }
-                </div>
+                </div><br>
             }
-            <div class="outcome-box success">
-                <div class="outcome-label"><strong>success</strong></div>
                 <div class="writing-input-box">
                     <mat-form-field class="full-width" [class.disabled]="currentOptionIndex !== 1">
-                        <mat-label>Option Success</mat-label>
+                        <mat-label>You selected {{otherOption.optionText}}</mat-label>
                         <textarea matInput
                             placeholder="{{optionTwoPreview}}"
                             type="text" id="optionTwoSuccess" [formControl]="optionTwoSuccess" maxlength="150" [disabled]="currentOptionIndex !== 1"></textarea>
@@ -138,7 +131,6 @@
                         </div>
                     </div>
                 }
-            </div>
         </div>
     </div>
 
