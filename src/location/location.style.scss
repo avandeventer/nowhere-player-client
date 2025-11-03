@@ -56,7 +56,6 @@
 .location-label {
   font-size: clamp(12px, 2vw, 20px); /* Ensures it scales but stays between 16px and 24px */
   color: var(--mdc-floating-label); /* Set text color */
-  font-family: "Lucida Handwriting", "Courier New", monospace;
 }
 
 .map::before {

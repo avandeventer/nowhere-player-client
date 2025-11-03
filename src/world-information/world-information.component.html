@@ -14,22 +14,33 @@
                     </mat-card-header><br>
                     <mat-card-content>
                         <div class="info-content">
-                            <div class="info-item">
-                                <strong>Where are we?</strong>
-                                <p>{{gameSessionDisplay.mapDescription || 'Not yet defined'}}</p>
-                            </div>
-                            <div class="info-item">
-                                <strong>Who are we?</strong>
-                                <p>{{gameSessionDisplay.playerDescription || 'Not yet defined'}}</p>
-                            </div>
-                            <div class="info-item">
-                                <strong>What do we fear?</strong>
-                                <p>{{gameSessionDisplay.entity || 'Not yet defined'}}</p>
-                            </div>
-                            <div class="info-item">
-                                <strong>What is coming?</strong>
-                                <p>{{gameSessionDisplay.goalDescription || 'Not yet defined'}}</p>
-                            </div>
+                            @if (gameSessionDisplay.mapDescription) {
+                                <div class="info-item">
+                                    <strong>Where are we?</strong>
+                                    <p>{{gameSessionDisplay.mapDescription || 'Not yet defined'}}</p>
+                                </div>
+                            }
+                            
+                            @if (gameSessionDisplay.playerDescription) {
+                                <div class="info-item">
+                                    <strong>Who are we?</strong>
+                                    <p>{{gameSessionDisplay.playerDescription || 'Not yet defined'}}</p>
+                                </div>
+                            }
+
+                            @if (gameSessionDisplay.entity) {
+                                <div class="info-item">
+                                    <strong>What do we fear?</strong>
+                                    <p>{{gameSessionDisplay.entity || 'Not yet defined'}}</p>
+                                </div>
+                            }
+
+                            @if (gameSessionDisplay.goalDescription) {
+                                <div class="info-item">
+                                    <strong>What is coming?</strong>
+                                    <p>{{gameSessionDisplay.goalDescription || 'Not yet defined'}}</p>
+                                </div>
+                            }
                         </div>
                     </mat-card-content>
                 </mat-card>
