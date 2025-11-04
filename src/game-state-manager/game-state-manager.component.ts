@@ -175,6 +175,7 @@ export class GameStateManagerComponent implements OnInit {
     || this.isGameInCollaborativeTextPhase()
     || this.isGameInLocationCreationPhase()
     || this.isGameInLocationOutcomesCreationPhase()
+    || this.isGameInWhatWillBecomeOfUsPhase()
   }
 
   isGameInPreamblePhase() {
@@ -193,6 +194,10 @@ export class GameStateManagerComponent implements OnInit {
     return this.gameState === GameState.RITUAL;
   }
 
+  isGameInWhatWillBecomeOfUsPhase() {
+    return this.gameState === GameState.WHAT_WILL_BECOME_OF_US;
+  }
+
   isGameInWriteEndingsPhase() {
     return this.gameState === GameState.WRITE_ENDINGS;
   }
@@ -207,6 +212,7 @@ export class GameStateManagerComponent implements OnInit {
            this.gameState === GameState.WHAT_IS_COMING || 
            this.gameState === GameState.WHAT_DO_WE_FEAR ||
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF ||
+           this.gameState === GameState.WHAT_WILL_BECOME_OF_US ||
            this.gameState === GameState.WRITE_ENDING_TEXT;
   }
 
@@ -215,7 +221,8 @@ export class GameStateManagerComponent implements OnInit {
            this.gameState === GameState.WHO_ARE_WE_VOTE || 
            this.gameState === GameState.WHAT_IS_COMING_VOTE ||
            this.gameState === GameState.WHAT_DO_WE_FEAR_VOTE ||
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE;
+           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE ||
+           this.gameState === GameState.WHAT_WILL_BECOME_OF_US_VOTE;
   }
 
   isGameInCollaborativeTextWinningPhase() {
@@ -223,7 +230,8 @@ export class GameStateManagerComponent implements OnInit {
            this.gameState === GameState.WHO_ARE_WE_VOTE_WINNER || 
            this.gameState === GameState.WHAT_IS_COMING_VOTE_WINNER ||
            this.gameState === GameState.WHAT_DO_WE_FEAR_VOTE_WINNER ||
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE_WINNERS;
+           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE_WINNERS ||
+           this.gameState === GameState.WHAT_WILL_BECOME_OF_US_VOTE_WINNER;
   }
 
   isGameInLocationCreationPhase() {
