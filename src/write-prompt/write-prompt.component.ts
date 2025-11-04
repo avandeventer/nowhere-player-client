@@ -221,6 +221,11 @@ export class WritePromptComponent implements OnInit {
     return this.phase === WritePhase.OPTION_TWO ? 1 : 0;
   }
 
+  getIsMainPlotStory(): boolean {
+    return this.playerStories[this.currentStoryIndex].mainPlotStory 
+      && this.phase === WritePhase.PROMPT;
+  }
+
   submitStory() {
     const requestBody = {
       gameCode: this.gameCode,

@@ -64,6 +64,7 @@ export class GameStateManagerComponent implements OnInit {
   storiesToPlayPerRound: number = 1;
   adventureMap: AdventureMap | null = null;
   collaborativeTextPhases: any = null;
+  stories: any[] | null = null;
 
   constructor(
     private gameService: GameService,
@@ -81,6 +82,11 @@ export class GameStateManagerComponent implements OnInit {
       this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       this.storiesToPlayPerRound = newState.storiesToPlayPerRound as unknown as number;
       this.adventureMap = newState.adventureMap as unknown as AdventureMap;
+      
+      // Check for stories changes
+      if (newState.stories && JSON.stringify(this.stories) !== JSON.stringify(newState.stories)) {
+        this.stories = newState.stories;
+      }
       
       // Check for collaborative text phase changes
       if (newState.collaborativeTextPhases && JSON.stringify(this.collaborativeTextPhases) !== JSON.stringify(newState.collaborativeTextPhases)) {

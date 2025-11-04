@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from "@angular/core";
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { GameState } from "src/assets/game-state";
 import { HttpConstants } from "src/assets/http-constants";
@@ -20,12 +20,13 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner"
     standalone: true,
     styleUrl: './location.style.scss'
 })
-export class LocationComponent implements OnInit {
+export class LocationComponent implements OnInit, OnChanges {
     @Input() gameState: GameState = GameState.ROUND1;
     @Input() gameCode: string = "";
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
     @Input() storiesToPlayPerRound: number = 1;
+    @Input() stories: Story[] | null = null;
     @Output() playerDone = new EventEmitter<ComponentType>();
     buttonTransforms: { [key: string]: string } = {};
     mapSize: number = 500;
@@ -47,6 +48,20 @@ export class LocationComponent implements OnInit {
     ngOnInit(): void {
       this.getLocations(this.gameCode);
       console.log("Stories to play per round" + this.storiesToPlayPerRound);
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+      if (changes['stories'] && !changes['stories'].isFirstChange()) {
+        const previousStories = changes['stories'].previousValue;
+        const currentStories = changes['stories'].currentValue;
+        
+        // Check if stories actually changed
+        if (JSON.stringify(previousStories) !== JSON.stringify(currentStories)) {
+          // Block selection and reload locations
+          this.isLoadingSelection = true;
+          this.getLocations(this.gameCode);
+        }
+      }
     }
 
     ngAfterViewInit() {
@@ -82,6 +97,7 @@ export class LocationComponent implements OnInit {
     getLocations(gameCode: string) {
       const params = {
         gameCode: gameCode,
+        playerId: this.player.authorId,
       };
       this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params }).subscribe({
           next: (response) => {
@@ -96,9 +112,13 @@ export class LocationComponent implements OnInit {
               location.locationIndex = locationIndex;
               locationIndex += 1;
             });
+            
+            // Re-enable selection after locations are loaded
+            this.isLoadingSelection = false;
           },
           error: (error) => {
             console.error('Error fetching locations', error);
+            this.isLoadingSelection = false;
           },
         });
     }
@@ -145,7 +165,7 @@ export class LocationComponent implements OnInit {
       const buttonHeight = exampleButton ? exampleButton.offsetHeight : 50;
 
       const mapCenter = mapSize / 2; // Center of the map
-      const radius = mapCenter - (totalButtons * 10); // Adjust radius dynamically
+      const radius = mapCenter - (totalButtons * 20); // Adjust radius dynamically
 
     
       const angle = (2 * Math.PI / totalButtons) * locationId; // Evenly spaced angle

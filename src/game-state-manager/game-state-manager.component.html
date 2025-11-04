@@ -76,7 +76,7 @@
 }
 
 @if (isLocationSelect()) {
-    <location [gameCode]="gameCode" [gameState]="gameState" [player]="player" [storiesToPlayPerRound]="storiesToPlayPerRound" (playerDone)="setDone($event)"></location>
+    <location [gameCode]="gameCode" [gameState]="gameState" [player]="player" [storiesToPlayPerRound]="storiesToPlayPerRound" [stories]="stories" (playerDone)="setDone($event)"></location>
 }
 
 @if (isGameInWriteOutcomesPhase()) {

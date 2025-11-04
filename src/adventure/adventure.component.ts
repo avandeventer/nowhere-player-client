@@ -210,95 +210,68 @@ export class AdventureComponent implements OnInit {
     const location = this.locations.find(location => location.id === this.playerStory.location.id);
 
     if (location) {
-      this.location = location;
-      this.playerStory.location = this.location;
-      this.selectedLocationOption = this.location.options[parseInt(this.activePlayerSession.selectedLocationOptionId.toString())];
-      this.locationLabel = "You travel to the " + this.playerStory.location.label;
-      this.locationOptionOne = this.playerStory.location.options[0].optionText;
-      this.locationOptionTwo = this.playerStory.location.options[1].optionText;
-      this.storyRetrieved = true;
+      this.loadLocation(location);
+    } else {
+      this.http.get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, {
+        params: { gameCode: this.gameCode, playerId: this.player.authorId }
+      }).subscribe({
+        next: (stories) => {
+          console.log('Story retrieved!', stories);
 
-      if (this.outcomeDisplay.length > 0) {
-        this.loadStory = true;
-  
-        if (!this.activePlayerSession.repercussions.ending) {
-          this.resolveStoryOutcomes(this.playerStory.playerSucceeded, this.player.authorId, this.selectedOption.optionId);
+          this.playerStories = stories;
+          if (this.playerStories.length > 0) {
+            this.playerStory = this.playerStories[0];
+          }
+
+          this.loadLocation(this.playerStory.location);
         }
-      }
-  
-      this.repercussionOutput = this.activePlayerSession.repercussions;
+      });
     }
   }
 
-    updatePlayerStats(authorId: string) {
-      this.http
-        .get<Player>(environment.nowhereBackendUrl + HttpConstants.PLAYER_AUTHORID_PATH + '?gameCode=' + this.gameCode + '&authorId=' + authorId)
-        .subscribe({
-          next: (response) => {
-            console.log('Player joined!', response);
-            this.player = response;
-          },
-          error: (error) => {
-            console.error('Error creating game', error);
-          },
-        });      
+  loadLocation (location: Location) {
+    this.location = location;
+    this.playerStory.location = this.location;
+    this.selectedLocationOption = this.location.options[parseInt(this.activePlayerSession.selectedLocationOptionId.toString())];
+    this.locationLabel = "You travel to the " + this.playerStory.location.label;
+    this.locationOptionOne = this.playerStory.location.options[0].optionText;
+    this.locationOptionTwo = this.playerStory.location.options[1].optionText;
+    this.storyRetrieved = true;
+
+    if (this.outcomeDisplay.length > 0) {
+      this.loadStory = true;
+
+      if (!this.activePlayerSession.repercussions.ending) {
+        this.resolveStoryOutcomes(this.playerStory.playerSucceeded, this.player.authorId, this.selectedOption.optionId);
+      }
     }
 
-    getLocations(gameCode: string): Observable<Location[]> {
-      const params = { gameCode };
-    
-      return this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params });
-    }
-    
-      
-    getLocationTasks(selectedLocation: Location) {
-      this.selectedLocation = selectedLocation;
-    }
+    this.repercussionOutput = this.activePlayerSession.repercussions;
+  }
 
-    getStory() {
-      const params = {
-        gameCode: this.gameCode,
-        playerId: this.player.authorId
-      };
+  updatePlayerStats(authorId: string) {
+    this.http
+      .get<Player>(environment.nowhereBackendUrl + HttpConstants.PLAYER_AUTHORID_PATH + '?gameCode=' + this.gameCode + '&authorId=' + authorId)
+      .subscribe({
+        next: (response) => {
+          console.log('Player joined!', response);
+          this.player = response;
+        },
+        error: (error) => {
+          console.error('Error creating game', error);
+        },
+      });      
+  }
+
+  getLocations(gameCode: string): Observable<Location[]> {
+    const params = { gameCode };
   
-      console.log(params);
+    return this.http.get<Location[]>(environment.nowhereBackendUrl + HttpConstants.LOCATION_PATH, { params });
+  }
   
-      this.http
-      .get<Story[]>(environment.nowhereBackendUrl + HttpConstants.PLAYER_STORIES_PLAYED_PATH, { params })
-        .subscribe({
-          next: (response) => {
-            console.log('Story retrieved!', response);
-            this.playerStories = response;
-            if(this.playerStories.length != 0) {
-              this.playerStory = this.playerStories[0];
-              const location = this.locations.find(location => location.id === this.playerStory.location.id);
-
-              if (location) {
-                this.location = location;
-                this.playerStory.location = this.location;
-                console.log('Player Story', this.playerStory);
-                this.locationLabel = "You travel to the " + this.playerStory.location.label;
-                this.locationOptionOne = this.playerStory.location.options[0].optionText;
-                this.locationOptionTwo = this.playerStory.location.options[1].optionText;
-                this.storyRetrieved = true;
-                this.activePlayerSessionService.updateActivePlayerSession(this.gameCode, this.player.authorId, this.location, this.playerStory, "", [], false, "", [], this.repercussionOutput)
-                  .subscribe({
-                    next: (updatedSession) => {
-                      console.log("Updated session:", updatedSession);
-                      this.activePlayerSession = updatedSession;
-                    },
-                    error: (err) => {
-                      console.error("Error:", err);
-                    }
-                  });
-                }
-            }
-            console.log('Player Stories', this.playerStories);
-          },
-          error: (error) => {
-            console.error('Error retrieving stories', error);
-          },
-        });
+    
+  getLocationTasks(selectedLocation: Location) {
+    this.selectedLocation = selectedLocation;
   }
 
   pickOption(optionPicked: number) {
@@ -503,7 +476,7 @@ export class AdventureComponent implements OnInit {
     
       if (playerStat) {
         playerStat.value += outcome.playerStat.value;
-        this.locationOutcomeDisplay.push(`You gain ${outcome.playerStat.value} ${playerStat.statType.label}`);
+        this.locationOutcomeDisplay.push(`You gain ${outcome.playerStat.value} ${playerStat.statType.label} ${playerStat.statType.favorType ? "with " + playerStat.statType.favorEntity : ""}`);
       } else {
         console.warn(`Stat not found on player for ID: ${impactedStatId}`);
       }

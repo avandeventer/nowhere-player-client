@@ -8,12 +8,12 @@
     </mat-card>
 
     @if (repercussions.ending?.options?.[0]?.optionText != "") {
-      <div>If you wanted to try to impress them you could {{favorStatType.favorEntity}}</div>
+      <div>If you wanted to try to impress them you could...</div>
       <mat-card class="story">{{repercussions.ending?.options?.[0]?.optionText}}</mat-card><br>
     }
 
     @if (repercussions.ending?.options?.[1]?.optionText != "") {
-      <div>If you wanted to try to weaken them you could {{favorStatType.favorEntity}}</div>
+      <div>If you wanted to try to weaken them you could...</div>
       <mat-card class="story">{{repercussions.ending?.options?.[1]?.optionText}}</mat-card>
     }
   </mat-dialog-content>

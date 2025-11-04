@@ -2,7 +2,7 @@
     <p>All stories have been submitted!</p>
 } 
 @else {
-    <div class="story-so-far-section" [style.display]="hasPrequelContent ? 'block' : 'none'">
+    <div class="story-so-far-section" [style.display]="hasPrequelContent && !getIsMainPlotStory() ? 'block' : 'none'">
         <h3>Story so far</h3>
         <prequel-story-display
             [gameCode]="gameCode" 

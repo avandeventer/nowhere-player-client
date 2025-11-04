@@ -3,7 +3,7 @@
 }
 @else {
     <!-- Story so Far Section -->
-    <div class="story-so-far-section">
+    <div class="story-so-far-section" [style.display]="!playerStories[currentStoryIndex].mainPlotStory ? 'block' : 'none'">
         <h3>Story so Far</h3>
         <prequel-story-display 
             [gameCode]="gameCode" 
@@ -87,9 +87,6 @@
                                 @for (outcomeStat of playerOption.successResults; track outcomeStat) {
                                     <mat-chip class="stat">
                                         {{outcomeStat.playerStat.value >= 0 ? '+' : '-'}}{{abs(outcomeStat.playerStat.value)}} {{outcomeStat.playerStat.statType.label}}
-                                        @if (outcomeStat.playerStat.statType.favorType) {
-                                            with {{outcomeStat.playerStat.statType.favorEntity}}
-                                        }
                                     </mat-chip>
                                 }
                             </mat-chip-set>
