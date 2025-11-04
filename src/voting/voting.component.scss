@@ -241,3 +241,88 @@
     min-width: 100px;
   }
 }
+
+// Outcome type styling for WHAT_WILL_BECOME_OF_US phase
+.outcome-filter-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #2196f3;
+
+  mat-icon {
+    color: #2196f3;
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  p {
+    margin: 0;
+    color: #333;
+    font-size: 1rem;
+    
+    strong {
+      color: #2196f3;
+    }
+  }
+}
+
+.outcome-highlight {
+  border-left: 4px solid !important;
+}
+
+.outcome-success {
+  border-left-color: #4caf50 !important;
+  background-color: #f1f8f4;
+}
+
+.outcome-neutral {
+  border-left-color: #ff9800 !important;
+  background-color: #fff8f1;
+}
+
+.outcome-failure {
+  border-left-color: #f44336 !important;
+  background-color: #fef5f5;
+}
+
+.submission-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.outcome-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.outcome-badge.outcome-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.outcome-badge.outcome-neutral {
+  background-color: #ff9800;
+  color: white;
+}
+
+.outcome-badge.outcome-failure {
+  background-color: #f44336;
+  color: white;
+}
+
+.your-submission {
+  font-size: 0.75rem;
+  font-weight: normal;
+  margin-left: 8px;
+  opacity: 0.9;
+}

@@ -171,3 +171,77 @@
   color: #4caf50;
   font-size: 1rem;
 }
+
+// Outcome type styling for WHAT_WILL_BECOME_OF_US phase
+.outcome-highlight {
+  border-left: 4px solid;
+}
+
+.outcome-success {
+  border-left-color: #4caf50;
+  background-color: #f1f8f4;
+}
+
+.outcome-neutral {
+  border-left-color: #ff9800;
+  background-color: #fff8f1;
+}
+
+.outcome-failure {
+  border-left-color: #f44336;
+  background-color: #fef5f5;
+}
+
+.outcome-message {
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.outcome-success .outcome-message {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+}
+
+.outcome-neutral .outcome-message {
+  color: #e65100;
+  background-color: #fff3e0;
+}
+
+.outcome-failure .outcome-message {
+  color: #c62828;
+  background-color: #ffebee;
+}
+
+.outcome-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.outcome-badge.outcome-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.outcome-badge.outcome-neutral {
+  background-color: #ff9800;
+  color: white;
+}
+
+.outcome-badge.outcome-failure {
+  background-color: #f44336;
+  color: white;
+}
+
+.your-submission {
+  font-size: 0.75rem;
+  font-weight: normal;
+  margin-left: 8px;
+  opacity: 0.9;
+}

@@ -12,9 +12,12 @@
   } @else {
     <!-- New Submission Section -->
     @if (showNewSubmission || isSimpleMode) {
-      <mat-card class="submission-card">
+      <mat-card class="submission-card" [class.outcome-highlight]="isWhatWillBecomeOfUsPhase() && playerOutcomeType" [ngClass]="isWhatWillBecomeOfUsPhase() && playerOutcomeType ? getOutcomeTypeClass(playerOutcomeType) : ''">
         <mat-card-header>
           <mat-card-title>{{ phaseQuestion }}</mat-card-title>
+          @if (isWhatWillBecomeOfUsPhase() && playerOutcomeType) {
+            <mat-card-subtitle class="outcome-message">{{ getOutcomeTypeMessage(playerOutcomeType) }}</mat-card-subtitle>
+          }
         </mat-card-header>
         <mat-card-content>
           @if (isSimpleMode) {
@@ -67,9 +70,19 @@
               <mat-card 
                 class="submission-item"
                 [class.selected]="selectedSubmission?.submissionId === submission.submissionId"
+                [class.outcome-highlight]="isWhatWillBecomeOfUsPhase() && submission.outcomeType"
+                [ngClass]="isWhatWillBecomeOfUsPhase() && submission.outcomeType ? getOutcomeTypeClass(submission.outcomeType) : ''"
                 (click)="onSelectSubmission(submission)">
                 <mat-card-content>
                   <div class="submission-preview">
+                    @if (isWhatWillBecomeOfUsPhase() && submission.outcomeType) {
+                      <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
+                        {{ getOutcomeTypeLabel(submission.outcomeType) }} Ending
+                        @if (isPlayerSubmission(submission)) {
+                          <span class="your-submission">(Your submission)</span>
+                        }
+                      </div>
+                    }
                     <p class="submission-text">{{ getSubmissionPreview(submission) }}</p>
                     <div class="submission-meta">
                       <mat-chip-set>

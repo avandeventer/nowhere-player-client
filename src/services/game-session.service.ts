@@ -70,6 +70,12 @@ export class GameService {
     return this.http.post<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText/votes?gameCode=${gameCode}`, playerVotes);
   }
 
+  getOutcomeTypeForPlayer(gameCode: string, playerId: string): Observable<string> {
+    return this.http.get<string>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeType?gameCode=${gameCode}&playerId=${playerId}`, {
+      responseType: 'text' as 'json'
+    });
+  }
+
   getGameSessionDisplay(gameCode: string): Observable<GameSessionDisplay> {
     const parameter = "?gameCode=" + gameCode;
     return this.http.get<GameSessionDisplay>(environment.nowhereBackendUrl + HttpConstants.DISPLAY_PATH + parameter) as Observable<GameSessionDisplay>;

@@ -22,6 +22,7 @@ export interface TextSubmission {
   isFinalized: boolean;
   totalVotes: number;
   averageRanking: number;
+  outcomeType?: string; // "success", "neutral", or "failure" - used for WHAT_WILL_BECOME_OF_US phase
 }
 
 export interface TextAddition {
@@ -29,4 +30,5 @@ export interface TextAddition {
   authorId: string;
   addedText: string;
   submissionId: string | null; // null for new submissions
+  outcomeType?: string; // Optional: "success", "neutral", or "failure" - used for WHAT_WILL_BECOME_OF_US phase
 }

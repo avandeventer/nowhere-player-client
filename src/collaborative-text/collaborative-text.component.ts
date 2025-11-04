@@ -62,11 +62,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   // Mode detection
   isSimpleMode = false; // For WHAT_DO_WE_FEAR and WHAT_ARE_WE_CAPABLE_OF
   isCollaborativeMode = false; // For WHERE_ARE_WE, WHO_ARE_WE, WHAT_IS_COMING
+  
+  // WHAT_WILL_BECOME_OF_US phase properties
+  playerOutcomeType: string | null = null; // "success", "neutral", or "failure"
 
   constructor(private gameService: GameService) {}
 
   ngOnInit() {
     this.setupPhaseProperties();
+    this.loadPlayerOutcomeType();
     this.loadCollaborativePhase();
   }
 
@@ -126,6 +130,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.isSimpleMode = true;
         this.phaseQuestion = 'What are we capable of?';
         this.phaseInstructions = 'We will need certain skills in order to overcome. List anything you think we will need to be good at to survive.';
+        break;
+      case GameState.WHAT_WILL_BECOME_OF_US:
+        this.isCollaborativeMode = true;
+        this.phaseQuestion = 'What will become of us?';
+        this.phaseInstructions = 'Write the ending text for your assigned outcome type.';
         break;
       case GameState.WRITE_ENDING_TEXT:
         this.isCollaborativeMode = true;
@@ -251,10 +260,27 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         return 'WHAT_IS_COMING';
       case GameState.WHAT_ARE_WE_CAPABLE_OF:
         return 'WHAT_ARE_WE_CAPABLE_OF';
+      case GameState.WHAT_WILL_BECOME_OF_US:
+        return 'WHAT_WILL_BECOME_OF_US';
       case GameState.WRITE_ENDING_TEXT:
         return 'WRITE_ENDING_TEXT';
       default:
         return null;
+    }
+  }
+
+  private loadPlayerOutcomeType() {
+    // Only load outcome type for WHAT_WILL_BECOME_OF_US phase
+    if (this.gameState === GameState.WHAT_WILL_BECOME_OF_US) {
+      this.gameService.getOutcomeTypeForPlayer(this.gameCode, this.player.authorId).subscribe({
+        next: (outcomeType) => {
+          this.playerOutcomeType = outcomeType;
+          console.log('Player outcome type:', outcomeType);
+        },
+        error: (error) => {
+          console.error('Error loading player outcome type:', error);
+        }
+      });
     }
   }
 
@@ -264,6 +290,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
            this.gameState === GameState.WHO_ARE_WE || 
            this.gameState === GameState.WHAT_IS_COMING || 
            this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF ||
+           this.gameState === GameState.WHAT_WILL_BECOME_OF_US ||
            this.gameState === GameState.WRITE_ENDING_TEXT;
   }
 
@@ -358,7 +385,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       additionId: '',
       authorId: this.player.authorId,
       addedText: this.newTextControl.value.trim(),
-      submissionId: null // This indicates a new submission
+      submissionId: null, // This indicates a new submission
+      outcomeType: this.playerOutcomeType || undefined // Include outcomeType for WHAT_WILL_BECOME_OF_US
     };
 
     this.isLoading = true;
@@ -420,5 +448,38 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   getSubmissionAuthor(submission: TextSubmission): string {
     // In a real app, you might want to look up the actual player name
     return `Player ${submission.authorId}`;
+  }
+
+  // Helper methods for WHAT_WILL_BECOME_OF_US phase
+  isWhatWillBecomeOfUsPhase(): boolean {
+    return this.gameState === GameState.WHAT_WILL_BECOME_OF_US;
+  }
+
+  isPlayerSubmission(submission: TextSubmission): boolean {
+    return submission.authorId === this.player.authorId;
+  }
+
+  getOutcomeTypeLabel(outcomeType: string | undefined): string {
+    if (!outcomeType) return '';
+    return outcomeType.charAt(0).toUpperCase() + outcomeType.slice(1);
+  }
+
+  getOutcomeTypeMessage(outcomeType: string | undefined): string {
+    if (!outcomeType) return '';
+    switch (outcomeType) {
+      case 'success':
+        return 'You are writing a SUCCESS ending';
+      case 'neutral':
+        return 'You are writing a NEUTRAL ending';
+      case 'failure':
+        return 'You are writing a FAILURE ending';
+      default:
+        return '';
+    }
+  }
+
+  getOutcomeTypeClass(outcomeType: string | undefined): string {
+    if (!outcomeType) return '';
+    return `outcome-${outcomeType}`;
   }
 }

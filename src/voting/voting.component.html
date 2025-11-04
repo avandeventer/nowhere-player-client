@@ -39,13 +39,30 @@
 
       <!-- Submissions for Selection -->
       <div class="submissions-list">
+        @if (isWhatWillBecomeOfUsVotePhase() && playerOutcomeType) {
+          <div class="outcome-filter-message">
+            <mat-icon>{{ playerOutcomeType === 'success' ? 'check_circle' : playerOutcomeType === 'neutral' ? 'remove_circle' : 'cancel' }}</mat-icon>
+            <p>You can only vote on <strong>{{ getOutcomeTypeLabel(playerOutcomeType) }}</strong> endings</p>
+          </div>
+        }
         @for (submission of submissions; track submission.submissionId) {
           <mat-card 
             class="submission-card" 
             [class.selected]="isSelected(submission.submissionId)"
-            (click)="onSubmissionToggle(submission.submissionId)">
+            [class.outcome-highlight]="isWhatWillBecomeOfUsVotePhase() && submission.outcomeType"
+            [ngClass]="isWhatWillBecomeOfUsVotePhase() && submission.outcomeType ? getOutcomeTypeClass(submission.outcomeType) : ''"
+            [class.disabled]="!canSelectSubmission(submission)"
+            (click)="canSelectSubmission(submission) && onSubmissionToggle(submission.submissionId)">
             <mat-card-content>
               <div class="submission-content">
+                @if (isWhatWillBecomeOfUsVotePhase() && submission.outcomeType) {
+                  <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
+                    {{ getOutcomeTypeLabel(submission.outcomeType) }} Ending
+                    @if (isPlayerSubmission(submission)) {
+                      <span class="your-submission">(Your submission)</span>
+                    }
+                  </div>
+                }
                 @if (isSelected(submission.submissionId)) {
                   <div class="ranking-badge">
                     <span class="ranking-number">{{ getRanking(submission.submissionId) }}</span>
