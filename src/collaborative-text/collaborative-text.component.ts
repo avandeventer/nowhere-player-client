@@ -284,6 +284,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
   }
 
+  isWhatAreWeCapableOfPhase(): boolean {
+    return this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
+  }
+
   private   isGameInCollaborativeTextPhase(): boolean {
     return this.gameState === GameState.WHERE_ARE_WE || 
            this.gameState === GameState.WHAT_DO_WE_FEAR ||

@@ -13,6 +13,7 @@ import { LocationComponent } from 'src/location/location.component';
 import { RitualComponent } from 'src/ritual/ritual.component';
 import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { WriteEndingsComponent } from 'src/write-endings/write-endings.component';
 import { GenreComponent } from 'src/genre/genre.component';
 import { EndingComponent } from 'src/ending/ending.component';
@@ -41,7 +42,8 @@ import { WorldInformationComponent } from 'src/world-information/world-informati
       CollaborativeTextComponent, 
       VotingComponent, 
       WriteLocationPromptComponent,
-      WriteLocationOutcomesComponent
+      WriteLocationOutcomesComponent,
+      MatCardModule
     ],
     standalone: true
 })

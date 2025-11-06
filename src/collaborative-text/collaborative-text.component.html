@@ -22,6 +22,12 @@
         <mat-card-content>
           @if (isSimpleMode) {
             <!-- Simple mode: text input for WHAT_DO_WE_FEAR and WHAT_ARE_WE_CAPABLE_OF -->
+            @if (isWhatAreWeCapableOfPhase() && newTextControl.value) {
+              Example:
+              <mat-card class="story">
+                You gain +2 {{ newTextControl.value }}
+              </mat-card>
+            }
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>{{ getSimpleModeLabel() }}</mat-label>
               <input 

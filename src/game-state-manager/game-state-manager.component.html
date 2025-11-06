@@ -21,13 +21,25 @@
 <app-world-information [gameCode]="gameCode"></app-world-information>
 
 @if (isGameInitialized()) {
-    <p>Hello {{player.userName}}!</p>
+    <mat-card class="stat-board">
+        <div>{{player.userName}}</div>
 
-    @if(adventureMap) {
-        <p>Welcome to {{adventureMap.name}}!</p>
-    } @else {
-        <p>We will soon generate our world</p>
-    }
+        @if (player.playerStats.length > 0) {
+            @for (playerStat of player.playerStats; track playerStat) {
+                @if (!playerStat.statType.favorType) {
+                    <div>{{playerStat.statType.label}}: {{playerStat.value}}</div>
+                }
+            }
+        }
+    </mat-card><br>
+
+    <mat-card class="story">Hello {{player.userName}}!
+        @if(adventureMap) {
+            Welcome to {{adventureMap.name}}!
+        } @else {
+            We will soon generate our world
+        }
+    </mat-card>
 }
 
 @if (isGameInPreamblePhase() || isGameInCollaborativeTextWinningPhase()) {
