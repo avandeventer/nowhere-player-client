@@ -195,6 +195,10 @@ export class AdventureComponent implements OnInit {
                   this.repercussionOutput
                 ).subscribe();
               }
+            } else {
+              this.playerDone.emit(ComponentType.ADVENTURE);
+              this.isDone = true;
+              this.nextPlayerTurn();
             }
           },
           error: (err) => console.error('Error retrieving stories', err)
@@ -435,7 +439,6 @@ export class AdventureComponent implements OnInit {
   }
 
   nextPlayerTurn() {
-    this.resetTurnState();
     this.activePlayerSessionService.updateActivePlayerSession(
       this.gameCode,
       this.player.authorId,
@@ -463,6 +466,7 @@ export class AdventureComponent implements OnInit {
       this.isDone = true;
       this.playerDone.emit(ComponentType.ADVENTURE);
     }
+    this.resetTurnState();
   }
 
   selectLocationOption(locationOptionIndex: number) {
