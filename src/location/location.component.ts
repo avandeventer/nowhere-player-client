@@ -103,6 +103,11 @@ export class LocationComponent implements OnInit, OnChanges {
           next: (response) => {
             this.locations = response;
 
+            if (this.locations.length === 0) {
+              this.playerDone.emit(ComponentType.LOCATION_SELECT);
+              this.isLocationsSelected = true;
+            }
+
             let locationIndex = 0;
             this.locations.forEach((location) => {
               this.buttonTransforms[locationIndex] =  this.generateTransformBasedOnId(

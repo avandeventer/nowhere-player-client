@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
+import { ActivePlayerSession } from 'src/assets/active-player-session';
 import { Location } from 'src/assets/location';
 import { ResponseObject } from 'src/assets/response-object';
 import { Story } from 'src/assets/story';
@@ -40,10 +41,11 @@ import { WritePhase } from 'src/assets/phases/write-phase';
   ],
   standalone: true
 })
-export class WritePromptComponent implements OnInit {
+export class WritePromptComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.WRITE_PROMPTS;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
+  @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   @Output() playerDone = new EventEmitter<ComponentType>();
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
@@ -76,14 +78,22 @@ export class WritePromptComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // Check for writeTimerDone change
+    if (changes['activePlayerSession'] && !changes['activePlayerSession'].isFirstChange()) {
+      const currentSession = changes['activePlayerSession'].currentValue as ActivePlayerSession;
+      const previousSession = changes['activePlayerSession'].previousValue as ActivePlayerSession;
+      
+      if (currentSession && currentSession.writeTimerDone 
+          && (!previousSession || !previousSession.writeTimerDone)
+          && this.currentStoryIndex < this.playerStories.length
+          && this.hasUnsavedContent()) {
+        console.log('Auto-submitting unsaved content due to writeTimerDone');
+        this.submitStory();
+      }
+    }
+    
     if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
       const currentState = changes['gameState'].currentValue;
-
-      // TODO: Reimplement when timer is readded - Auto submits prompts
-      // if ((currentState === GameState.WRITE_OPTIONS || currentState === GameState.WRITE_OPTIONS_AGAIN)
-      //     && !(this.currentStoryIndex >= this.playerStories.length)) {
-      //   this.submitPrompt();
-      // } 
 
       if (currentState !== GameState.WRITE_PROMPTS && currentState !== GameState.WRITE_PROMPTS_AGAIN) {
         this.currentStoryIndex = 0;
@@ -266,7 +276,7 @@ export class WritePromptComponent implements OnInit {
     this.optionTwo.reset('');
     this.currentStoryIndex++;
     this.promptSubmitted = false;
-    if (this.currentStoryIndex >= this.playerStories.length) {
+    if (this.currentStoryIndex >= this.playerStories.length || this.activePlayerSession.writeTimerDone) {
       this.playerDone.emit(ComponentType.WRITE_PROMPTS);
     } else {
       if (this.playerStories[this.currentStoryIndex].mainPlotStory) {
@@ -340,5 +350,12 @@ export class WritePromptComponent implements OnInit {
         });
       }
     }, 100); // Small delay to ensure DOM updates
+  }
+
+  private hasUnsavedContent(): boolean {
+    const hasPrompt = !!(this.prompt.value && this.prompt.value.trim().length > 0);
+    const hasOptionOne = !!(this.optionOne.value && this.optionOne.value.trim().length > 0);
+    const hasOptionTwo = !!(this.optionTwo.value && this.optionTwo.value.trim().length > 0);
+    return hasPrompt || hasOptionOne || hasOptionTwo;
   }
 }

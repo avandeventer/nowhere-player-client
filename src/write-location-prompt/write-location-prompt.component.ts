@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
+import { ActivePlayerSession } from 'src/assets/active-player-session';
 import { Location } from 'src/assets/location';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpConstants } from 'src/assets/http-constants';
@@ -33,10 +34,11 @@ import { WritePhase } from 'src/assets/phases/write-phase';
   ],
   standalone: true
 })
-export class WriteLocationPromptComponent implements OnInit {
+export class WriteLocationPromptComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.WHERE_CAN_WE_GO;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
+  @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   location: Location = new Location();
@@ -60,6 +62,27 @@ export class WriteLocationPromptComponent implements OnInit {
   ngOnInit() {
     this.getLocationByAuthor(this.player.authorId);
     this.loadAvailableImages();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Check for writeTimerDone change
+    if (changes['activePlayerSession'] && !changes['activePlayerSession'].isFirstChange()) {
+      const currentSession = changes['activePlayerSession'].currentValue as ActivePlayerSession;
+      const previousSession = changes['activePlayerSession'].previousValue as ActivePlayerSession;
+      
+      if (currentSession && currentSession.writeTimerDone 
+          && (!previousSession || !previousSession.writeTimerDone)
+          && this.hasUnsavedContent() 
+          && this.phase !== WritePhase.DONE) {
+        console.log('Auto-submitting unsaved location prompt due to writeTimerDone');
+        this.submitLocation();
+      }
+    }
+    
+    if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
+      const currentState = changes['gameState'].currentValue;
+      // No auto-submit on game state change for location prompt
+    }
   }
 
   async getLocationByAuthor(authorId: string) {
@@ -133,12 +156,20 @@ export class WriteLocationPromptComponent implements OnInit {
       .subscribe({
         next: (response) => {
           console.log('Location updated!', response);
+          this.resetLocationForm();
           this.playerDone.emit(ComponentType.WRITE_LOCATION_PROMPT);
         },
         error: (error) => {
           console.error('Error updating location', error);
         },
       });
+  }
+
+  resetLocationForm() {
+    this.locationLabel.reset('');
+    this.optionOneText.reset('');
+    this.optionTwoText.reset('');
+    this.selectedImage = '';
   }
 
   goBack() {
@@ -281,5 +312,14 @@ export class WriteLocationPromptComponent implements OnInit {
       default:
         return false;
     }
+  }
+
+  private hasUnsavedContent(): boolean {
+    const hasLabel = !!(this.locationLabel.value && this.locationLabel.value.trim().length > 0);
+    const hasOptionOne = !!(this.optionOneText.value && this.optionOneText.value.trim().length > 0);
+    const hasOptionTwo = !!(this.optionTwoText.value && this.optionTwoText.value.trim().length > 0);
+    const hasImage = !!(this.selectedImage && this.selectedImage.trim().length > 0);
+    
+    return hasLabel || hasOptionOne || hasOptionTwo || hasImage;
   }
 }

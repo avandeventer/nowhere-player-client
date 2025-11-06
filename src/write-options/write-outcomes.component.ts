@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
+import { ActivePlayerSession } from 'src/assets/active-player-session';
 import { ResponseObject } from 'src/assets/response-object';
 import { Story } from 'src/assets/story';
 import { Option } from 'src/assets/option';
@@ -41,10 +42,11 @@ enum OutcomePhase {
     ],
     standalone: true
 })
-export class WriteOutcomesComponent implements OnInit {
+export class WriteOutcomesComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.WRITE_OPTIONS;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
+  @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   @Output() playerDone = new EventEmitter<ComponentType>();
   playerStories: Story[] = [];
   currentStoryIndex: number = 0;
@@ -80,15 +82,22 @@ export class WriteOutcomesComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // Check for writeTimerDone change
+    if (changes['activePlayerSession'] && !changes['activePlayerSession'].isFirstChange()) {
+      const currentSession = changes['activePlayerSession'].currentValue as ActivePlayerSession;
+      const previousSession = changes['activePlayerSession'].previousValue as ActivePlayerSession;
+      
+      if (currentSession && currentSession.writeTimerDone 
+          && (!previousSession || !previousSession.writeTimerDone)
+          && this.currentStoryIndex < this.playerStories.length
+          && this.hasUnsavedContent()) {
+        console.log('Auto-submitting unsaved outcomes due to writeTimerDone');
+        this.submitOutcomes();
+      }
+    }
+    
     if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
       const currentState = changes['gameState'].currentValue;
-
-      // TODO: Reimplement when timer is readded - Auto submits outcomes
-      // if ((currentState === GameState.ROUND1 || currentState === GameState.ROUND2)
-      //     && !(this.currentStoryIndex >= this.playerStories.length)
-      // ) {
-      //   this.submitOutcomes();
-      // }
 
       if (currentState !== GameState.WRITE_OPTIONS && currentState !== GameState.WRITE_OPTIONS_AGAIN) {
         this.currentStoryIndex = 0;
@@ -242,7 +251,7 @@ export class WriteOutcomesComponent implements OnInit {
     this.playerOption = new Option();
     this.otherOption = new Option();
    
-    if(this.currentStoryIndex >= this.playerStories.length) {
+    if(this.currentStoryIndex >= this.playerStories.length || this.activePlayerSession.writeTimerDone) {
       this.playerDone.emit(ComponentType.WRITE_OUTCOMES);
     } else {
       this.setPlayerOption();
@@ -329,5 +338,15 @@ export class WriteOutcomesComponent implements OnInit {
 
   public currentOption(): Option {
     return this.currentOptionIndex === 0 ? this.playerOption : this.otherOption;
+  }
+
+  private hasUnsavedContent(): boolean {
+    // Check if there's any outcome content that hasn't been submitted
+    const hasOptionOneSuccess = !!(this.optionOneSuccess.value && this.optionOneSuccess.value.trim().length > 0);
+    const hasOptionOneFailure = !!(this.optionOneFailure.value && this.optionOneFailure.value.trim().length > 0);
+    const hasOptionTwoSuccess = !!(this.optionTwoSuccess.value && this.optionTwoSuccess.value.trim().length > 0);
+    const hasOptionTwoFailure = !!(this.optionTwoFailure.value && this.optionTwoFailure.value.trim().length > 0);
+    
+    return hasOptionOneSuccess || hasOptionOneFailure || hasOptionTwoSuccess || hasOptionTwoFailure;
   }
 }

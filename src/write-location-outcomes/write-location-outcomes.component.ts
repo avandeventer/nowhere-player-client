@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { GameState } from 'src/assets/game-state';
 import { Player } from 'src/assets/player';
+import { ActivePlayerSession } from 'src/assets/active-player-session';
 import { Location } from 'src/assets/location';
 import { Option } from 'src/assets/option';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -33,10 +34,11 @@ import { StatType } from 'src/assets/stat-type';
   ],
   standalone: true
 })
-export class WriteLocationOutcomesComponent implements OnInit {
+export class WriteLocationOutcomesComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.WHAT_OCCUPATIONS_ARE_THERE;
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
+  @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   @Output() playerDone = new EventEmitter<ComponentType>();
   
   playerLocations: Location[] = [];
@@ -65,6 +67,20 @@ export class WriteLocationOutcomesComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // Check for writeTimerDone change
+    if (changes['activePlayerSession'] && !changes['activePlayerSession'].isFirstChange()) {
+      const currentSession = changes['activePlayerSession'].currentValue as ActivePlayerSession;
+      const previousSession = changes['activePlayerSession'].previousValue as ActivePlayerSession;
+      
+      if (currentSession && currentSession.writeTimerDone 
+          && (!previousSession || !previousSession.writeTimerDone)
+          && this.currentLocationIndex < this.playerLocations.length
+          && this.hasUnsavedContent()) {
+        console.log('Auto-submitting unsaved location outcomes due to writeTimerDone');
+        this.submitOutcomes();
+      }
+    }
+    
     if (changes['gameState'] && !changes['gameState'].isFirstChange()) {
       const currentState = changes['gameState'].currentValue;
 
@@ -236,7 +252,7 @@ export class WriteLocationOutcomesComponent implements OnInit {
     this.otherOption = new Option();
     this.currentOptionIndex = 0;
    
-    if (this.currentLocationIndex >= this.playerLocations.length) {
+    if (this.currentLocationIndex >= this.playerLocations.length || this.activePlayerSession.writeTimerDone) {
       this.playerDone.emit(ComponentType.WRITE_LOCATION_OUTCOMES);
     } else {
       this.setPlayerOption();
@@ -296,5 +312,12 @@ export class WriteLocationOutcomesComponent implements OnInit {
 
   public abs(value: number): number {
     return Math.abs(value);
+  }
+
+  private hasUnsavedContent(): boolean {
+    const hasOptionOneSuccess = !!(this.optionOneSuccess.value && this.optionOneSuccess.value.trim().length > 0);
+    const hasOptionTwoSuccess = !!(this.optionTwoSuccess.value && this.optionTwoSuccess.value.trim().length > 0);
+    
+    return hasOptionOneSuccess || hasOptionTwoSuccess;
   }
 }

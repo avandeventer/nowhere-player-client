@@ -47,7 +47,7 @@
 }
 
 @if (isGameInWritePromptsPhase()) {
-    <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-prompt>
+    <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></write-prompt>
 }
 
 @if (isGameInCollaborativeTextPhase()) {
@@ -65,6 +65,7 @@
       [gameCode]="gameCode" 
       [gameState]="gameState" 
       [player]="player"
+      [activePlayerSession]="activePlayerSession"
       (playerDone)="setDone($event)">
     </write-location-prompt>
 }
@@ -74,6 +75,7 @@
       [gameCode]="gameCode" 
       [gameState]="gameState" 
       [player]="player"
+      [activePlayerSession]="activePlayerSession"
       (playerDone)="setDone($event)">
     </write-location-outcomes>
 }
@@ -92,7 +94,7 @@
 }
 
 @if (isGameInWriteOutcomesPhase()) {
-    <write-outcomes [gameCode]="gameCode" [gameState]="gameState" [player]="player" (playerDone)="setDone($event)"></write-outcomes>
+    <write-outcomes [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></write-outcomes>
 }
 
 @if (isGameInAdventurePhase()) {
