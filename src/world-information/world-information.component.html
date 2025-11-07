@@ -14,6 +14,17 @@
                     </mat-card-header><br>
                     <mat-card-content>
                         <div class="info-content">
+
+                            @if (!gameSessionDisplay.mapDescription 
+                            && !gameSessionDisplay.playerDescription 
+                            && !gameSessionDisplay.entity 
+                            && !gameSessionDisplay.goalDescription 
+                            && !gameSessionDisplay.endingDescription) {
+                                <div class="info-item">
+                                    <p>We have not yet defined this place.</p>
+                                </div>
+                            }
+
                             @if (gameSessionDisplay.mapDescription) {
                                 <div class="info-item">
                                     <strong>Where are we?</strong>

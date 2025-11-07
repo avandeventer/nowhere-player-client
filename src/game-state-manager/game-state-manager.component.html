@@ -24,7 +24,7 @@
     <mat-card class="stat-board">
         <div>{{player.userName}}</div>
 
-        @if (player.playerStats.length > 0) {
+        @if (player.playerStats && player.playerStats.length > 0) {
             @for (playerStat of player.playerStats; track playerStat) {
                 @if (!playerStat.statType.favorType) {
                     <div>{{playerStat.statType.label}}: {{playerStat.value}}</div>
