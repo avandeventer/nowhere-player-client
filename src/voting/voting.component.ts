@@ -14,6 +14,7 @@ import { TextSubmission } from '../assets/collaborative-text-phase';
 import { PlayerVote } from '../assets/player-vote';
 import { GameState } from '../assets/game-state';
 import { ComponentType } from 'src/assets/component-type';
+import { GameSessionDisplay } from '../assets/game-session-display';
 
 @Component({
   selector: 'app-voting',
@@ -37,6 +38,7 @@ export class VotingComponent implements OnInit, OnDestroy {
   @Input() gameCode: string = '';
   @Input() gameState: GameState = GameState.WHERE_ARE_WE_VOTE;
   @Input() player: any = null;
+  @Input() gameSessionDisplay: GameSessionDisplay | null = null;
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   submissions: TextSubmission[] = [];
@@ -262,8 +264,18 @@ export class VotingComponent implements OnInit, OnDestroy {
   }
 
   getOutcomeTypeLabel(outcomeType: string | undefined): string {
+    const entityName = this.gameSessionDisplay?.entity || 'the Entity';
     if (!outcomeType) return '';
-    return outcomeType.charAt(0).toUpperCase() + outcomeType.slice(1);
+    switch (outcomeType) {
+      case 'success':
+        return `IMPRESSED ${entityName}`;
+      case 'neutral':
+        return `FAILED ${entityName}`;
+      case 'failure':
+        return `DESTROYED ${entityName}`;
+      default:
+        return '';
+    }
   }
 
   getOutcomeTypeClass(outcomeType: string | undefined): string {

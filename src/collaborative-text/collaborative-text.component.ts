@@ -12,6 +12,7 @@ import { GameService } from '../services/game-session.service';
 import { Player } from '../assets/player';
 import { GameState } from '../assets/game-state';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
+import { GameSessionDisplay } from '../assets/game-session-display';
 
 @Component({
   selector: 'collaborative-text',
@@ -37,6 +38,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.INIT;
   @Input() player: Player = new Player();
   @Input() collaborativeTextPhases: any = null;
+  @Input() gameSessionDisplay: GameSessionDisplay | null = null;
   @Output() playerDone = new EventEmitter<void>();
   @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
 
@@ -119,7 +121,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       case GameState.WHAT_IS_COMING:
         this.isCollaborativeMode = true;
         this.phaseQuestion = 'What is coming?';
-        this.phaseInstructions = 'An event will occur at the end of the season where we will be judged by the Entity. What must we each do when they arrive to ensure our success or survival?';
+        const entityName = this.gameSessionDisplay?.entity || 'the Entity';
+        this.phaseInstructions = `An event will occur at the end of the season where we will be judged by ${entityName}. What must we each do when they arrive to ensure our success or survival?`;
         break;
       case GameState.WHO_ARE_WE:
         this.isCollaborativeMode = true;
@@ -134,7 +137,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       case GameState.WHAT_WILL_BECOME_OF_US:
         this.isCollaborativeMode = true;
         this.phaseQuestion = 'What will become of us?';
-        this.phaseInstructions = 'Write the ending text for your assigned outcome type.';
+        this.phaseInstructions = 'What will become of us when our confrontation with ' + (this.gameSessionDisplay?.entity || 'the Entity') + ' is over?';
         break;
       case GameState.WRITE_ENDING_TEXT:
         this.isCollaborativeMode = true;
@@ -464,19 +467,30 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   getOutcomeTypeLabel(outcomeType: string | undefined): string {
+    const entityName = this.gameSessionDisplay?.entity || 'the Entity';
     if (!outcomeType) return '';
-    return outcomeType.charAt(0).toUpperCase() + outcomeType.slice(1);
+    switch (outcomeType) {
+      case 'success':
+        return `IMPRESSED ${entityName}`;
+      case 'neutral':
+        return `FAILED ${entityName}`;
+      case 'failure':
+        return `DESTROYED ${entityName}`;
+      default:
+        return '';
+    }
   }
 
   getOutcomeTypeMessage(outcomeType: string | undefined): string {
     if (!outcomeType) return '';
+    const entityName = this.gameSessionDisplay?.entity || 'the Entity';
     switch (outcomeType) {
       case 'success':
-        return 'You are writing a SUCCESS ending';
+        return `What will happen if we impress ${entityName} and survive?`;
       case 'neutral':
-        return 'You are writing a NEUTRAL ending';
+        return `What will happen if we are fractured and fail in the final confrontation with ${entityName}?`;
       case 'failure':
-        return 'You are writing a FAILURE ending';
+        return `What will happen if we rise and destroy ${entityName}?`;
       default:
         return '';
     }

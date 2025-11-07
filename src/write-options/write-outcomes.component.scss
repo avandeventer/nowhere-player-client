@@ -99,7 +99,10 @@ mat-form-field.disabled {
   margin-bottom: 12px;
   background: rgba(0,0,0,0.02);
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   position: relative;
+  overflow: hidden; // Prevent content from overflowing
 
   .outcome-label {
     margin-bottom: 8px;
@@ -144,27 +147,64 @@ mat-form-field.disabled {
 @media (max-width: 768px) {
   .writing-container {
     gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 8px; // Add small padding to prevent edge-to-edge on mobile
+  }
+
+  .story-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 12px 8px; // Reduce padding on mobile
+    
+    .outcome-box {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
 
   .writing-section {
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     
     .instructions-box,
     .instructions {
       width: 100%;
       min-width: unset;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .writing-input-box {
       min-width: unset;
       width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .outcome-box {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin-left: 0;
+      margin-right: 0;
     }
 
     .writing-button-container {
       position: static;
       margin-top: 36px;
       align-self: flex-end;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
   }
 

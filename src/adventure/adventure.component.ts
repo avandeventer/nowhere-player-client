@@ -480,7 +480,7 @@ export class AdventureComponent implements OnInit {
     
       if (playerStat) {
         playerStat.value += outcome.playerStat.value;
-        this.locationOutcomeDisplay.push(`You gain ${outcome.playerStat.value} ${playerStat.statType.label} ${playerStat.statType.favorType ? "with " + playerStat.statType.favorEntity : ""}`);
+        this.locationOutcomeDisplay.push(`You gain +${outcome.playerStat.value} ${playerStat.statType.label} ${playerStat.statType.favorType ? "with " + playerStat.statType.favorEntity : ""}`);
       } else {
         console.warn(`Stat not found on player for ID: ${impactedStatId}`);
       }
