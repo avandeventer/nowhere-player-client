@@ -8,6 +8,8 @@ import { environment } from 'src/environments/environment';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from 'src/assets/collaborative-text-phase';
 import { PlayerVote } from 'src/assets/player-vote';
 import { GameSessionDisplay } from 'src/assets/game-session-display';
+import { CollaborativeTextPhaseInfo } from 'src/assets/collaborative-text-phase-info';
+import { GameBoard } from 'src/assets/game-board';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -79,5 +81,13 @@ export class GameService {
   getGameSessionDisplay(gameCode: string): Observable<GameSessionDisplay> {
     const parameter = "?gameCode=" + gameCode;
     return this.http.get<GameSessionDisplay>(environment.nowhereBackendUrl + HttpConstants.DISPLAY_PATH + parameter) as Observable<GameSessionDisplay>;
+  }
+
+  getCollaborativeTextPhaseInfo(gameCode: string): Observable<CollaborativeTextPhaseInfo> {
+    return this.http.get<CollaborativeTextPhaseInfo>(`${environment.nowhereBackendUrl}/collaborativeText/phaseInfo?gameCode=${gameCode}`);
+  }
+
+  getGameBoard(gameCode: string): Observable<GameBoard> {
+    return this.http.get<GameBoard>(`${environment.nowhereBackendUrl}/game-board?gameCode=${gameCode}`);
   }
 }

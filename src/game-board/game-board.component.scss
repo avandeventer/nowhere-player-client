@@ -1,0 +1,132 @@
+.game-board-container {
+  margin: 16px 0;
+}
+
+.game-board-card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.board-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.board-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-cell {
+  width: 150px;
+  min-height: 80px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.02);
+  position: relative;
+}
+
+.board-cell.current {
+  border-color: #1976d2;
+  border-width: 4px;
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.25) 0%, rgba(25, 118, 210, 0.15) 100%);
+  font-weight: 500;
+  box-shadow: 0 0 20px rgba(25, 118, 210, 0.4), 0 0 40px rgba(25, 118, 210, 0.2);
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.encounter-label {
+  font-size: 14px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.encounter-label.current-location {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.encounter-label.current-location strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #1976d2;
+}
+
+.empty-cell {
+  color: rgba(0, 0, 0, 0.3);
+  font-style: italic;
+}
+
+.loading {
+  text-align: center;
+  padding: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.direction-arrow {
+  position: absolute;
+  font-size: 28px;
+  font-weight: bold;
+  color: #1976d2;
+  z-index: 15;
+  pointer-events: none;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+.board-cell.current .north-arrow {
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.board-cell.current .south-arrow {
+  bottom: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.board-cell.current .east-arrow {
+  right: -36px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.board-cell.current .west-arrow {
+  left: -36px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.encounter-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.encounter-icon.current-icon {
+  color: #1976d2;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+
+.board-cell.current .encounter-icon {
+  color: #1976d2;
+}
+

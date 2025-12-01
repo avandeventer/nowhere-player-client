@@ -13,7 +13,7 @@ import { Player } from '../assets/player';
 import { GameState } from '../assets/game-state';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
 import { GameSessionDisplay } from '../assets/game-session-display';
-
+import { CollaborativeTextPhaseInfo, CollaborativeMode } from '../assets/collaborative-text-phase-info';
 @Component({
   selector: 'collaborative-text',
   templateUrl: './collaborative-text.component.html',
@@ -39,6 +39,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() player: Player = new Player();
   @Input() collaborativeTextPhases: any = null;
   @Input() gameSessionDisplay: GameSessionDisplay | null = null;
+  @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Output() playerDone = new EventEmitter<void>();
   @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
 
@@ -60,8 +61,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   // Phase-specific properties
   phaseQuestion = '';
   phaseInstructions = '';
+  collaborativeMode: CollaborativeMode = CollaborativeMode.SHARE_TEXT;
+  collaborativeModeInstructions = '';
   
-  // Mode detection
+  // Mode detection (for backward compatibility)
   isSimpleMode = false; // For WHAT_DO_WE_FEAR and WHAT_ARE_WE_CAPABLE_OF
   isCollaborativeMode = false; // For WHERE_ARE_WE, WHO_ARE_WE, WHAT_IS_COMING
   
@@ -71,12 +74,17 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   constructor(private gameService: GameService) {}
 
   ngOnInit() {
-    this.setupPhaseProperties();
+    this.updatePhaseInfoFromInput();
     this.loadPlayerOutcomeType();
     this.loadCollaborativePhase();
   }
 
   ngOnChanges() {
+    // Update phase info when input changes
+    if (this.phaseInfo) {
+      this.updatePhaseInfoFromInput();
+    }
+    
     // When collaborative text phases change, check if submissions actually changed
     if (this.collaborativeTextPhases 
         && this.isGameInCollaborativeTextPhase() 
@@ -102,52 +110,26 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
   }
 
-  private setupPhaseProperties() {
-    // Reset mode flags
-    this.isSimpleMode = false;
-    this.isCollaborativeMode = false;
-    
-    switch (this.gameState) {
-      case GameState.WHERE_ARE_WE:
-        this.isCollaborativeMode = true;
-        this.phaseQuestion = 'Where are we?';
-        this.phaseInstructions = 'We will begin by describing our world.';
-        break;
-      case GameState.WHAT_DO_WE_FEAR:
-        this.isSimpleMode = true;
-        this.phaseQuestion = 'What do we fear?';
-        this.phaseInstructions = 'What do we fear? What person, group, or entity holds power in this world?';
-        break;
-      case GameState.WHAT_IS_COMING:
-        this.isCollaborativeMode = true;
-        this.phaseQuestion = 'What is coming?';
-        const entityName = this.gameSessionDisplay?.entity || 'the Entity';
-        this.phaseInstructions = `An event will occur at the end of the season where we will be judged by ${entityName}. What must we each do when they arrive to ensure our success or survival?`;
-        break;
-      case GameState.WHO_ARE_WE:
-        this.isCollaborativeMode = true;
-        this.phaseQuestion = 'Who are we?';
-        this.phaseInstructions = 'Define who we are together. What is our goal?';
-        break;
-      case GameState.WHAT_ARE_WE_CAPABLE_OF:
-        this.isSimpleMode = true;
-        this.phaseQuestion = 'What are we capable of?';
-        this.phaseInstructions = 'We will need certain skills in order to overcome. List anything you think we will need to be good at to survive.';
-        break;
-      case GameState.WHAT_WILL_BECOME_OF_US:
-        this.isCollaborativeMode = true;
-        this.phaseQuestion = 'What will become of us?';
-        this.phaseInstructions = 'What will become of us when our confrontation with ' + (this.gameSessionDisplay?.entity || 'the Entity') + ' is over?';
-        break;
-      case GameState.WRITE_ENDING_TEXT:
-        this.isCollaborativeMode = true;
-        this.phaseQuestion = 'How will our story end?';
-        this.phaseInstructions = 'Based on how well we have done as a group, write the ending text that will be displayed. This will determine how our story concludes.';
-        break;
-      default:
-        this.phaseQuestion = 'Collaborative Writing';
-        this.phaseInstructions = 'Work together to build your story!';
+  private updatePhaseInfoFromInput() {
+    if (!this.phaseInfo) {
+      // Fallback to default values if phaseInfo is not provided
+      this.phaseQuestion = 'Collaborative Writing';
+      this.phaseInstructions = 'Work together to build your story!';
+      this.collaborativeMode = CollaborativeMode.SHARE_TEXT;
+      this.collaborativeModeInstructions = 'Look to your device and don\'t worry about thinking too hard about what you say. Your friends will help!';
+      this.isSimpleMode = false;
+      this.isCollaborativeMode = true;
+      return;
     }
+    
+    this.phaseQuestion = this.phaseInfo.phaseQuestion;
+    this.phaseInstructions = this.phaseInfo.phaseInstructions;
+    this.collaborativeMode = this.phaseInfo.collaborativeMode;
+    this.collaborativeModeInstructions = this.phaseInfo.collaborativeModeInstructions;
+    
+    // Set backward compatibility flags
+    this.isSimpleMode = this.phaseInfo.collaborativeMode === CollaborativeMode.RAPID_FIRE;
+    this.isCollaborativeMode = this.phaseInfo.collaborativeMode === CollaborativeMode.SHARE_TEXT;
   }
 
   private loadCollaborativePhase() {
@@ -182,7 +164,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     if (usePhasesData) {
       if (!this.collaborativeTextPhases) return;
 
-      const phaseId = this.getPhaseIdForGameState();
+      const phaseId = this.collaborativePhase?.phaseId || this.getPhaseIdForGameState();
       if (!phaseId) return;
 
       const phase = this.collaborativeTextPhases[phaseId];

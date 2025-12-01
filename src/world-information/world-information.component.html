@@ -13,6 +13,11 @@
                         <mat-card-title>Our World</mat-card-title>
                     </mat-card-header><br>
                     <mat-card-content>
+                        @if (phaseInfo?.showGameBoard) {
+                            <div class="game-board-section">
+                                <app-game-board [gameCode]="gameCode"></app-game-board>
+                            </div>
+                        }
                         <div class="info-content">
 
                             @if (!gameSessionDisplay.mapDescription 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -15,6 +15,7 @@ import { PlayerVote } from '../assets/player-vote';
 import { GameState } from '../assets/game-state';
 import { ComponentType } from 'src/assets/component-type';
 import { GameSessionDisplay } from '../assets/game-session-display';
+import { CollaborativeTextPhaseInfo } from '../assets/collaborative-text-phase-info';
 
 @Component({
   selector: 'app-voting',
@@ -34,11 +35,12 @@ import { GameSessionDisplay } from '../assets/game-session-display';
   templateUrl: './voting.component.html',
   styleUrl: './voting.component.scss'
 })
-export class VotingComponent implements OnInit, OnDestroy {
+export class VotingComponent implements OnInit, OnChanges {
   @Input() gameCode: string = '';
   @Input() gameState: GameState = GameState.WHERE_ARE_WE_VOTE;
   @Input() player: any = null;
   @Input() gameSessionDisplay: GameSessionDisplay | null = null;
+  @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   submissions: TextSubmission[] = [];
@@ -58,34 +60,13 @@ export class VotingComponent implements OnInit, OnDestroy {
     }
     this.loadVotingSubmissions();
   }
-
-  ngOnDestroy() {
-    // Cleanup if needed
+  
+  ngOnChanges() {
+    this.setupPhaseProperties();
   }
 
   private setupPhaseProperties() {
-    switch (this.gameState) {
-      case GameState.WHERE_ARE_WE_VOTE:
-        this.phaseQuestion = 'Where are we?';
-        break;
-      case GameState.WHAT_DO_WE_FEAR_VOTE:
-        this.phaseQuestion = 'What do we fear?';
-        break;
-      case GameState.WHO_ARE_WE_VOTE:
-        this.phaseQuestion = 'Who are we?';
-        break;
-      case GameState.WHAT_IS_COMING_VOTE:
-        this.phaseQuestion = 'What is coming?';
-        break;
-      case GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE:
-        this.phaseQuestion = 'What are we capable of?';
-        break;
-      case GameState.WHAT_WILL_BECOME_OF_US_VOTE:
-        this.phaseQuestion = 'What will become of us?';
-        break;
-      default:
-        this.phaseQuestion = 'Vote on submissions';
-    }
+      this.phaseQuestion = this.phaseInfo?.phaseQuestion || 'Vote on submissions';
   }
 
   private loadPlayerOutcomeType() {

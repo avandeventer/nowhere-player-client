@@ -23,6 +23,7 @@ import { VotingComponent } from 'src/voting/voting.component';
 import { WriteLocationPromptComponent } from 'src/write-location-prompt/write-location-prompt.component';
 import { WriteLocationOutcomesComponent } from 'src/write-location-outcomes/write-location-outcomes.component';
 import { WorldInformationComponent } from 'src/world-information/world-information.component';
+import { CollaborativeTextPhaseInfo, PhaseType } from 'src/assets/collaborative-text-phase-info';
 
 @Component({
     selector: 'game-state-manager',
@@ -67,6 +68,7 @@ export class GameStateManagerComponent implements OnInit {
   adventureMap: AdventureMap | null = null;
   collaborativeTextPhases: any = null;
   stories: any[] | null = null;
+  collaborativeTextPhaseInfo: CollaborativeTextPhaseInfo | null = null;
 
   constructor(
     private gameService: GameService,
@@ -78,6 +80,8 @@ export class GameStateManagerComponent implements OnInit {
       if (this.gameState !== newState.gameState as unknown as GameState) {
         this.gameState = newState.gameState as unknown as GameState;
         this.gameStateChanged.emit(this.gameState);
+        // Load phase info when game state changes
+        this.loadCollaborativeTextPhaseInfo();
       }
       
       this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
@@ -97,6 +101,23 @@ export class GameStateManagerComponent implements OnInit {
       }
       
       console.log('New gameState:', this.gameState);
+    });
+    
+    // Load initial phase info
+    this.loadCollaborativeTextPhaseInfo();
+  }
+  
+  private loadCollaborativeTextPhaseInfo() {
+    if (!this.gameCode) return;
+    
+    this.gameService.getCollaborativeTextPhaseInfo(this.gameCode).subscribe({
+      next: (phaseInfo: CollaborativeTextPhaseInfo) => {
+        this.collaborativeTextPhaseInfo = phaseInfo;
+      },
+      error: (error) => {
+        console.error('Error loading collaborative text phase info:', error);
+        this.collaborativeTextPhaseInfo = null;
+      }
     });
   }
 
@@ -209,31 +230,15 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isGameInCollaborativeTextPhase() {
-    return this.gameState === GameState.WHERE_ARE_WE || 
-           this.gameState === GameState.WHO_ARE_WE || 
-           this.gameState === GameState.WHAT_IS_COMING || 
-           this.gameState === GameState.WHAT_DO_WE_FEAR ||
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF ||
-           this.gameState === GameState.WHAT_WILL_BECOME_OF_US ||
-           this.gameState === GameState.WRITE_ENDING_TEXT;
+    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.SUBMISSION;
   }
 
   isGameInVotingPhase() {
-    return this.gameState === GameState.WHERE_ARE_WE_VOTE || 
-           this.gameState === GameState.WHO_ARE_WE_VOTE || 
-           this.gameState === GameState.WHAT_IS_COMING_VOTE ||
-           this.gameState === GameState.WHAT_DO_WE_FEAR_VOTE ||
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE ||
-           this.gameState === GameState.WHAT_WILL_BECOME_OF_US_VOTE;
+    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.VOTING;
   }
 
   isGameInCollaborativeTextWinningPhase() {
-    return this.gameState === GameState.WHERE_ARE_WE_VOTE_WINNER || 
-           this.gameState === GameState.WHO_ARE_WE_VOTE_WINNER || 
-           this.gameState === GameState.WHAT_IS_COMING_VOTE_WINNER ||
-           this.gameState === GameState.WHAT_DO_WE_FEAR_VOTE_WINNER ||
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE_WINNERS ||
-           this.gameState === GameState.WHAT_WILL_BECOME_OF_US_VOTE_WINNER;
+    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.WINNING;
   }
 
   isGameInLocationCreationPhase() {
