@@ -10,6 +10,7 @@ import { PlayerVote } from 'src/assets/player-vote';
 import { GameSessionDisplay } from 'src/assets/game-session-display';
 import { CollaborativeTextPhaseInfo } from 'src/assets/collaborative-text-phase-info';
 import { GameBoard } from 'src/assets/game-board';
+import { OutcomeType } from 'src/assets/outcome-type';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -72,10 +73,8 @@ export class GameService {
     return this.http.post<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText/votes?gameCode=${gameCode}`, playerVotes);
   }
 
-  getOutcomeTypeForPlayer(gameCode: string, playerId: string): Observable<string> {
-    return this.http.get<string>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeType?gameCode=${gameCode}&playerId=${playerId}`, {
-      responseType: 'text' as 'json'
-    });
+  getOutcomeTypeForPlayer(gameCode: string, playerId: string): Observable<OutcomeType> {
+    return this.http.get<OutcomeType>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeType?gameCode=${gameCode}&playerId=${playerId}`);
   }
 
   getGameSessionDisplay(gameCode: string): Observable<GameSessionDisplay> {

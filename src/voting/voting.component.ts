@@ -16,6 +16,9 @@ import { GameState } from '../assets/game-state';
 import { ComponentType } from 'src/assets/component-type';
 import { GameSessionDisplay } from '../assets/game-session-display';
 import { CollaborativeTextPhaseInfo } from '../assets/collaborative-text-phase-info';
+import { OutcomeType } from 'src/assets/outcome-type';
+import { StoryComponent } from '../story/story.component';
+import { CompassVotingComponent } from '../compass-voting/compass-voting.component';
 
 @Component({
   selector: 'app-voting',
@@ -30,7 +33,9 @@ import { CollaborativeTextPhaseInfo } from '../assets/collaborative-text-phase-i
     MatInputModule,
     MatChipsModule,
     MatIconModule,
-    MatSelectModule
+    MatSelectModule,
+    StoryComponent,
+    CompassVotingComponent
   ],
   templateUrl: './voting.component.html',
   styleUrl: './voting.component.scss'
@@ -49,13 +54,13 @@ export class VotingComponent implements OnInit, OnChanges {
   isLoading = false;
   hasVoted = false;
   phaseQuestion = '';
-  playerOutcomeType: string | null = null; // "success", "neutral", or "failure"
+  playerOutcomeType: OutcomeType | null = null;
 
   constructor(private gameService: GameService) {}
 
   ngOnInit() {
     this.setupPhaseProperties();
-    if (this.isWhatWillBecomeOfUsVotePhase()) {
+    if (this.isMultipleOutcomeTypeVotePhase()) {
       this.loadPlayerOutcomeType();
     }
     this.loadVotingSubmissions();
@@ -70,7 +75,7 @@ export class VotingComponent implements OnInit, OnChanges {
   }
 
   private loadPlayerOutcomeType() {
-    if (this.isWhatWillBecomeOfUsVotePhase()) {
+    if (this.isMultipleOutcomeTypeVotePhase()) {
       this.gameService.getOutcomeTypeForPlayer(this.gameCode, this.player.authorId).subscribe({
         next: (outcomeType) => {
           this.playerOutcomeType = outcomeType;
@@ -88,7 +93,7 @@ export class VotingComponent implements OnInit, OnChanges {
   private loadVotingSubmissions() {
     this.isLoading = true;
     
-    if (this.isWhatWillBecomeOfUsVotePhase() && !this.playerOutcomeType) {
+    if (this.isMultipleOutcomeTypeVotePhase() && !this.playerOutcomeType) {
       // Wait for outcome type to be loaded
       return;
     }
@@ -98,7 +103,7 @@ export class VotingComponent implements OnInit, OnChanges {
         this.allSubmissions = submissions;
         
         // For WHAT_WILL_BECOME_OF_US, also load player's own submissions
-        if (this.isWhatWillBecomeOfUsVotePhase()) {
+        if (this.isMultipleOutcomeTypeVotePhase()) {
           this.loadPlayerOwnSubmissions().then(() => {
             this.filterSubmissionsByOutcomeType();
           });
@@ -148,10 +153,10 @@ export class VotingComponent implements OnInit, OnChanges {
   }
 
   private filterSubmissionsByOutcomeType() {
-    if (this.isWhatWillBecomeOfUsVotePhase() && this.playerOutcomeType) {
+    if (this.isMultipleOutcomeTypeVotePhase() && this.playerOutcomeType) {
       // Filter to only show submissions matching player's outcome type
       this.submissions = this.allSubmissions.filter(
-        submission => submission.outcomeType === this.playerOutcomeType
+        submission => submission.outcomeType === this.playerOutcomeType?.id || null
       );
     } else {
       this.submissions = this.allSubmissions;
@@ -164,8 +169,8 @@ export class VotingComponent implements OnInit, OnChanges {
     this.isLoading = false;
   }
 
-  isWhatWillBecomeOfUsVotePhase(): boolean {
-    return this.gameState === GameState.WHAT_WILL_BECOME_OF_US_VOTE;
+  isMultipleOutcomeTypeVotePhase(): boolean {
+    return this.gameState === GameState.WHAT_WILL_BECOME_OF_US_VOTE || this.gameState === GameState.HOW_DOES_THIS_RESOLVE_VOTING;
   }
 
   private initializeRankings() {
@@ -245,18 +250,10 @@ export class VotingComponent implements OnInit, OnChanges {
   }
 
   getOutcomeTypeLabel(outcomeType: string | undefined): string {
-    const entityName = this.gameSessionDisplay?.entity || 'the Entity';
-    if (!outcomeType) return '';
-    switch (outcomeType) {
-      case 'success':
-        return `IMPRESSED ${entityName}`;
-      case 'neutral':
-        return `FAILED ${entityName}`;
-      case 'failure':
-        return `DESTROYED ${entityName}`;
-      default:
-        return '';
+    if (this.playerOutcomeType && outcomeType === this.playerOutcomeType?.id) {
+      return this.playerOutcomeType.label;
     }
+    return '';
   }
 
   getOutcomeTypeClass(outcomeType: string | undefined): string {
@@ -266,9 +263,17 @@ export class VotingComponent implements OnInit, OnChanges {
 
   canSelectSubmission(submission: TextSubmission): boolean {
     // For WHAT_WILL_BECOME_OF_US, only allow selecting submissions matching player's outcome type
-    if (this.isWhatWillBecomeOfUsVotePhase()) {
-      return submission.outcomeType === this.playerOutcomeType;
+    if (this.isMultipleOutcomeTypeVotePhase()) {
+      return submission.outcomeType === (this.playerOutcomeType?.id || null);
     }
     return true;
+  }
+
+  hasStoryWithOptions(): boolean {
+    return !!(this.phaseInfo?.storyToIterateOn?.options && this.phaseInfo.storyToIterateOn.options.length > 0);
+  }
+
+  isNavigateVotingPhase(): boolean {
+    return this.gameState === GameState.NAVIGATE_VOTING;
   }
 }

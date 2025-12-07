@@ -12,11 +12,11 @@
   } @else {
     <!-- New Submission Section -->
     @if (showNewSubmission || isSimpleMode) {
-      <mat-card class="submission-card" [class.outcome-highlight]="isWhatWillBecomeOfUsPhase() && playerOutcomeType" [ngClass]="isWhatWillBecomeOfUsPhase() && playerOutcomeType ? getOutcomeTypeClass(playerOutcomeType) : ''">
+      <mat-card class="submission-card" [class.outcome-highlight]="playerOutcomeType" [ngClass]="playerOutcomeType ? getOutcomeTypeClass(playerOutcomeType.id) : ''">
         <mat-card-header>
           <mat-card-title>{{ phaseQuestion }}</mat-card-title>
-          @if (isWhatWillBecomeOfUsPhase() && playerOutcomeType) {
-            <mat-card-subtitle class="outcome-message">{{ getOutcomeTypeMessage(playerOutcomeType) }}</mat-card-subtitle>
+          @if (playerOutcomeType) {
+            <mat-card-subtitle class="outcome-message">{{ playerOutcomeType.label }}</mat-card-subtitle>
           }
         </mat-card-header>
         <mat-card-content>
@@ -38,7 +38,6 @@
               <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/30</mat-hint>
             </mat-form-field>
           } @else {
-            <!-- Collaborative mode: textarea for WHERE_ARE_WE, WHO_ARE_WE, WHAT_IS_COMING -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>{{ phaseQuestion.toLowerCase() }}</mat-label>
               <textarea 
@@ -76,14 +75,14 @@
               <mat-card 
                 class="submission-item"
                 [class.selected]="selectedSubmission?.submissionId === submission.submissionId"
-                [class.outcome-highlight]="isWhatWillBecomeOfUsPhase() && submission.outcomeType"
-                [ngClass]="isWhatWillBecomeOfUsPhase() && submission.outcomeType ? getOutcomeTypeClass(submission.outcomeType) : ''"
+                [class.outcome-highlight]="submission.outcomeType"
+                [ngClass]="submission.outcomeType ? getOutcomeTypeClass(submission.outcomeType) : ''"
                 (click)="onSelectSubmission(submission)">
                 <mat-card-content>
                   <div class="submission-preview">
-                    @if (isWhatWillBecomeOfUsPhase() && submission.outcomeType) {
+                    @if (submission.outcomeType) {
                       <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
-                        {{ getOutcomeTypeLabel(submission.outcomeType) }} Ending
+                        {{ getOutcomeTypeLabel(submission.outcomeType) }}
                         @if (isPlayerSubmission(submission)) {
                           <span class="your-submission">(Your submission)</span>
                         }

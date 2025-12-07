@@ -1,5 +1,6 @@
 import { Option } from './option';
 import { Location } from './location';
+import { EncounterLabel } from './encounter-label';
 
 export class Story {
     prompt: string;
@@ -17,6 +18,7 @@ export class Story {
     prequelOutcomeDisplay: string[];
     gameCode: string;
     mainPlotStory: boolean;
+    encounterLabel?: EncounterLabel;
     
     constructor() {
         this.prompt = "";

@@ -1,0 +1,63 @@
+@if (story) {
+  <div class="story-container">
+    <mat-card class="encounter-header">
+      <h2>You've encountered</h2>
+      <mat-card class="story-card">
+        @if (story.encounterLabel?.encounterLabel) {
+          <mat-card-header>
+            <h1>{{ story.encounterLabel?.encounterLabel }}</h1>
+          </mat-card-header>
+        }
+        <mat-card-content>
+          @if (story.prompt) {
+            <div class="story-prompt">
+              <p>{{ story.prompt }}</p>
+            </div>
+          }
+          
+          @if (hasVoted) {
+            <div class="voted-container">
+              <mat-icon class="voted-icon">check_circle</mat-icon>
+              <h2>Vote Submitted!</h2>
+              <p>Thank you for voting. The results will be calculated when all players have voted.</p>
+            </div>
+          } @else if (story.options && story.options.length > 0) {
+            <div class="options-section">
+              <div class="options-list">
+                @for (option of getOptions(); track option.optionId || $index) {
+                  @if (option.optionText) {
+                    <button 
+                      mat-flat-button 
+                      class="option-button"
+                      [class.selected]="isSelected(option)"
+                      [disabled]="isLoading"
+                      (click)="selectOption(option)">
+                      {{ option.optionText }}
+                    </button>
+                  }
+                }
+              </div>
+              @if (selectedOptionId) {
+                <div class="submit-container">
+                  <button 
+                    mat-flat-button 
+                    class="submit-button"
+                    [disabled]="isLoading"
+                    (click)="submitVote()">
+                    @if (isLoading) {
+                      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+                      Submitting...
+                    } @else {
+                      Submit Vote
+                    }
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </mat-card>
+  </div>
+}
+

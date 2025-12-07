@@ -14,6 +14,7 @@ import { GameState } from '../assets/game-state';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
 import { GameSessionDisplay } from '../assets/game-session-display';
 import { CollaborativeTextPhaseInfo, CollaborativeMode } from '../assets/collaborative-text-phase-info';
+import { OutcomeType } from '../assets/outcome-type';
 @Component({
   selector: 'collaborative-text',
   templateUrl: './collaborative-text.component.html',
@@ -64,12 +65,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   collaborativeMode: CollaborativeMode = CollaborativeMode.SHARE_TEXT;
   collaborativeModeInstructions = '';
   
-  // Mode detection (for backward compatibility)
-  isSimpleMode = false; // For WHAT_DO_WE_FEAR and WHAT_ARE_WE_CAPABLE_OF
-  isCollaborativeMode = false; // For WHERE_ARE_WE, WHO_ARE_WE, WHAT_IS_COMING
+  isSimpleMode = false;
+  isCollaborativeMode = false;
   
   // WHAT_WILL_BECOME_OF_US phase properties
-  playerOutcomeType: string | null = null; // "success", "neutral", or "failure"
+  playerOutcomeType: OutcomeType | null = null;
 
   constructor(private gameService: GameService) {}
 
@@ -91,7 +91,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         && this.hasSubmitted
         && !this.maximumSubmissionsReached
     ) {
-      const phaseId = this.getPhaseIdForGameState();
+      const phaseId: string = this.phaseInfo?.phaseId.toString() || '';
       if (!phaseId) return;
       
       const phase = this.collaborativeTextPhases[phaseId];
@@ -164,7 +164,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     if (usePhasesData) {
       if (!this.collaborativeTextPhases) return;
 
-      const phaseId = this.collaborativePhase?.phaseId || this.getPhaseIdForGameState();
+      const phaseId = this.collaborativePhase?.phaseId;
       if (!phaseId) return;
 
       const phase = this.collaborativeTextPhases[phaseId];
@@ -234,29 +234,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     console.log(`Added ${newSubmissionsToAdd.length} new submissions. Showing ${this.availableSubmissions.length} total submissions (limited to 2)`);
   }
 
-
-  private getPhaseIdForGameState(): string | null {
-    switch (this.gameState) {
-      case GameState.WHERE_ARE_WE:
-        return 'WHERE_ARE_WE';
-      case GameState.WHO_ARE_WE:
-        return 'WHO_ARE_WE';
-      case GameState.WHAT_IS_COMING:
-        return 'WHAT_IS_COMING';
-      case GameState.WHAT_ARE_WE_CAPABLE_OF:
-        return 'WHAT_ARE_WE_CAPABLE_OF';
-      case GameState.WHAT_WILL_BECOME_OF_US:
-        return 'WHAT_WILL_BECOME_OF_US';
-      case GameState.WRITE_ENDING_TEXT:
-        return 'WRITE_ENDING_TEXT';
-      default:
-        return null;
-    }
-  }
-
   private loadPlayerOutcomeType() {
     // Only load outcome type for WHAT_WILL_BECOME_OF_US phase
-    if (this.gameState === GameState.WHAT_WILL_BECOME_OF_US) {
+    if (this.gameState === GameState.WHAT_WILL_BECOME_OF_US || this.gameState === GameState.HOW_DOES_THIS_RESOLVE) {
       this.gameService.getOutcomeTypeForPlayer(this.gameCode, this.player.authorId).subscribe({
         next: (outcomeType) => {
           this.playerOutcomeType = outcomeType;
@@ -375,7 +355,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       authorId: this.player.authorId,
       addedText: this.newTextControl.value.trim(),
       submissionId: null, // This indicates a new submission
-      outcomeType: this.playerOutcomeType || undefined // Include outcomeType for WHAT_WILL_BECOME_OF_US
+      outcomeType: this.playerOutcomeType?.id || undefined // Include outcomeType for WHAT_WILL_BECOME_OF_US
     };
 
     this.isLoading = true;
@@ -453,13 +433,13 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     if (!outcomeType) return '';
     switch (outcomeType) {
       case 'success':
-        return `IMPRESSED ${entityName}`;
+        return `IMPRESSED ${entityName} ending`;
       case 'neutral':
-        return `FAILED ${entityName}`;
+        return `FAILED ${entityName} ending`;
       case 'failure':
-        return `DESTROYED ${entityName}`;
+        return `DESTROYED ${entityName} ending`;
       default:
-        return '';
+        return outcomeType === this.playerOutcomeType?.id ? this.playerOutcomeType?.label : '';
     }
   }
 
@@ -468,18 +448,23 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     const entityName = this.gameSessionDisplay?.entity || 'the Entity';
     switch (outcomeType) {
       case 'success':
-        return `What will happen if we impress ${entityName} and survive?`;
+        return `IMPRESSED ${entityName}`;
       case 'neutral':
-        return `What will happen if we are fractured and fail in the final confrontation with ${entityName}?`;
+        return `FAILED ${entityName}`;
       case 'failure':
-        return `What will happen if we rise and destroy ${entityName}?`;
+        return `DESTROYED ${entityName}`;
       default:
-        return '';
+        return outcomeType;
     }
   }
 
   getOutcomeTypeClass(outcomeType: string | undefined): string {
     if (!outcomeType) return '';
+
+    if (outcomeType !== 'success' && outcomeType !== 'neutral' && outcomeType !== 'failure') {
+      return 'outcome-success';
+    }
+
     return `outcome-${outcomeType}`;
   }
 }

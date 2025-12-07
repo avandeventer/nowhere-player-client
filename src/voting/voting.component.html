@@ -1,10 +1,24 @@
 <div class="voting-container">
   <div class="voting-header">
     <h1 class="phase-question">{{ phaseQuestion }}</h1>
-    <p class="voting-instructions">Click on submissions to rank them from best to worst. The first one you select will be ranked #1, the second will be #2, and so on.</p>
+    <p class="voting-instructions">{{ phaseInfo?.phaseInstructions || 'Click on submissions to rank them from best to worst. The first one you select will be ranked #1, the second will be #2, and so on.' }}</p>
   </div>
 
-  @if (isLoading) {
+  @if (isNavigateVotingPhase()) {
+    <app-compass-voting
+      [gameCode]="gameCode"
+      [player]="player"
+      [submissions]="submissions"
+      (playerDone)="playerDone.emit($event)">
+    </app-compass-voting>
+  } @else if (hasStoryWithOptions()) {
+    <app-story 
+      [gameCode]="gameCode" 
+      [player]="player"
+      [phaseInfo]="phaseInfo"
+      (playerDone)="playerDone.emit($event)">
+    </app-story>
+  } @else if (isLoading) {
     <div class="loading-container">
       <mat-icon class="loading-icon">hourglass_empty</mat-icon>
       <p>Loading submissions for voting...</p>
@@ -39,25 +53,25 @@
 
       <!-- Submissions for Selection -->
       <div class="submissions-list">
-        @if (isWhatWillBecomeOfUsVotePhase() && playerOutcomeType) {
+        @if (isMultipleOutcomeTypeVotePhase() && playerOutcomeType) {
           <div class="outcome-filter-message">
-            <mat-icon>{{ playerOutcomeType === 'success' ? 'check_circle' : playerOutcomeType === 'neutral' ? 'remove_circle' : 'cancel' }}</mat-icon>
-            <p>You can only vote on <strong>{{ getOutcomeTypeLabel(playerOutcomeType) }}</strong> endings</p>
+            <mat-icon>{{ playerOutcomeType?.id === 'success' ? 'check_circle' : playerOutcomeType?.id === 'neutral' ? 'remove_circle' : 'cancel' }}</mat-icon>
+            <p>You can only vote on resolutions for <strong>{{ getOutcomeTypeLabel(playerOutcomeType?.id) }}</strong></p>
           </div>
         }
         @for (submission of submissions; track submission.submissionId) {
           <mat-card 
             class="submission-card" 
             [class.selected]="isSelected(submission.submissionId)"
-            [class.outcome-highlight]="isWhatWillBecomeOfUsVotePhase() && submission.outcomeType"
-            [ngClass]="isWhatWillBecomeOfUsVotePhase() && submission.outcomeType ? getOutcomeTypeClass(submission.outcomeType) : ''"
+            [class.outcome-highlight]="isMultipleOutcomeTypeVotePhase() && submission.outcomeType"
+            [ngClass]="isMultipleOutcomeTypeVotePhase() && submission.outcomeType ? getOutcomeTypeClass(submission.outcomeType) : ''"
             [class.disabled]="!canSelectSubmission(submission)"
             (click)="canSelectSubmission(submission) && onSubmissionToggle(submission.submissionId)">
             <mat-card-content>
               <div class="submission-content">
-                @if (isWhatWillBecomeOfUsVotePhase() && submission.outcomeType) {
+                @if (isMultipleOutcomeTypeVotePhase() && submission.outcomeType) {
                   <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
-                    {{ getOutcomeTypeLabel(submission.outcomeType) }} Ending
+                    {{ getOutcomeTypeLabel(submission.outcomeType) }}
                     @if (isPlayerSubmission(submission)) {
                       <span class="your-submission">(Your submission)</span>
                     }

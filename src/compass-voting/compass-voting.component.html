@@ -1,0 +1,49 @@
+<div class="compass-container">
+  @if (hasVoted) {
+    <div class="voted-container">
+      <mat-icon class="voted-icon">check_circle</mat-icon>
+      <h2>Vote Submitted!</h2>
+      <p>Thank you for voting. The results will be calculated when all players have voted.</p>
+    </div>
+  } @else {
+    <div class="compass-wrapper">
+      <div class="compass-rose">
+        @for (direction of directions; track direction.id) {
+          <button
+            mat-fab
+            [class]="'compass-button compass-' + direction.position"
+            [class.selected]="isSelected(direction.id)"
+            [disabled]="isLoading"
+            (click)="selectDirection(direction.id)"
+            [attr.aria-label]="direction.label">
+            <mat-icon>{{ direction.icon }}</mat-icon>
+            <span class="direction-label">{{ direction.label }}</span>
+          </button>
+        }
+        <div class="compass-center">
+          <mat-icon class="center-icon">explore</mat-icon>
+        </div>
+      </div>
+      
+      @if (selectedDirection) {
+        <div class="submit-container">
+          <button
+            mat-raised-button
+            color="primary"
+            class="submit-button"
+            [disabled]="isLoading"
+            (click)="submitVote()">
+            @if (isLoading) {
+              <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+              Submitting...
+            } @else {
+              <mat-icon>navigation</mat-icon>
+              Submit Vote
+            }
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>
+
