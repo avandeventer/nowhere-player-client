@@ -13,7 +13,7 @@ import { Player } from '../assets/player';
 import { GameState } from '../assets/game-state';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
 import { GameSessionDisplay } from '../assets/game-session-display';
-import { CollaborativeTextPhaseInfo, CollaborativeMode } from '../assets/collaborative-text-phase-info';
+import { CollaborativeTextPhaseInfo, CollaborativeMode, PhaseType } from '../assets/collaborative-text-phase-info';
 import { OutcomeType } from '../assets/outcome-type';
 @Component({
   selector: 'collaborative-text',
@@ -235,32 +235,23 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   private loadPlayerOutcomeType() {
-    // Only load outcome type for WHAT_WILL_BECOME_OF_US phase
-    if (this.gameState === GameState.WHAT_WILL_BECOME_OF_US || this.gameState === GameState.HOW_DOES_THIS_RESOLVE) {
-      this.gameService.getOutcomeTypeForPlayer(this.gameCode, this.player.authorId).subscribe({
-        next: (outcomeType) => {
-          this.playerOutcomeType = outcomeType;
-          console.log('Player outcome type:', outcomeType);
-        },
-        error: (error) => {
-          console.error('Error loading player outcome type:', error);
-        }
-      });
-    }
+    this.gameService.getOutcomeTypeForPlayer(this.gameCode, this.player.authorId).subscribe({
+      next: (outcomeType) => {
+        this.playerOutcomeType = outcomeType;
+        console.log('Player outcome type:', outcomeType);
+      },
+      error: (error) => {
+        console.error('Error loading player outcome type:', error);
+      }
+    });
   }
 
   isWhatAreWeCapableOfPhase(): boolean {
     return this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
   }
 
-  private   isGameInCollaborativeTextPhase(): boolean {
-    return this.gameState === GameState.WHERE_ARE_WE || 
-           this.gameState === GameState.WHAT_DO_WE_FEAR ||
-           this.gameState === GameState.WHO_ARE_WE || 
-           this.gameState === GameState.WHAT_IS_COMING || 
-           this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF ||
-           this.gameState === GameState.WHAT_WILL_BECOME_OF_US ||
-           this.gameState === GameState.WRITE_ENDING_TEXT;
+  private isGameInCollaborativeTextPhase(): boolean {
+    return this.phaseInfo?.phaseType === PhaseType.SUBMISSION;
   }
 
   // Helper methods for simple mode
