@@ -11,7 +11,7 @@
       [submissions]="submissions"
       (playerDone)="playerDone.emit($event)">
     </app-compass-voting>
-  } @else if (hasStoryWithOptions()) {
+  } @else if (isMakeChoiceVotingPhase()) {
     <app-story 
       [gameCode]="gameCode" 
       [player]="player"
@@ -53,25 +53,24 @@
 
       <!-- Submissions for Selection -->
       <div class="submissions-list">
-        @if (isMultipleOutcomeTypeVotePhase() && playerOutcomeType) {
+        @if (playerOutcomeType) {
           <div class="outcome-filter-message">
-            <mat-icon>{{ playerOutcomeType?.id === 'success' ? 'check_circle' : playerOutcomeType?.id === 'neutral' ? 'remove_circle' : 'cancel' }}</mat-icon>
-            <p>You can only vote on resolutions for <strong>{{ getOutcomeTypeLabel(playerOutcomeType?.id) }}</strong></p>
+            <mat-icon>{{ playerOutcomeType.id === 'failure' ? 'cancel' : playerOutcomeType.id === 'neutral' ? 'remove_circle' : 'check_circle' }}</mat-icon>
+            <p>You can only vote on resolutions for <strong>{{ playerOutcomeType.label }}</strong></p>
           </div>
         }
         @for (submission of submissions; track submission.submissionId) {
           <mat-card 
             class="submission-card" 
             [class.selected]="isSelected(submission.submissionId)"
-            [class.outcome-highlight]="isMultipleOutcomeTypeVotePhase() && submission.outcomeType"
-            [ngClass]="isMultipleOutcomeTypeVotePhase() && submission.outcomeType ? getOutcomeTypeClass(submission.outcomeType) : ''"
-            [class.disabled]="!canSelectSubmission(submission)"
-            (click)="canSelectSubmission(submission) && onSubmissionToggle(submission.submissionId)">
+            [class.outcome-highlight]="submission.outcomeTypeWithLabel"
+            [ngClass]="submission.outcomeTypeWithLabel ? getOutcomeTypeClass(submission.outcomeTypeWithLabel.id) : ''"
+            (click)="onSubmissionToggle(submission.submissionId)">
             <mat-card-content>
               <div class="submission-content">
-                @if (isMultipleOutcomeTypeVotePhase() && submission.outcomeType) {
-                  <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
-                    {{ getOutcomeTypeLabel(submission.outcomeType) }}
+                @if (submission.outcomeTypeWithLabel) {
+                  <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeTypeWithLabel.id)">
+                    {{ submission.outcomeTypeWithLabel.label }}
                     @if (isPlayerSubmission(submission)) {
                       <span class="your-submission">(Your submission)</span>
                     }

@@ -49,7 +49,6 @@ export class VotingComponent implements OnInit, OnChanges {
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   submissions: TextSubmission[] = [];
-  allSubmissions: TextSubmission[] = []; // All submissions including player's own
   selectedSubmissions: string[] = []; // Array of submission IDs in order of selection
   isLoading = false;
   hasVoted = false;
@@ -60,9 +59,7 @@ export class VotingComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.setupPhaseProperties();
-    if (this.isMultipleOutcomeTypeVotePhase()) {
-      this.loadPlayerOutcomeType();
-    }
+    this.loadPlayerOutcomeType();
     this.loadVotingSubmissions();
   }
   
@@ -74,47 +71,18 @@ export class VotingComponent implements OnInit, OnChanges {
       this.phaseQuestion = this.phaseInfo?.phaseQuestion || 'Vote on submissions';
   }
 
-  private loadPlayerOutcomeType() {
-    if (this.isMultipleOutcomeTypeVotePhase()) {
-      this.gameService.getOutcomeTypeForPlayer(this.gameCode, this.player.authorId).subscribe({
-        next: (outcomeType) => {
-          this.playerOutcomeType = outcomeType;
-          console.log('Player outcome type for voting:', outcomeType);
-          // Reload submissions after getting outcome type to filter correctly
-          this.loadVotingSubmissions();
-        },
-        error: (error) => {
-          console.error('Error loading player outcome type:', error);
-        }
-      });
-    }
-  }
-
   private loadVotingSubmissions() {
     this.isLoading = true;
-    
-    if (this.isMultipleOutcomeTypeVotePhase() && !this.playerOutcomeType) {
-      // Wait for outcome type to be loaded
-      return;
-    }
-    
+        
     this.gameService.getVotingSubmissions(this.gameCode, this.player.authorId).subscribe({
       next: (submissions) => {
-        this.allSubmissions = submissions;
         
-        // For WHAT_WILL_BECOME_OF_US, also load player's own submissions
-        if (this.isMultipleOutcomeTypeVotePhase()) {
-          this.loadPlayerOwnSubmissions().then(() => {
-            this.filterSubmissionsByOutcomeType();
-          });
-        } else {
-          this.submissions = submissions;
-          this.initializeRankings();
-          if (this.submissions.length === 0) {
-            this.playerDone.emit(ComponentType.VOTING);
-          }
-          this.isLoading = false;
+        this.submissions = submissions;
+        this.initializeRankings();
+        if (this.submissions.length === 0) {
+          this.playerDone.emit(ComponentType.VOTING);
         }
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading voting submissions:', error);
@@ -123,54 +91,12 @@ export class VotingComponent implements OnInit, OnChanges {
     });
   }
 
-  private async loadPlayerOwnSubmissions(): Promise<void> {
-    // Get the collaborative text phase to find player's own submissions
-    return new Promise((resolve, reject) => {
-      this.gameService.getCollaborativeTextPhase(this.gameCode).subscribe({
-        next: (phase) => {
-          if (phase && phase.submissions) {
-            // Add player's own submissions to allSubmissions
-            const playerSubmissions = phase.submissions.filter(
-              submission => submission.authorId === this.player.authorId
-            );
-            
-            // Merge with existing submissions, avoiding duplicates
-            const existingIds = new Set(this.allSubmissions.map(s => s.submissionId));
-            const newPlayerSubmissions = playerSubmissions.filter(
-              s => !existingIds.has(s.submissionId)
-            );
-            
-            this.allSubmissions = [...this.allSubmissions, ...newPlayerSubmissions];
-          }
-          resolve();
-        },
-        error: (error) => {
-          console.error('Error loading collaborative phase for player submissions:', error);
-          resolve(); // Continue even if this fails
-        }
-      });
+  loadPlayerOutcomeType() {
+    this.gameService.getOutcomeTypeForPlayer(this.gameCode, this.player.authorId).subscribe({
+      next: (outcomeType) => {
+        this.playerOutcomeType = outcomeType;
+      },
     });
-  }
-
-  private filterSubmissionsByOutcomeType() {
-    if (this.isMultipleOutcomeTypeVotePhase() && this.playerOutcomeType) {
-      // Filter to only show submissions matching player's outcome type
-      this.submissions = this.allSubmissions.filter(
-        submission => submission.outcomeType === this.playerOutcomeType?.id || null
-      );
-    } else {
-      this.submissions = this.allSubmissions;
-    }
-    
-    this.initializeRankings();
-    if (this.submissions.length === 0) {
-      this.playerDone.emit(ComponentType.VOTING);
-    }
-    this.isLoading = false;
-  }
-
-  isMultipleOutcomeTypeVotePhase(): boolean {
-    return this.gameState === GameState.WHAT_WILL_BECOME_OF_US_VOTE || this.gameState === GameState.HOW_DOES_THIS_RESOLVE_VOTING;
   }
 
   private initializeRankings() {
@@ -249,24 +175,18 @@ export class VotingComponent implements OnInit, OnChanges {
     return submission.authorId === this.player.authorId;
   }
 
-  getOutcomeTypeLabel(outcomeType: string | undefined): string {
-    if (this.playerOutcomeType && outcomeType === this.playerOutcomeType?.id) {
-      return this.playerOutcomeType.label;
-    }
-    return '';
-  }
-
   getOutcomeTypeClass(outcomeType: string | undefined): string {
     if (!outcomeType) return '';
+
+    if (outcomeType != 'success' && outcomeType != 'neutral' && outcomeType != 'failure') {
+      return 'outcome-success';
+    }
+    
     return `outcome-${outcomeType}`;
   }
 
-  canSelectSubmission(submission: TextSubmission): boolean {
-    // For WHAT_WILL_BECOME_OF_US, only allow selecting submissions matching player's outcome type
-    if (this.isMultipleOutcomeTypeVotePhase()) {
-      return submission.outcomeType === (this.playerOutcomeType?.id || null);
-    }
-    return true;
+  isMakeChoiceVotingPhase(): boolean {
+    return this.gameState === GameState.MAKE_CHOICE_VOTING;
   }
 
   hasStoryWithOptions(): boolean {

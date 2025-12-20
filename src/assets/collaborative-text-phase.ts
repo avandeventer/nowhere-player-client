@@ -1,3 +1,4 @@
+import { OutcomeType } from './outcome-type';
 import { PlayerVote } from './player-vote';
 
 export interface CollaborativeTextPhase {
@@ -23,6 +24,7 @@ export interface TextSubmission {
   totalVotes: number;
   averageRanking: number;
   outcomeType?: string; // "success", "neutral", or "failure" - used for WHAT_WILL_BECOME_OF_US phase
+  outcomeTypeWithLabel?: OutcomeType;
 }
 
 export interface TextAddition {
