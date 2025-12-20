@@ -60,7 +60,9 @@ export class VotingComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.setupPhaseProperties();
     this.loadPlayerOutcomeType();
-    this.loadVotingSubmissions();
+    if (this.gameState !== GameState.NAVIGATE_VOTING) {
+      this.loadVotingSubmissions();
+    }
   }
   
   ngOnChanges() {
