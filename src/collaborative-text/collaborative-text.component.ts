@@ -71,12 +71,50 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   // WHAT_WILL_BECOME_OF_US phase properties
   playerOutcomeType: OutcomeType | null = null;
 
+  // Streamlined mode properties
+  isStreamlinedMode = false;
+  availableOutcomeTypes: OutcomeType[] = [];
+  selectedOutcomeType: OutcomeType | null = null;
+
   constructor(private gameService: GameService) {}
 
   ngOnInit() {
     this.updatePhaseInfoFromInput();
     this.loadPlayerOutcomeType();
+    this.checkStreamlinedMode();
     this.loadCollaborativePhase();
+  }
+
+  private checkStreamlinedMode() {
+    this.gameService.getFeatureFlag('streamlinedCollaborativeStories').subscribe({
+      next: (isStreamlined) => {
+        this.isStreamlinedMode = isStreamlined;
+        if (isStreamlined && !this.hasSubmitted) {
+          this.loadOutcomeTypes();
+        }
+      },
+      error: (error) => {
+        console.error('Error checking streamlined mode:', error);
+        this.isStreamlinedMode = false;
+      }
+    });
+  }
+
+  private loadOutcomeTypes() {
+    this.gameService.getOutcomeTypes(this.gameCode).subscribe({
+      next: (outcomeTypes) => {
+        this.availableOutcomeTypes = outcomeTypes;
+        console.log('Available outcome types:', outcomeTypes);
+      },
+      error: (error) => {
+        console.error('Error loading outcome types:', error);
+        this.availableOutcomeTypes = [];
+      }
+    });
+  }
+
+  onSelectOutcomeType(outcomeType: OutcomeType) {
+    this.selectedOutcomeType = outcomeType;
   }
 
   ngOnChanges() {
@@ -341,12 +379,24 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   onSubmitNewText() {
     if (this.newTextControl.invalid || !this.newTextControl.value) return;
 
+    // In streamlined mode, require outcomeType selection if available
+    if (this.isStreamlinedMode && this.availableOutcomeTypes.length > 0 && !this.selectedOutcomeType) {
+      alert('Please select an option before submitting.');
+      return;
+    }
+
+    // In streamlined mode, use selected outcomeType if available
+    const outcomeType: OutcomeType | null = this.isStreamlinedMode && this.selectedOutcomeType 
+      ? this.selectedOutcomeType
+      : null;
+
     const textAddition: TextAddition = {
       additionId: '',
       authorId: this.player.authorId,
       addedText: this.newTextControl.value.trim(),
       submissionId: null, // This indicates a new submission
-      outcomeType: this.playerOutcomeType?.id || undefined // Include outcomeType for WHAT_WILL_BECOME_OF_US
+      outcomeType: outcomeType?.id,
+      outcomeTypeWithLabel: this.selectedOutcomeType ? this.selectedOutcomeType : undefined // Include outcomeType for streamlined mode or WHAT_WILL_BECOME_OF_US
     };
 
     this.isLoading = true;
@@ -356,6 +406,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.hasSubmitted = true;
         this.showNewSubmission = false;
         this.newTextControl.reset();
+        this.selectedOutcomeType = null; // Clear selection after submission
         this.availableSubmissions = [];
         this.maximumSubmissionsReached = false;
         this.updateAvailableSubmissions();
@@ -419,10 +470,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     return submission.authorId === this.player.authorId;
   }
 
-  getOutcomeTypeLabel(outcomeType: string | undefined): string {
+  getOutcomeTypeLabel(submission: TextSubmission): string {
     const entityName = this.gameSessionDisplay?.entity || 'the Entity';
-    if (!outcomeType) return '';
-    switch (outcomeType) {
+    if (!submission.outcomeType || !submission.outcomeTypeWithLabel) return '';
+    switch (submission.outcomeType) {
       case 'success':
         return `IMPRESSED ${entityName} ending`;
       case 'neutral':
@@ -430,7 +481,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       case 'failure':
         return `DESTROYED ${entityName} ending`;
       default:
-        return outcomeType === this.playerOutcomeType?.id ? this.playerOutcomeType?.label : '';
+        return submission.outcomeTypeWithLabel?.label !== undefined ? submission.outcomeTypeWithLabel.label : 
+          submission.outcomeType === this.playerOutcomeType?.id ? this.playerOutcomeType?.label : '';
     }
   }
 

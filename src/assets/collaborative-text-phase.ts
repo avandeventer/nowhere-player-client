@@ -33,4 +33,5 @@ export interface TextAddition {
   addedText: string;
   submissionId: string | null; // null for new submissions
   outcomeType?: string; // Optional: "success", "neutral", or "failure" - used for WHAT_WILL_BECOME_OF_US phase
+  outcomeTypeWithLabel?: OutcomeType;
 }

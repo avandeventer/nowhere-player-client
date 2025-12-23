@@ -89,4 +89,12 @@ export class GameService {
   getGameBoard(gameCode: string): Observable<GameBoard> {
     return this.http.get<GameBoard>(`${environment.nowhereBackendUrl}/game-board?gameCode=${gameCode}`);
   }
+
+  getFeatureFlag(flagName: string): Observable<boolean> {
+    return this.http.get<boolean>(`${environment.nowhereBackendUrl}/featureFlags/value?flagName=${flagName}`);
+  }
+
+  getOutcomeTypes(gameCode: string): Observable<OutcomeType[]> {
+    return this.http.get<OutcomeType[]>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeTypes?gameCode=${gameCode}`);
+  }
 }

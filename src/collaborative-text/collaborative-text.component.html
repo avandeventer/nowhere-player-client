@@ -4,6 +4,30 @@
     <p class="instructions">{{ phaseInstructions }}</p>
   </div>
 
+  <!-- Outcome Types Selection (Streamlined Mode) -->
+  @if (isStreamlinedMode && !hasSubmitted && availableOutcomeTypes.length > 0) {
+    <mat-card class="outcome-types-card">
+      <mat-card-header>
+        <mat-card-title>Choose an Option</mat-card-title>
+        <mat-card-subtitle>Select one to write about</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="outcome-types-scroll">
+          @for (outcomeType of availableOutcomeTypes; track outcomeType.id) {
+            <mat-card 
+              class="outcome-type-item"
+              [class.selected]="selectedOutcomeType?.id === outcomeType.id"
+              (click)="onSelectOutcomeType(outcomeType)">
+              <mat-card-content>
+                <p>{{ outcomeType.label }}</p>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
   @if (isLoading) {
     <div class="loading-container">
       <mat-spinner diameter="40"></mat-spinner>
@@ -12,10 +36,12 @@
   } @else {
     <!-- New Submission Section -->
     @if (showNewSubmission || isSimpleMode) {
-      <mat-card class="submission-card" [class.outcome-highlight]="playerOutcomeType" [ngClass]="playerOutcomeType ? getOutcomeTypeClass(playerOutcomeType.id) : ''">
+      <mat-card class="submission-card" [class.outcome-highlight]="playerOutcomeType || selectedOutcomeType" [ngClass]="(playerOutcomeType || selectedOutcomeType) ? getOutcomeTypeClass((selectedOutcomeType || playerOutcomeType)?.id) : ''">
         <mat-card-header>
           <mat-card-title>{{ phaseQuestion }}</mat-card-title>
-          @if (playerOutcomeType) {
+          @if (selectedOutcomeType) {
+            <mat-card-subtitle class="outcome-message">{{ selectedOutcomeType.label }}</mat-card-subtitle>
+          } @else if (playerOutcomeType) {
             <mat-card-subtitle class="outcome-message">{{ playerOutcomeType.label }}</mat-card-subtitle>
           }
         </mat-card-header>
@@ -55,7 +81,7 @@
             mat-flat-button 
             color="primary" 
             (click)="onSubmitNewText()"
-            [disabled]="newTextControl.invalid || isLoading">
+            [disabled]="newTextControl.invalid || isLoading || (isStreamlinedMode && availableOutcomeTypes.length > 0 && !selectedOutcomeType)">
             {{ getSubmitButtonText() }}
           </button>
         </mat-card-actions>
@@ -82,7 +108,7 @@
                   <div class="submission-preview">
                     @if (submission.outcomeType) {
                       <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
-                        {{ getOutcomeTypeLabel(submission.outcomeType) }}
+                        {{ getOutcomeTypeLabel(submission) }}
                         @if (isPlayerSubmission(submission)) {
                           <span class="your-submission">(Your submission)</span>
                         }

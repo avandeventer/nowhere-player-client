@@ -245,3 +245,66 @@
   margin-left: 8px;
   opacity: 0.9;
 }
+
+// Outcome Types Selection (Streamlined Mode)
+.outcome-types-card {
+  margin-bottom: 20px;
+}
+
+.outcome-types-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 0;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+
+    &:hover {
+      background: #555;
+    }
+  }
+}
+
+.outcome-type-item {
+  min-width: 200px;
+  max-width: 200px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.selected {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+  }
+
+  mat-card-content {
+    padding: 16px !important;
+    margin: 0;
+
+    p {
+      margin: 0;
+      font-weight: 500;
+      color: #333;
+      text-align: center;
+    }
+  }
+}

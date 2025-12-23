@@ -230,7 +230,7 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isGameInCollaborativeTextPhase() {
-    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.SUBMISSION;
+    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.SUBMISSION && this.gameState !== GameState.INIT && this.gameState !== GameState.PREAMBLE;
   }
 
   isGameInVotingPhase() {
