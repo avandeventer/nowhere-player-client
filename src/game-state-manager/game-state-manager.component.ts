@@ -202,7 +202,10 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isGameInPreamblePhase() {
-    return this.gameState === GameState.PREAMBLE || this.gameState === GameState.PREAMBLE_AGAIN || this.gameState === GameState.ENDING_PREAMBLE;
+    return this.gameState === GameState.PREAMBLE 
+    || this.gameState === GameState.PREAMBLE_AGAIN 
+    || this.gameState === GameState.ENDING_PREAMBLE 
+    || this.gameState === GameState.EPILOGUE_PREAMBLE;
   }
 
   isGameInWriteOutcomesPhase() {
