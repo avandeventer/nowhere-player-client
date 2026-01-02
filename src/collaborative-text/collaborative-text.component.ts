@@ -101,7 +101,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   private loadOutcomeTypes() {
-    this.gameService.getOutcomeTypes(this.gameCode).subscribe({
+    this.gameService.getOutcomeTypes(this.gameCode, this.player.authorId).subscribe({
       next: (outcomeTypes) => {
         this.availableOutcomeTypes = outcomeTypes;
         console.log('Available outcome types:', outcomeTypes);

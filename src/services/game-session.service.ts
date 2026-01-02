@@ -94,7 +94,7 @@ export class GameService {
     return this.http.get<boolean>(`${environment.nowhereBackendUrl}/featureFlags/value?flagName=${flagName}`);
   }
 
-  getOutcomeTypes(gameCode: string): Observable<OutcomeType[]> {
-    return this.http.get<OutcomeType[]>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeTypes?gameCode=${gameCode}`);
+  getOutcomeTypes(gameCode: string, playerId: string): Observable<OutcomeType[]> {
+    return this.http.get<OutcomeType[]>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeTypes?gameCode=${gameCode}&playerId=${playerId}`);
   }
 }
