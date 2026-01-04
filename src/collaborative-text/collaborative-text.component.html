@@ -5,7 +5,7 @@
   </div>
 
   <!-- Outcome Types Selection (Streamlined Mode) -->
-  @if (isStreamlinedMode && !hasSubmitted && availableOutcomeTypes.length > 0) {
+  @if (isStreamlinedMode && (!hasSubmitted || isSimpleMode) && availableOutcomeTypes.length > 0) {
     <mat-card class="outcome-types-card">
       <mat-card-header>
         <mat-card-title>Choose an Option</mat-card-title>
@@ -14,14 +14,36 @@
       <mat-card-content>
         <div class="outcome-types-scroll">
           @for (outcomeType of availableOutcomeTypes; track outcomeType.id) {
-            <mat-card 
-              class="outcome-type-item"
-              [class.selected]="selectedOutcomeType?.id === outcomeType.id"
-              (click)="onSelectOutcomeType(outcomeType)">
-              <mat-card-content>
-                <p>{{ outcomeType.label }}</p>
-              </mat-card-content>
-            </mat-card>
+            @if (outcomeType.subTypes && outcomeType.subTypes.length > 0) {
+              <!-- Parent with subTypes -->
+              <mat-card class="outcome-type-item parent-with-subtypes">
+                <mat-card-content>
+                  <p class="parent-label">{{ outcomeType.label }}</p>
+                  <div class="subtypes-container">
+                    @for (subType of outcomeType.subTypes; track subType.id) {
+                      <mat-card 
+                        class="subtype-item"
+                        [class.selected]="selectedOutcomeType?.subTypes?.[0]?.id === subType.id"
+                        (click)="onSelectSubType(outcomeType, subType)">
+                        <mat-card-content>
+                          <p>{{ subType.label }}</p>
+                        </mat-card-content>
+                      </mat-card>
+                    }
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            } @else {
+              <!-- Regular outcomeType without subTypes -->
+              <mat-card 
+                class="outcome-type-item"
+                [class.selected]="selectedOutcomeType?.id === outcomeType.id"
+                (click)="onSelectOutcomeType(outcomeType)">
+                <mat-card-content>
+                  <p>{{ outcomeType.label }}</p>
+                </mat-card-content>
+              </mat-card>
+            }
           }
         </div>
       </mat-card-content>
@@ -40,7 +62,9 @@
         <mat-card-header>
           <mat-card-title>{{ phaseQuestion }}</mat-card-title>
           @if (selectedOutcomeType) {
-            <mat-card-subtitle class="outcome-message">{{ selectedOutcomeType.label }}</mat-card-subtitle>
+            <mat-card-subtitle class="outcome-message">
+              {{ selectedOutcomeType.subTypes && selectedOutcomeType.subTypes.length > 0 ? selectedOutcomeType.subTypes[0].label : selectedOutcomeType.label }}
+            </mat-card-subtitle>
           } @else if (playerOutcomeType) {
             <mat-card-subtitle class="outcome-message">{{ playerOutcomeType.label }}</mat-card-subtitle>
           }
@@ -106,6 +130,11 @@
                 (click)="onSelectSubmission(submission)">
                 <mat-card-content>
                   <div class="submission-preview">
+                    @if (submission.outcomeTypeWithLabel && submission.outcomeTypeWithLabel.subTypes && submission.outcomeTypeWithLabel.subTypes.length > 0) {
+                      <p class="submission-text">
+                        {{ submission.outcomeTypeWithLabel.label }}
+                      </p>
+                    }
                     @if (submission.outcomeType) {
                       <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
                         {{ getOutcomeTypeLabel(submission) }}

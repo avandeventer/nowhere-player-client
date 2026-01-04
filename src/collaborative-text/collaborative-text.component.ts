@@ -104,6 +104,22 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.gameService.getOutcomeTypes(this.gameCode, this.player.authorId).subscribe({
       next: (outcomeTypes) => {
         this.availableOutcomeTypes = outcomeTypes;
+        // Auto-select first outcomeType or first subType if available
+        if (this.availableOutcomeTypes.length > 0) {
+          const firstOutcomeType = this.availableOutcomeTypes[0];
+          if (firstOutcomeType.subTypes && firstOutcomeType.subTypes.length > 0) {
+            // If first outcomeType has subTypes, set selectedOutcomeType to parent with first subType
+            this.selectedOutcomeType = {
+              id: firstOutcomeType.id,
+              label: firstOutcomeType.label,
+              clarifier: firstOutcomeType.clarifier,
+              subTypes: [firstOutcomeType.subTypes[0]]
+            };
+          } else {
+            // Otherwise select the outcomeType itself
+            this.selectedOutcomeType = firstOutcomeType;
+          }
+        }
         console.log('Available outcome types:', outcomeTypes);
       },
       error: (error) => {
@@ -114,7 +130,22 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   onSelectOutcomeType(outcomeType: OutcomeType) {
+    // If outcomeType has subTypes, don't select the parent - subTypes will be selectable
+    if (outcomeType.subTypes && outcomeType.subTypes.length > 0) {
+      // Don't select parent when it has subTypes
+      return;
+    }
     this.selectedOutcomeType = outcomeType;
+  }
+
+  onSelectSubType(parentOutcomeType: OutcomeType, subType: OutcomeType) {
+    // Set selectedOutcomeType to the parent with a single subType array containing the selected subType
+    this.selectedOutcomeType = {
+      id: parentOutcomeType.id,
+      label: parentOutcomeType.label,
+      clarifier: parentOutcomeType.clarifier,
+      subTypes: [subType]
+    };
   }
 
   ngOnChanges() {
@@ -390,12 +421,18 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       ? this.selectedOutcomeType
       : null;
 
+    // If selectedOutcomeType has subTypes, use the first subType's id as the outcomeType
+    // but keep the full parent structure in outcomeTypeWithLabel
+    const outcomeTypeId = outcomeType?.subTypes && outcomeType.subTypes.length > 0
+      ? outcomeType.subTypes[0].id
+      : outcomeType?.id;
+
     const textAddition: TextAddition = {
       additionId: '',
       authorId: this.player.authorId,
       addedText: this.newTextControl.value.trim(),
       submissionId: null, // This indicates a new submission
-      outcomeType: outcomeType?.id,
+      outcomeType: outcomeTypeId,
       outcomeTypeWithLabel: this.selectedOutcomeType ? this.selectedOutcomeType : undefined // Include outcomeType for streamlined mode or WHAT_WILL_BECOME_OF_US
     };
 
@@ -411,6 +448,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.maximumSubmissionsReached = false;
         this.updateAvailableSubmissions();
         this.isLoading = false;
+        if (this.isSimpleMode) {
+          this.loadOutcomeTypes();
+        }
       },
       error: (error) => {
         console.error('Error submitting new text:', error);
@@ -481,6 +521,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       case 'failure':
         return `DESTROYED ${entityName} ending`;
       default:
+        // If subTypes are present, return the first subType.label
+        if (submission.outcomeTypeWithLabel?.subTypes && submission.outcomeTypeWithLabel.subTypes.length > 0) {
+          return submission.outcomeTypeWithLabel.subTypes[0].label || '';
+        }
+        // Otherwise, return outcomeTypeWithLabel.label if present
         return submission.outcomeTypeWithLabel?.label !== undefined ? submission.outcomeTypeWithLabel.label : 
           submission.outcomeType === this.playerOutcomeType?.id ? this.playerOutcomeType?.label : '';
     }

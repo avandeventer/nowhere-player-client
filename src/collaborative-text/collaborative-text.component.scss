@@ -308,3 +308,54 @@
     }
   }
 }
+
+.parent-with-subtypes {
+  min-width: auto;
+  max-width: 100%;
+  
+  .parent-label {
+    margin: 0 0 40px 0;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+  }
+
+  .subtypes-container {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .subtype-item {
+    flex: 1;
+    min-width: 150px;
+    max-width: 300px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &.selected {
+      border-color: #4caf50;
+      background-color: #e8f5e9;
+    }
+
+    mat-card-content {
+      padding: 12px !important;
+      margin: 0;
+
+      p {
+        margin: 0;
+        font-weight: 500;
+        color: #333;
+        text-align: center;
+      }
+    }
+  }
+}
