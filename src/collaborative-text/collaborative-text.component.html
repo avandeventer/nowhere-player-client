@@ -2,6 +2,12 @@
   <div class="phase-header">
     <h2>{{ phaseQuestion }}</h2>
     <p class="instructions">{{ phaseInstructions }}</p>
+    @if (phaseInstructions && collaborativeMode) {
+      <p class="instructions">
+        <span class="collaborative-mode-title">{{ getCollaborativeModeLabel() }}</span>
+        <span [innerHTML]="collaborativeModeInstructions"></span>
+      </p>
+    }
   </div>
 
   <!-- Outcome Types Selection (Streamlined Mode) -->

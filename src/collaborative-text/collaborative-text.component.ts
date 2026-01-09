@@ -201,6 +201,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.isCollaborativeMode = this.phaseInfo.collaborativeMode === CollaborativeMode.SHARE_TEXT;
   }
 
+  getCollaborativeModeLabel(): string {
+    if (this.collaborativeMode === CollaborativeMode.RAPID_FIRE) {
+      return 'RAPID FIRE';
+    } else if (this.collaborativeMode === CollaborativeMode.SHARE_TEXT) {
+      return 'COLLABORATIVE MODE';
+    }
+    return '';
+  }
+
   private loadCollaborativePhase() {
     this.isLoading = true;
     this.gameService.getCollaborativeTextPhase(this.gameCode).subscribe({
