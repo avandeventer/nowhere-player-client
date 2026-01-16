@@ -286,6 +286,12 @@
   }
 }
 
+.outcome-type-wrapper {
+  position: relative;
+  min-width: 200px;
+  max-width: 200px;
+}
+
 .outcome-type-item {
   min-width: 200px;
   max-width: 200px;
@@ -313,6 +319,45 @@
       color: #333;
       text-align: center;
     }
+  }
+}
+
+.story-display {
+  margin-bottom: 12px;
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+
+  .encounter-label-text {
+    margin: 0 0 8px 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #666;
+    font-style: italic;
+  }
+
+  .submission-item {
+    margin: 0;
+    border: 2px solid #e0e0e0;
+    background-color: #fafafa;
+    cursor: default;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

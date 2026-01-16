@@ -15,6 +15,7 @@ import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/
 import { GameSessionDisplay } from '../assets/game-session-display';
 import { CollaborativeTextPhaseInfo, CollaborativeMode, PhaseType } from '../assets/collaborative-text-phase-info';
 import { OutcomeType } from '../assets/outcome-type';
+import { Story } from '../assets/story';
 @Component({
   selector: 'collaborative-text',
   templateUrl: './collaborative-text.component.html',
@@ -75,6 +76,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   isStreamlinedMode = false;
   availableOutcomeTypes: OutcomeType[] = [];
   selectedOutcomeType: OutcomeType | null = null;
+  selectedStory: Story | null = null;
+  storyCache: Map<string, Story> = new Map();
 
   constructor(private gameService: GameService) {}
 
@@ -104,6 +107,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.gameService.getOutcomeTypes(this.gameCode, this.player.authorId).subscribe({
       next: (outcomeTypes) => {
         this.availableOutcomeTypes = outcomeTypes;
+        
+        // Load stories for all outcomeTypes that have clarifiers
+        this.loadStoriesForOutcomeTypes(outcomeTypes);
+        
         // Auto-select first outcomeType or first subType if available
         if (this.availableOutcomeTypes.length > 0) {
           const firstOutcomeType = this.availableOutcomeTypes[0];
@@ -119,12 +126,43 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
             // Otherwise select the outcomeType itself
             this.selectedOutcomeType = firstOutcomeType;
           }
+          
+          // Load story for auto-selected outcomeType if it has a clarifier
+          if (this.selectedOutcomeType.clarifier) {
+            // Check cache first, if not available it will be loaded by loadStoriesForOutcomeTypes
+            this.selectedStory = this.storyCache.get(this.selectedOutcomeType.clarifier) || null;
+          }
         }
         console.log('Available outcome types:', outcomeTypes);
       },
       error: (error) => {
         console.error('Error loading outcome types:', error);
         this.availableOutcomeTypes = [];
+      }
+    });
+  }
+
+  private loadStoriesForOutcomeTypes(outcomeTypes: OutcomeType[]) {
+    // Collect all unique story IDs from clarifiers
+    const storyIds = new Set<string>();
+    outcomeTypes.forEach(outcomeType => {
+      if (outcomeType.clarifier) {
+        storyIds.add(outcomeType.clarifier);
+      }
+      // Also check subTypes
+      if (outcomeType.subTypes) {
+        outcomeType.subTypes.forEach(subType => {
+          if (subType.clarifier) {
+            storyIds.add(subType.clarifier);
+          }
+        });
+      }
+    });
+    
+    // Load each story
+    storyIds.forEach(storyId => {
+      if (!this.storyCache.has(storyId)) {
+        this.loadStoryForOutcomeType(storyId);
       }
     });
   }
@@ -136,6 +174,32 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       return;
     }
     this.selectedOutcomeType = outcomeType;
+    
+    // If outcomeType has a clarifier (storyId), get the story from cache
+    if (outcomeType.clarifier) {
+      this.selectedStory = this.storyCache.get(outcomeType.clarifier) || null;
+    } else {
+      this.selectedStory = null;
+    }
+  }
+
+  private loadStoryForOutcomeType(storyId: string) {
+    this.gameService.getStoryByStoryId(this.gameCode, storyId).subscribe({
+      next: (response: any) => {
+        if (response && response.responseBody && response.responseBody.length > 0) {
+          const story = response.responseBody[0];
+          this.storyCache.set(storyId, story);
+          
+          // Update selectedStory if this is the currently selected outcomeType's story
+          if (this.selectedOutcomeType?.clarifier === storyId) {
+            this.selectedStory = story;
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error loading story:', error);
+      }
+    });
   }
 
   onSelectSubType(parentOutcomeType: OutcomeType, subType: OutcomeType) {

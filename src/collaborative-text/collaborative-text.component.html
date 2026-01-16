@@ -41,14 +41,40 @@
               </mat-card>
             } @else {
               <!-- Regular outcomeType without subTypes -->
-              <mat-card 
-                class="outcome-type-item"
-                [class.selected]="selectedOutcomeType?.id === outcomeType.id"
-                (click)="onSelectOutcomeType(outcomeType)">
-                <mat-card-content>
-                  <p>{{ outcomeType.label }}</p>
-                </mat-card-content>
-              </mat-card>
+              <div class="outcome-type-wrapper">
+                @if (selectedOutcomeType?.id === outcomeType.id && selectedStory) {
+                  <div class="story-display">
+                    @if (selectedStory.encounterLabel?.encounterLabel) {
+                      <p class="encounter-label-text">When we encountered {{ selectedStory.encounterLabel?.encounterLabel }} last time</p>
+                    }
+                    <mat-card class="submission-item">
+                      <mat-card-content>
+                        <div class="submission-preview">
+                          <p class="submission-text">{{ selectedStory.prompt }}</p>
+                          @if (selectedStory.selectedOptionId) {
+                            @for (option of selectedStory.options; track option.optionId) {
+                              @if (option.optionId === selectedStory.selectedOptionId) {
+                                <div class="outcome-badge outcome-success">
+                                  {{ option.optionText }}
+                                </div>
+                                <p class="submission-text">{{ option.successText }}</p>
+                              }
+                            }
+                          }
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                }
+                <mat-card 
+                  class="outcome-type-item"
+                  [class.selected]="selectedOutcomeType?.id === outcomeType.id"
+                  (click)="onSelectOutcomeType(outcomeType)">
+                  <mat-card-content>
+                    <p>{{ outcomeType.label }}</p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
             }
           }
         </div>

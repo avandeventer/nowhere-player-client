@@ -97,4 +97,8 @@ export class GameService {
   getOutcomeTypes(gameCode: string, playerId: string): Observable<OutcomeType[]> {
     return this.http.get<OutcomeType[]>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeTypes?gameCode=${gameCode}&playerId=${playerId}`);
   }
+
+  getStoryByStoryId(gameCode: string, storyId: string): Observable<any> {
+    return this.http.get<any>(`${environment.nowhereBackendUrl}/story?gameCode=${gameCode}&storyId=${storyId}`);
+  }
 }
