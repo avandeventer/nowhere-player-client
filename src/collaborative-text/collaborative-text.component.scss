@@ -7,18 +7,15 @@
 .phase-header {
   text-align: center;
   margin-bottom: 30px;
-
   h2 {
     color: #1976d2;
     margin-bottom: 10px;
   }
-
   .instructions {
     color: #666;
     font-size: 16px;
     line-height: 1.5;
     margin-bottom: 10px;
-
     .collaborative-mode-title {
       font-weight: bold;
       display: block;
@@ -58,14 +55,12 @@
 
 .submission-item {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all .2s ease;
   border: 2px solid transparent;
-
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
   }
-
   &.selected {
     border-color: #1976d2;
     background-color: #f5f5f5;
@@ -74,11 +69,10 @@
 
 .submission-preview {
   .submission-text {
-    margin: 0 0 12px 0;
+    margin: 0 0 12px;
     line-height: 1.4;
     color: #333;
   }
-
   .submission-meta {
     display: flex;
     justify-content: space-between;
@@ -91,13 +85,11 @@
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-
   h4 {
-    margin: 0 0 16px 0;
+    margin: 0 0 16px;
     color: #1976d2;
     font-size: 16px;
   }
-
   .addition-actions {
     display: flex;
     gap: 12px;
@@ -108,7 +100,6 @@
 .no-submissions-message {
   text-align: center;
   padding: 40px 20px;
-
   mat-icon {
     font-size: 48px;
     width: 48px;
@@ -116,14 +107,12 @@
     color: #ccc;
     margin-bottom: 16px;
   }
-
   h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 8px;
     color: #666;
   }
-
   p {
-    margin: 0 0 20px 0;
+    margin: 0 0 20px;
     color: #999;
   }
 }
@@ -148,52 +137,43 @@
   }
 }
 
-// Simple mode submitted state
 .submitted-card {
-  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+  background: linear-gradient(135deg,#e8f5e8 0%,#f0f8f0 100%);
   border: 2px solid #4caf50;
 }
-
 .submitted-content {
   display: flex;
   align-items: center;
   gap: 15px;
   padding: 10px 0;
 }
-
 .check-icon {
   font-size: 2rem;
   width: 2rem;
   height: 2rem;
 }
-
 .submitted-text h3 {
-  margin: 0 0 5px 0;
+  margin: 0 0 5px;
   color: #2e7d32;
   font-size: 1.2rem;
 }
-
 .submitted-text p {
   margin: 0;
   color: #4caf50;
   font-size: 1rem;
 }
 
-// Outcome type styling for WHAT_WILL_BECOME_OF_US phase
 .outcome-highlight {
   border-left: 4px solid;
 }
-
 .outcome-success {
   border-left-color: #4caf50;
   background-color: #f1f8f4;
 }
-
 .outcome-neutral {
   border-left-color: #f44336;
   background-color: #fff8f1;
 }
-
 .outcome-failure {
   border-left-color: #ff9800;
   background-color: #fef5f5;
@@ -226,24 +206,21 @@
   display: inline-block;
   padding: 4px 12px;
   border-radius: 12px;
-  font-size: 0.875rem;
+  font-size: .875rem;
   font-weight: 600;
   margin-bottom: 8px;
-}
-
-.outcome-badge.outcome-success {
-  background-color: #4caf50;
-  color: white;
-}
-
-.outcome-badge.outcome-neutral {
-  background-color: #ff9800;
-  color: white;
-}
-
-.outcome-badge.outcome-failure {
-  background-color: #f44336;
-  color: white;
+  &.outcome-success {
+    background-color: #4caf50;
+    color: #fff;
+  }
+  &.outcome-neutral {
+    background-color: #ff9800;
+    color: #fff;
+  }
+  &.outcome-failure {
+    background-color: #f44336;
+    color: #fff;
+  }
 }
 
 .your-submission {
@@ -253,11 +230,9 @@
   opacity: 0.9;
 }
 
-// Outcome Types Selection (Streamlined Mode)
 .outcome-types-card {
   margin-bottom: 20px;
 }
-
 .outcome-types-scroll {
   display: flex;
   gap: 12px;
@@ -266,20 +241,16 @@
   padding: 8px 0;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-
   &::-webkit-scrollbar {
     height: 8px;
   }
-
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
   }
-
   &::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 4px;
-
     &:hover {
       background: #555;
     }
@@ -290,29 +261,29 @@
   position: relative;
   min-width: 200px;
   max-width: 200px;
+  &.has-subtypes {
+    min-width: auto;
+    max-width: 100%;
+  }
 }
 
 .outcome-type-item {
   min-width: 200px;
   max-width: 200px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all .2s ease;
   border: 2px solid transparent;
-
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
   }
-
   &.selected {
     border-color: #1976d2;
     background-color: #e3f2fd;
   }
-
   mat-card-content {
     padding: 16px !important;
     margin: 0;
-
     p {
       margin: 0;
       font-weight: 500;
@@ -324,30 +295,26 @@
 
 .story-display {
   margin-bottom: 12px;
-  animation: slideUp 0.3s ease-out;
+  animation: slideUp .3s ease-out;
   overflow: hidden;
-
   .encounter-label-text {
-    margin: 0 0 8px 0;
-    font-size: 0.875rem;
+    margin: 0 0 8px;
+    font-size: .875rem;
     font-weight: 500;
     color: #666;
     font-style: italic;
   }
-
   .submission-item {
     margin: 0;
     border: 2px solid #e0e0e0;
     background-color: #fafafa;
     cursor: default;
-    
     &:hover {
       transform: none;
       box-shadow: none;
     }
   }
 }
-
 @keyframes slideUp {
   from {
     max-height: 0;
@@ -364,14 +331,12 @@
 .parent-with-subtypes {
   min-width: auto;
   max-width: 100%;
-  
   .parent-label {
-    margin: 0 0 40px 0;
+    margin: 0 0 40px;
     font-weight: 600;
     color: #333;
     text-align: left;
   }
-
   .subtypes-container {
     display: flex;
     flex-direction: row;
@@ -379,29 +344,24 @@
     flex-wrap: wrap;
     margin-top: 20px;
   }
-
   .subtype-item {
     flex: 1;
     min-width: 150px;
     max-width: 300px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all .2s ease;
     border: 2px solid transparent;
-
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,.1);
     }
-
     &.selected {
       border-color: #4caf50;
       background-color: #e8f5e9;
     }
-
     mat-card-content {
       padding: 12px !important;
       margin: 0;
-
       p {
         margin: 0;
         font-weight: 500;

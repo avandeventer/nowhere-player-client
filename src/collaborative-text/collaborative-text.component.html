@@ -20,52 +20,52 @@
       <mat-card-content>
         <div class="outcome-types-scroll">
           @for (outcomeType of availableOutcomeTypes; track outcomeType.id) {
-            @if (outcomeType.subTypes && outcomeType.subTypes.length > 0) {
-              <!-- Parent with subTypes -->
-              <mat-card class="outcome-type-item parent-with-subtypes">
-                <mat-card-content>
-                  <p class="parent-label">{{ outcomeType.label }}</p>
-                  <div class="subtypes-container">
-                    @for (subType of outcomeType.subTypes; track subType.id) {
-                      <mat-card 
-                        class="subtype-item"
-                        [class.selected]="selectedOutcomeType?.subTypes?.[0]?.id === subType.id"
-                        (click)="onSelectSubType(outcomeType, subType)">
-                        <mat-card-content>
-                          <p>{{ subType.label }}</p>
-                        </mat-card-content>
-                      </mat-card>
-                    }
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            } @else {
-              <!-- Regular outcomeType without subTypes -->
-              <div class="outcome-type-wrapper">
-                @if (selectedOutcomeType?.id === outcomeType.id && selectedStory) {
-                  <div class="story-display">
-                    @if (selectedStory.encounterLabel?.encounterLabel) {
-                      <p class="encounter-label-text">When we encountered {{ selectedStory.encounterLabel?.encounterLabel }} last time</p>
-                    }
-                    <mat-card class="submission-item">
-                      <mat-card-content>
-                        <div class="submission-preview">
-                          <p class="submission-text">{{ selectedStory.prompt }}</p>
-                          @if (selectedStory.selectedOptionId) {
-                            @for (option of selectedStory.options; track option.optionId) {
-                              @if (option.optionId === selectedStory.selectedOptionId) {
-                                <div class="outcome-badge outcome-success">
-                                  {{ option.optionText }}
-                                </div>
-                                <p class="submission-text">{{ option.successText }}</p>
-                              }
+            <div class="outcome-type-wrapper" [class.has-subtypes]="outcomeType.subTypes && outcomeType.subTypes.length > 0">
+              @if (selectedOutcomeType?.id === outcomeType.id && selectedStory) {
+                <div class="story-display">
+                  @if (selectedStory.encounterLabel?.encounterLabel) {
+                    <p class="encounter-label-text">When we encountered {{ selectedStory.encounterLabel?.encounterLabel }} last time</p>
+                  }
+                  <mat-card class="submission-item">
+                    <mat-card-content>
+                      <div class="submission-preview">
+                        <p class="submission-text">{{ selectedStory.prompt }}</p>
+                        @if (selectedStory.selectedOptionId) {
+                          @for (option of selectedStory.options; track option.optionId) {
+                            @if (option.optionId === selectedStory.selectedOptionId) {
+                              <div class="outcome-badge outcome-success">
+                                {{ option.optionText }}
+                              </div>
+                              <p class="submission-text">{{ option.successText }}</p>
                             }
                           }
-                        </div>
-                      </mat-card-content>
-                    </mat-card>
-                  </div>
-                }
+                        }
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              }
+              @if (outcomeType.subTypes && outcomeType.subTypes.length > 0) {
+                <!-- Parent with subTypes -->
+                <mat-card class="outcome-type-item parent-with-subtypes">
+                  <mat-card-content>
+                    <p class="parent-label">{{ outcomeType.label }}</p>
+                    <div class="subtypes-container">
+                      @for (subType of outcomeType.subTypes; track subType.id) {
+                        <mat-card 
+                          class="subtype-item"
+                          [class.selected]="selectedOutcomeType?.subTypes?.[0]?.id === subType.id"
+                          (click)="onSelectSubType(outcomeType, subType)">
+                          <mat-card-content>
+                            <p>{{ subType.label }}</p>
+                          </mat-card-content>
+                        </mat-card>
+                      }
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              } @else {
+                <!-- Regular outcomeType without subTypes -->
                 <mat-card 
                   class="outcome-type-item"
                   [class.selected]="selectedOutcomeType?.id === outcomeType.id"
@@ -74,8 +74,8 @@
                     <p>{{ outcomeType.label }}</p>
                   </mat-card-content>
                 </mat-card>
-              </div>
-            }
+              }
+            </div>
           }
         </div>
       </mat-card-content>
