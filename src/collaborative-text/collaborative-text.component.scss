@@ -94,6 +94,7 @@
     display: flex;
     gap: 12px;
     margin-top: 16px;
+    justify-content: flex-end;
   }
 }
 
@@ -161,6 +162,16 @@
   margin: 0;
   color: #4caf50;
   font-size: 1rem;
+}
+
+.actions-right {
+  justify-content: flex-end;
+}
+
+.limit-warning {
+  margin-top: 8px;
+  color: #2e7d32;
+  font-weight: 600;
 }
 
 .outcome-highlight {

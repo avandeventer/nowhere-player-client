@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -111,8 +111,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         // Load stories for all outcomeTypes that have clarifiers
         this.loadStoriesForOutcomeTypes(outcomeTypes);
         
-        // Auto-select first outcomeType or first subType if available
-        if (this.availableOutcomeTypes.length > 0) {
+        // Auto-select first outcomeType or first subType if available (only if no selection exists)
+        if (this.selectedOutcomeType === null && this.availableOutcomeTypes.length > 0) {
           const firstOutcomeType = this.availableOutcomeTypes[0];
           if (firstOutcomeType.subTypes && firstOutcomeType.subTypes.length > 0) {
             // If first outcomeType has subTypes, set selectedOutcomeType to parent with first subType
@@ -212,7 +212,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     };
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
+    // Reload outcome types when gameState changes (new phase)
+    if (changes['gameState'] && this.isStreamlinedMode) {
+      // Reset selection when gameState changes (new phase)
+      this.selectedOutcomeType = null;
+      this.selectedStory = null;
+      this.loadOutcomeTypes();
+    }
+    
     // Update phase info when input changes
     if (this.phaseInfo) {
       this.updatePhaseInfoFromInput();
@@ -516,7 +524,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.hasSubmitted = true;
         this.showNewSubmission = false;
         this.newTextControl.reset();
-        this.selectedOutcomeType = null; // Clear selection after submission
+        this.selectedOutcomeType = this.isSimpleMode ? this.selectedOutcomeType : null; // Clear selection after submission in collaborative mode
         this.availableSubmissions = [];
         this.maximumSubmissionsReached = false;
         this.updateAvailableSubmissions();
