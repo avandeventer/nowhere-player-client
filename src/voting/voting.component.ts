@@ -81,9 +81,6 @@ export class VotingComponent implements OnInit, OnChanges {
         
         this.submissions = submissions;
         this.initializeRankings();
-        if (this.submissions.length === 0) {
-          this.playerDone.emit(ComponentType.VOTING);
-        }
         this.isLoading = false;
       },
       error: (error) => {
