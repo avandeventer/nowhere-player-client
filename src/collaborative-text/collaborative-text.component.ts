@@ -218,6 +218,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       // Reset selection when gameState changes (new phase)
       this.selectedOutcomeType = null;
       this.selectedStory = null;
+      this.hasSubmitted = false;
+      this.showNewSubmission = true;
       this.loadOutcomeTypes();
     }
     
