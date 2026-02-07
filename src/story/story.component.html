@@ -21,6 +21,12 @@
               <h2>Vote Submitted!</h2>
               <p>Thank you for voting. The results will be calculated when all players have voted.</p>
             </div>
+          } @else if (!isPlayerTurn) {
+            <div class="voted-container">
+              <mat-icon class="voted-icon">access_time</mat-icon>
+              <h2>Not Your Turn!</h2>
+              <p>It's not your turn to make a choice.</p>
+            </div>
           } @else if (story.options && story.options.length > 0) {
             <div class="options-section">
               <div class="options-list">

@@ -16,6 +16,7 @@
       [gameCode]="gameCode" 
       [player]="player"
       [phaseInfo]="phaseInfo"
+      [submissions]="submissions"
       (playerDone)="playerDone.emit($event)">
     </app-story>
   } @else if (isLoading) {

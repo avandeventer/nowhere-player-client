@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, SimpleChange, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Story } from '../assets/story';
+import { TextSubmission } from '../assets/collaborative-text-phase';
 import { Option } from '../assets/option';
 import { CollaborativeTextPhaseInfo } from '../assets/collaborative-text-phase-info';
 import { GameService } from '../services/game-session.service';
@@ -21,13 +22,21 @@ export class StoryComponent {
   @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Input() gameCode: string = '';
   @Input() player: any = null;
+  @Input() submissions: TextSubmission[] = [];
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   selectedOptionId: string | null = null;
   isLoading = false;
   hasVoted = false;
+  isPlayerTurn: boolean = false;
 
   constructor(private gameService: GameService) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['submissions']) {
+      this.isPlayerTurn = this.submissions.length > 0;
+    }
+  }
 
   get story(): Story | undefined {
     return this.phaseInfo?.storyToIterateOn;
