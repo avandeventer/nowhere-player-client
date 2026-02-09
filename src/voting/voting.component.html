@@ -11,12 +11,13 @@
       [submissions]="submissions"
       (playerDone)="playerDone.emit($event)">
     </app-compass-voting>
-  } @else if (isMakeChoiceVotingPhase()) {
+  } @else if (isMakeChoicePhase()) {
     <app-story 
       [gameCode]="gameCode" 
       [player]="player"
       [phaseInfo]="phaseInfo"
       [submissions]="submissions"
+      [gameState]="gameState"
       (playerDone)="playerDone.emit($event)">
     </app-story>
   } @else if (isLoading) {
@@ -25,10 +26,17 @@
       <p>Loading submissions for voting...</p>
     </div>
   } @else if (submissions.length === 0) {
-    <div class="no-submissions">
-      <mat-icon class="no-submissions-icon">inbox</mat-icon>
-      <p>No submissions available for voting yet.</p>
-    </div>
+    @if (isMakeOutcomeChoiceVotingPhase()) {
+      <div class="no-submissions">
+        <mat-icon class="no-submissions-icon">call_split</mat-icon>
+        <p>You've stumbled into a branching path. Other players are choosing your fate</p>
+      </div>
+    } @else {
+      <div class="no-submissions">
+        <mat-icon class="no-submissions-icon">inbox</mat-icon>
+        <p>No submissions available for voting yet.</p>
+      </div>
+    }
   } @else if (hasVoted) {
     <div class="voted-container">
       <mat-icon class="voted-icon">check_circle</mat-icon>

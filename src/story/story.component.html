@@ -15,7 +15,7 @@
             </div>
           }
           
-          @if (hasVoted) {
+          @if (hasVoted && !getSelectedOption()) {
             <div class="voted-container">
               <mat-icon class="voted-icon">check_circle</mat-icon>
               <h2>Vote Submitted!</h2>
@@ -30,19 +30,34 @@
           } @else if (story.options && story.options.length > 0) {
             <div class="options-section">
               <div class="options-list">
-                @for (option of getOptions(); track option.optionId || $index) {
-                  @if (option.optionText) {
-                    <button 
-                      mat-flat-button 
-                      class="option-button"
-                      [class.selected]="isSelected(option)"
-                      [disabled]="isLoading"
-                      (click)="selectOption(option)">
-                      {{ option.optionText }}
+                @if (getSelectedOption()?.successText) {
+                  @if (getSelectedOption(); as selectedOption) {
+                    <button mat-flat-button 
+                              class="option-button" 
+                              [class.selected]="isOptionSelected(selectedOption)">
+                      {{ selectedOption.optionText }}
                     </button>
+                  }
+                } @else {
+                  @for (option of getOptions(); track option.optionId || $index) {
+                    @if (option.optionText) {
+                      <button 
+                        mat-flat-button 
+                        class="option-button"
+                        [class.selected]="isSelected(option)"
+                        [disabled]="isLoading || isOptionSelected(option)"
+                        (click)="selectOption(option)">
+                        {{ option.optionText }}
+                      </button>
+                    }
                   }
                 }
               </div>
+              @if (getSelectedOption()?.successText) {
+                <div class="success-text">
+                  <p>{{ getSelectedOption()?.successText }}</p>
+                </div>
+              }
               @if (selectedOptionId) {
                 <div class="submit-container">
                   <button 

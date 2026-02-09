@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Story } from '../assets/story';
 import { TextSubmission } from '../assets/collaborative-text-phase';
 import { Option } from '../assets/option';
-import { CollaborativeTextPhaseInfo } from '../assets/collaborative-text-phase-info';
+import { CollaborativeTextPhaseInfo, PhaseType } from '../assets/collaborative-text-phase-info';
 import { GameService } from '../services/game-session.service';
 import { PlayerVote } from '../assets/player-vote';
 import { ComponentType } from '../assets/component-type';
@@ -22,6 +22,7 @@ export class StoryComponent {
   @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Input() gameCode: string = '';
   @Input() player: any = null;
+  @Input() gameState: any = null;
   @Input() submissions: TextSubmission[] = [];
   @Output() playerDone = new EventEmitter<ComponentType>();
 
@@ -33,8 +34,12 @@ export class StoryComponent {
   constructor(private gameService: GameService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['submissions']) {
+    if (this.phaseInfo?.phaseType === PhaseType.VOTING && changes['submissions']) {
       this.isPlayerTurn = this.submissions.length > 0;
+    }
+
+    if (this.phaseInfo?.phaseType === PhaseType.WINNING && changes['phaseInfo']) {
+      this.isPlayerTurn = this.phaseInfo?.storyToIterateOn?.playerIds?.includes(this.player?.authorId) ?? false;
     }
   }
 
@@ -51,6 +56,17 @@ export class StoryComponent {
       return;
     }
     this.selectedOptionId = option.optionId;
+  }
+
+  getSelectedOption(): Option | undefined {
+    if (!this.story?.selectedOptionId) {
+      return undefined;
+    }
+    return this.getOptions().find(option => option.optionId === this.story?.selectedOptionId);
+  }
+
+  isOptionSelected(option: Option): boolean {
+    return this.story?.selectedOptionId === option.optionId;
   }
 
   submitVote() {

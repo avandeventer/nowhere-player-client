@@ -80,6 +80,9 @@ export class VotingComponent implements OnInit, OnChanges {
       next: (submissions) => {
         
         this.submissions = submissions;
+        if (this.submissions.length === 0) {
+          this.hasVoted = true; // No submissions to vote on, mark as voted
+        }
         this.initializeRankings();
         this.isLoading = false;
       },
@@ -184,8 +187,14 @@ export class VotingComponent implements OnInit, OnChanges {
     return `outcome-${outcomeType}`;
   }
 
-  isMakeChoiceVotingPhase(): boolean {
-    return this.gameState === GameState.MAKE_CHOICE_VOTING;
+  isMakeChoicePhase(): boolean {
+    return this.gameState === GameState.MAKE_CHOICE_VOTING 
+    || this.gameState === GameState.MAKE_CHOICE_WINNER 
+    || this.gameState === GameState.MAKE_OUTCOME_CHOICE_WINNER;
+  }
+
+  isMakeOutcomeChoiceVotingPhase(): boolean {
+    return this.gameState === GameState.MAKE_OUTCOME_CHOICE_VOTING;
   }
 
   hasStoryWithOptions(): boolean {

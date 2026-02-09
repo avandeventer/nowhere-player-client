@@ -7,6 +7,7 @@ export class Story {
     authorId: string;
     outcomeAuthorId: string;
     playerId: string;
+    playerIds: string[];
     selectedOptionId: string;
     playerSucceeded: boolean;
     location: Location;
@@ -28,6 +29,7 @@ export class Story {
         this.options = [];
         this.storyId = "";
         this.playerId = "";
+        this.playerIds = [];
         this.selectedOptionId = "";
         this.playerSucceeded = false;
         this.prequelStoryId = "";
