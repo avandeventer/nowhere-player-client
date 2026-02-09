@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, EventEmitter, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -65,8 +65,11 @@ export class VotingComponent implements OnInit, OnChanges {
     }
   }
   
-  ngOnChanges() {
-    this.setupPhaseProperties();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['gameState']) {
+      this.setupPhaseProperties();
+      this.loadVotingSubmissions();
+    }
   }
 
   private setupPhaseProperties() {
