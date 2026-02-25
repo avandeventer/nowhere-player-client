@@ -58,7 +58,7 @@
                   <p>{{ getSelectedOption()?.successText }}</p>
                 </div>
               }
-              @if (selectedOptionId) {
+              @if (selectedOptionId && !getSelectedOption()?.successText) {
                 <div class="submit-container">
                   <button 
                     mat-flat-button 
@@ -70,6 +70,23 @@
                       Submitting...
                     } @else {
                       Submit Vote
+                    }
+                  </button>
+                </div>
+              }
+
+              @if (getSelectedOption()?.successText) {
+                <div class="submit-container">
+                  <button 
+                    mat-flat-button 
+                    class="submit-button"
+                    [disabled]="isLoading"
+                    (click)="nextGamePhase()">
+                    @if (isLoading) {
+                      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+                      Continuing...
+                    } @else {
+                      Continue
                     }
                   </button>
                 </div>

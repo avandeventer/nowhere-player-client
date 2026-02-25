@@ -42,8 +42,15 @@
     </mat-card>
 }
 
-@if (isGameInPreamblePhase() || isGameInCollaborativeTextWinningPhase()) {
+@if (isGameInPreamblePhase()) {
     <p>Have someone read the text on screen!</p>
+}
+
+@if (isGameInCollaborativeTextWinningPhase()) {
+    <div class="phase-header">
+        <h2>{{ collaborativeTextPhaseInfo?.phaseQuestion }}</h2>
+        <p class="instructions">{{ collaborativeTextPhaseInfo?.phaseInstructions }}</p>
+    </div>
 }
 
 @if (isGameInWritePromptsPhase()) {
@@ -58,7 +65,9 @@
       [collaborativeTextPhases]="collaborativeTextPhases"
       [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
       [phaseInfo]="collaborativeTextPhaseInfo"
-      (collaborativeTextPhaseChanged)="onCollaborativeTextPhaseChanged($event)">
+      [activePlayerSession]="activePlayerSession"
+      (collaborativeTextPhaseChanged)="onCollaborativeTextPhaseChanged($event)"
+      (playerDone)="setDone($event)">
     </collaborative-text>
 }
 

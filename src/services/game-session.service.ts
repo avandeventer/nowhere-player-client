@@ -101,4 +101,16 @@ export class GameService {
   getStoryByStoryId(gameCode: string, storyId: string): Observable<any> {
     return this.http.get<any>(`${environment.nowhereBackendUrl}/story?gameCode=${gameCode}&storyId=${storyId}`);
   }
+
+  nextGamePhase(gameCode: string) {    
+    this.http.put(environment.nowhereBackendUrl + HttpConstants.NEXT_GAME_SESSION_PATH + '?gameCode=' + gameCode, {})
+    .subscribe({
+      next: (response) => {
+        console.log('Game phase updated', response);
+      },
+      error: (error) => {
+        console.error('Error updating game phase', error);
+      },
+    });
+  }
 }

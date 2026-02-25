@@ -10,6 +10,8 @@ import { CollaborativeTextPhaseInfo, PhaseType } from '../assets/collaborative-t
 import { GameService } from '../services/game-session.service';
 import { PlayerVote } from '../assets/player-vote';
 import { ComponentType } from '../assets/component-type';
+import { HttpConstants } from 'src/assets/http-constants';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-story',
@@ -41,6 +43,10 @@ export class StoryComponent {
     if (this.phaseInfo?.phaseType === PhaseType.WINNING && changes['phaseInfo']) {
       this.isPlayerTurn = this.phaseInfo?.storyToIterateOn?.playerIds?.includes(this.player?.authorId) ?? false;
     }
+  }
+
+  nextGamePhase() {
+    this.gameService.nextGamePhase(this.gameCode);
   }
 
   get story(): Story | undefined {

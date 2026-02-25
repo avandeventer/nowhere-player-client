@@ -121,17 +121,8 @@ export class GameStateManagerComponent implements OnInit {
     });
   }
 
-  nextGamePhase() {    
-    this.http
-    .put(environment.nowhereBackendUrl + HttpConstants.NEXT_GAME_SESSION_PATH + '?gameCode=' + this.gameCode, {})
-    .subscribe({
-      next: (response) => {
-        console.log('Game phase updated', response);
-      },
-      error: (error) => {
-        console.error('Error updating game phase', error);
-      },
-    });
+  nextGamePhase() {
+    this.gameService.nextGamePhase(this.gameCode);
   }
 
   startTimer() {
@@ -242,7 +233,7 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isGameInCollaborativeTextWinningPhase() {
-    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.WINNING;
+    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.WINNING && this.gameState !== GameState.MAKE_OUTCOME_CHOICE_WINNER;
   }
 
   isGameInLocationCreationPhase() {

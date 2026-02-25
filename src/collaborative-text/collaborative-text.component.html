@@ -127,12 +127,12 @@
                 [formControl]="newTextControl"
                 placeholder="Be creative and descriptive..."
                 rows="4"
-                maxlength="200">
+                maxlength="150">
               </textarea>
-              @if ((newTextControl.value?.length || 0) >= 150) {
+              @if ((newTextControl.value?.length || 0) >= 120) {
                 <mat-hint align="start" class="limit-warning">Submit so others can add to your idea!</mat-hint>
               }
-              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/200</mat-hint>
+              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/150</mat-hint>
             </mat-form-field>
           }
         </mat-card-content>

@@ -16,6 +16,8 @@ import { GameSessionDisplay } from '../assets/game-session-display';
 import { CollaborativeTextPhaseInfo, CollaborativeMode, PhaseType } from '../assets/collaborative-text-phase-info';
 import { OutcomeType } from '../assets/outcome-type';
 import { Story } from '../assets/story';
+import { ActivePlayerSession } from 'src/assets/active-player-session';
+import { ComponentType } from 'src/assets/component-type';
 @Component({
   selector: 'collaborative-text',
   templateUrl: './collaborative-text.component.html',
@@ -42,7 +44,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() collaborativeTextPhases: any = null;
   @Input() gameSessionDisplay: GameSessionDisplay | null = null;
   @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
-  @Output() playerDone = new EventEmitter<void>();
+  @Input() activePlayerSession: any = null;
+  @Output() playerDone = new EventEmitter<ComponentType>();
   @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
 
   // Form controls
@@ -86,6 +89,69 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.loadPlayerOutcomeType();
     this.checkStreamlinedMode();
     this.loadCollaborativePhase();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Reload outcome types when gameState changes (new phase)
+    if (changes['gameState'] && this.isStreamlinedMode) {
+      // Reset selection when gameState changes (new phase)
+      this.selectedOutcomeType = null;
+      this.selectedStory = null;
+      this.hasSubmitted = false;
+      this.showNewSubmission = true;
+      this.loadOutcomeTypes();
+    }
+
+    if (changes['activePlayerSession']) {
+      const currentSession = changes['activePlayerSession'].currentValue as ActivePlayerSession;
+      const previousSession = changes['activePlayerSession'].previousValue as ActivePlayerSession;
+
+      if (currentSession?.writeTimerDone
+          && (!previousSession || !previousSession.writeTimerDone)) {
+        console.log('Auto-submitting due to writeTimerDone');
+        this.isLoading = true;
+        let completedCount = 0;
+        const checkDone = () => {
+          completedCount++;
+          if (completedCount === 2) {
+            this.isLoading = false;
+            this.playerDone.emit(ComponentType.COLLABORATIVE_SUBMIT_PHASE);
+            console.log('Player done submitted after both submission and addition completed');
+          }
+        };
+        this.onSubmitNewText(checkDone);
+        this.onAddToSubmission(checkDone);
+      }
+    }
+    
+    // Update phase info when input changes
+    if (this.phaseInfo) {
+      this.updatePhaseInfoFromInput();
+    }
+    
+    // When collaborative text phases change, check if submissions actually changed
+    if (this.collaborativeTextPhases 
+        && this.isGameInCollaborativeTextPhase() 
+        && this.hasSubmitted
+        && !this.maximumSubmissionsReached
+    ) {
+      const phaseId: string = this.phaseInfo?.phaseId.toString() || '';
+      if (!phaseId) return;
+      
+      const phase = this.collaborativeTextPhases[phaseId];
+      if (!phase || !phase.submissions) return;
+      
+      // Check if submissions array has actually changed
+      const currentSubmissions = phase.submissions;
+      const submissionsChanged = this.hasSubmissionsChanged(currentSubmissions);
+      
+      if (submissionsChanged) {
+        console.log('Submissions changed, updating available submissions');
+        this.updateAvailableSubmissions(true); // true = use phases data
+      } else {
+        console.log('No submission changes detected, skipping update');
+      }
+    }
   }
 
   private checkStreamlinedMode() {
@@ -210,47 +276,6 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       clarifier: parentOutcomeType.clarifier,
       subTypes: [subType]
     };
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    // Reload outcome types when gameState changes (new phase)
-    if (changes['gameState'] && this.isStreamlinedMode) {
-      // Reset selection when gameState changes (new phase)
-      this.selectedOutcomeType = null;
-      this.selectedStory = null;
-      this.hasSubmitted = false;
-      this.showNewSubmission = true;
-      this.loadOutcomeTypes();
-    }
-    
-    // Update phase info when input changes
-    if (this.phaseInfo) {
-      this.updatePhaseInfoFromInput();
-    }
-    
-    // When collaborative text phases change, check if submissions actually changed
-    if (this.collaborativeTextPhases 
-        && this.isGameInCollaborativeTextPhase() 
-        && this.hasSubmitted
-        && !this.maximumSubmissionsReached
-    ) {
-      const phaseId: string = this.phaseInfo?.phaseId.toString() || '';
-      if (!phaseId) return;
-      
-      const phase = this.collaborativeTextPhases[phaseId];
-      if (!phase || !phase.submissions) return;
-      
-      // Check if submissions array has actually changed
-      const currentSubmissions = phase.submissions;
-      const submissionsChanged = this.hasSubmissionsChanged(currentSubmissions);
-      
-      if (submissionsChanged) {
-        console.log('Submissions changed, updating available submissions');
-        this.updateAvailableSubmissions(true); // true = use phases data
-      } else {
-        console.log('No submission changes detected, skipping update');
-      }
-    }
   }
 
   private updatePhaseInfoFromInput() {
@@ -490,12 +515,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     return false;
   }
 
-  onSubmitNewText() {
-    if (this.newTextControl.invalid || !this.newTextControl.value) return;
+  onSubmitNewText(onComplete?: () => void) {
+    if (this.newTextControl.invalid || !this.newTextControl.value) {
+      onComplete?.();
+      return;
+    }
 
     // In streamlined mode, require outcomeType selection if available
     if (this.isStreamlinedMode && this.availableOutcomeTypes.length > 0 && !this.selectedOutcomeType) {
-      alert('Please select an option before submitting.');
+      onComplete?.();
       return;
     }
 
@@ -534,10 +562,12 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         if (this.isSimpleMode) {
           this.loadOutcomeTypes();
         }
+        onComplete?.();
       },
       error: (error) => {
         console.error('Error submitting new text:', error);
         this.isLoading = false;
+        onComplete?.();
       }
     });
   }
@@ -546,8 +576,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.selectedSubmission = submission;
   }
 
-  onAddToSubmission() {
-    if (this.additionTextControl.invalid || !this.additionTextControl.value || !this.selectedSubmission) return;
+  onAddToSubmission(onComplete?: () => void) {
+    if (this.additionTextControl.invalid || !this.additionTextControl.value || !this.selectedSubmission) {
+      onComplete?.();
+      return;
+    }
 
     const textAddition: TextAddition = {
       additionId: '',
@@ -567,10 +600,12 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
         this.updateAvailableSubmissions();
         this.isLoading = false;
+        onComplete?.();
       },
       error: (error) => {
         console.error('Error adding to submission:', error);
         this.isLoading = false;
+        onComplete?.();
       }
     });
   }

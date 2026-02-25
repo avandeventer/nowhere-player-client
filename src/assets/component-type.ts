@@ -11,6 +11,7 @@ export enum ComponentType {
     VOTING = "VOTING",
     WRITE_LOCATION_PROMPT = "WRITE_LOCATION_PROMPT",
     WRITE_LOCATION_OUTCOMES = "WRITE_LOCATION_OUTCOMES",
+    COLLABORATIVE_SUBMIT_PHASE = "COLLABORATIVE_SUBMIT_PHASE",
 }  
 
 export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
@@ -20,6 +21,7 @@ export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
     [ComponentType.ADVENTURE]: [GameState.ROUND1, GameState.ROUND2],
     [ComponentType.RITUAL]: [GameState.RITUAL],
     [ComponentType.WRITE_ENDINGS]: [GameState.WRITE_ENDINGS],
+    [ComponentType.COLLABORATIVE_SUBMIT_PHASE]: [GameState.SET_ENCOUNTERS, GameState.WHAT_HAPPENS_HERE, GameState.WHAT_CAN_WE_TRY, GameState.HOW_DOES_THIS_RESOLVE, GameState.HOW_DOES_THIS_RESOLVE_AGAIN],
     [ComponentType.ENDING]: [GameState.ENDING],
     [ComponentType.VOTING]: [GameState.WHERE_ARE_WE_VOTE, GameState.WHO_ARE_WE_VOTE, GameState.WHAT_IS_COMING_VOTE, GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE, GameState.WHAT_DO_WE_FEAR_VOTE, GameState.WHAT_WILL_BECOME_OF_US_VOTE, GameState.SET_ENCOUNTERS_VOTING, 
         GameState.WHAT_HAPPENS_HERE_VOTING, GameState.WHAT_CAN_WE_TRY_VOTING, GameState.HOW_DOES_THIS_RESOLVE_VOTING, GameState.MAKE_CHOICE_VOTING, GameState.MAKE_OUTCOME_CHOICE_VOTING, GameState.NAVIGATE_VOTING],
