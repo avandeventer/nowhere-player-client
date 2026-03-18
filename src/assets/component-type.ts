@@ -1,6 +1,7 @@
 import { GameState } from "./game-state";
 
 export enum ComponentType {
+    INIT = "INIT",
     WRITE_PROMPTS = "WRITE_PROMPTS",
     LOCATION_SELECT = "LOCATION_SELECT",
     WRITE_OUTCOMES = "WRITE_OUTCOMES",
@@ -12,19 +13,22 @@ export enum ComponentType {
     WRITE_LOCATION_PROMPT = "WRITE_LOCATION_PROMPT",
     WRITE_LOCATION_OUTCOMES = "WRITE_LOCATION_OUTCOMES",
     COLLABORATIVE_SUBMIT_PHASE = "COLLABORATIVE_SUBMIT_PHASE",
-}  
+    WHO_ARE_YOU = "WHO_ARE_YOU",
+}
 
 export const ComponentTypeGameStateMap: Record<ComponentType, GameState[]> = {
+    [ComponentType.INIT]: [GameState.INIT],
     [ComponentType.WRITE_PROMPTS]: [GameState.WRITE_PROMPTS, GameState.WRITE_PROMPTS_AGAIN],
     [ComponentType.LOCATION_SELECT]: [GameState.LOCATION_SELECT, GameState.LOCATION_SELECT_AGAIN],
     [ComponentType.WRITE_OUTCOMES]: [GameState.WRITE_OPTIONS, GameState.WRITE_OPTIONS_AGAIN],
     [ComponentType.ADVENTURE]: [GameState.ROUND1, GameState.ROUND2],
     [ComponentType.RITUAL]: [GameState.RITUAL],
     [ComponentType.WRITE_ENDINGS]: [GameState.WRITE_ENDINGS],
-    [ComponentType.COLLABORATIVE_SUBMIT_PHASE]: [GameState.SET_ENCOUNTERS, GameState.WHAT_HAPPENS_HERE, GameState.WHAT_CAN_WE_TRY, GameState.HOW_DOES_THIS_RESOLVE, GameState.HOW_DOES_THIS_RESOLVE_AGAIN],
+    [ComponentType.COLLABORATIVE_SUBMIT_PHASE]: [GameState.SET_ENCOUNTERS, GameState.SET_TRAITS, GameState.WHAT_HAPPENS_HERE, GameState.WHAT_CAN_WE_TRY, GameState.HOW_DOES_THIS_RESOLVE, GameState.HOW_DOES_THIS_RESOLVE_AGAIN],
     [ComponentType.ENDING]: [GameState.ENDING],
     [ComponentType.VOTING]: [GameState.WHERE_ARE_WE_VOTE, GameState.WHO_ARE_WE_VOTE, GameState.WHAT_IS_COMING_VOTE, GameState.WHAT_ARE_WE_CAPABLE_OF_VOTE, GameState.WHAT_DO_WE_FEAR_VOTE, GameState.WHAT_WILL_BECOME_OF_US_VOTE, GameState.SET_ENCOUNTERS_VOTING, 
         GameState.WHAT_HAPPENS_HERE_VOTING, GameState.WHAT_CAN_WE_TRY_VOTING, GameState.HOW_DOES_THIS_RESOLVE_VOTING, GameState.MAKE_CHOICE_VOTING, GameState.MAKE_OUTCOME_CHOICE_VOTING, GameState.NAVIGATE_VOTING],
     [ComponentType.WRITE_LOCATION_PROMPT]: [GameState.WHERE_CAN_WE_GO],
-    [ComponentType.WRITE_LOCATION_OUTCOMES]: [GameState.WHAT_OCCUPATIONS_ARE_THERE]
+    [ComponentType.WRITE_LOCATION_OUTCOMES]: [GameState.WHAT_OCCUPATIONS_ARE_THERE],
+    [ComponentType.WHO_ARE_YOU]: [GameState.WHO_ARE_YOU],
 };

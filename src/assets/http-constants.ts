@@ -16,4 +16,7 @@ export abstract class HttpConstants {
     static readonly ADVENTURE_REPERCUSSIONS_PATH: string = '/adventure/repercussions';
     static readonly GENRE_PATH: string = '/display/genre';
     static readonly DISPLAY_PATH: string = "/display";
+    static readonly TRAITS_PATH: string = "/adventure-map/traits";
+    static readonly PLAYER_CLASSES_PATH: string = "/player/classes";
+    static readonly REPERCUSSION_TYPES_PATH: string = "/collaborativeText/repercussionTypes";
 }

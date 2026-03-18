@@ -18,6 +18,9 @@ import { OutcomeType } from '../assets/outcome-type';
 import { Story } from '../assets/story';
 import { ActivePlayerSession } from 'src/assets/active-player-session';
 import { ComponentType } from 'src/assets/component-type';
+import { RepercussionTypeOption } from 'src/assets/repercussion-type-option';
+import { Repercussion } from 'src/assets/repercussion';
+import { RepercussionToggleComponent } from 'src/repercussion-toggle/repercussion-toggle.component';
 @Component({
   selector: 'collaborative-text',
   templateUrl: './collaborative-text.component.html',
@@ -33,7 +36,8 @@ import { ComponentType } from 'src/assets/component-type';
     MatChipsModule,
     MatChipsModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    RepercussionToggleComponent,
   ],
   standalone: true
 })
@@ -82,6 +86,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   selectedStory: Story | null = null;
   storyCache: Map<string, Story> = new Map();
 
+  // Repercussion properties
+  playerRepercussionTypes: RepercussionTypeOption[] = [];
+  activeRepercussion: Repercussion | null = null;
+  repercussionToggleValid = true;
+
   constructor(private gameService: GameService) {}
 
   ngOnInit() {
@@ -89,6 +98,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.loadPlayerOutcomeType();
     this.checkStreamlinedMode();
     this.loadCollaborativePhase();
+    this.loadPlayerRepercussionTypes();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -423,6 +433,22 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     });
   }
 
+  private loadPlayerRepercussionTypes() {
+    if (!this.player.authorId) return;
+    this.gameService.getPlayerRepercussionTypes(this.gameCode, this.player.authorId).subscribe({
+      next: (types) => { this.playerRepercussionTypes = types; },
+      error: (error) => { console.error('Error loading repercussion types:', error); }
+    });
+  }
+
+  onRepercussionChange(repercussion: Repercussion | null) {
+    this.activeRepercussion = repercussion;
+  }
+
+  onRepercussionValidityChange(isValid: boolean) {
+    this.repercussionToggleValid = isValid;
+  }
+
   isWhatAreWeCapableOfPhase(): boolean {
     return this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
   }
@@ -586,7 +612,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       additionId: '',
       authorId: this.player.authorId,
       addedText: this.additionTextControl.value.trim(),
-      submissionId: this.selectedSubmission.submissionId
+      submissionId: this.selectedSubmission.submissionId,
+      repercussion: this.activeRepercussion ?? undefined,
     };
 
     this.isLoading = true;

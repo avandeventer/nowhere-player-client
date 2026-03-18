@@ -11,22 +11,27 @@ import { GameSessionDisplay } from 'src/assets/game-session-display';
 import { CollaborativeTextPhaseInfo } from 'src/assets/collaborative-text-phase-info';
 import { GameBoard } from 'src/assets/game-board';
 import { OutcomeType } from 'src/assets/outcome-type';
+import { Trait } from 'src/assets/trait';
+import { Player } from 'src/assets/player';
+import { PlayerClassOption } from 'src/assets/player-class-option';
+import { RepercussionTypeOption } from 'src/assets/repercussion-type-option';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
   constructor(private firestore: Firestore, private http: HttpClient) {}
 
-  listenForGameStateChanges(gameCode: string): Observable<{ 
-    gameState: string | null; 
-    activePlayerSession: any | null; 
-    storiesToWritePerRound: number | null; 
+  listenForGameStateChanges(gameCode: string): Observable<{
+    gameState: string | null;
+    activePlayerSession: any | null;
+    storiesToWritePerRound: number | null;
     storiesToPlayPerRound: number | null;
     adventureMap: any | null;
     collaborativeTextPhases: any | null;
     stories: any[] | null;
+    gameMode: string | null;
   }> {
     const gameDocRef = doc(this.firestore, `gameSessions/${gameCode}`);
-  
+
     return docData(gameDocRef).pipe(
       map((data: any) => ({
         gameState: data?.gameState ?? null,
@@ -35,7 +40,8 @@ export class GameService {
         storiesToPlayPerRound: data?.storiesToPlayPerRound ?? null,
         adventureMap: data?.adventureMap ?? null,
         collaborativeTextPhases: data?.collaborativeTextPhases ?? null,
-        stories: data?.stories ?? null
+        stories: data?.stories ?? null,
+        gameMode: data?.gameMode ?? null,
       }))
     );
   }
@@ -100,6 +106,22 @@ export class GameService {
 
   getStoryByStoryId(gameCode: string, storyId: string): Observable<any> {
     return this.http.get<any>(`${environment.nowhereBackendUrl}/story?gameCode=${gameCode}&storyId=${storyId}`);
+  }
+
+  getTraits(gameCode: string): Observable<Trait[]> {
+    return this.http.get<Trait[]>(`${environment.nowhereBackendUrl}${HttpConstants.TRAITS_PATH}?gameCode=${gameCode}`);
+  }
+
+  getPlayerClasses(): Observable<PlayerClassOption[]> {
+    return this.http.get<PlayerClassOption[]>(`${environment.nowhereBackendUrl}${HttpConstants.PLAYER_CLASSES_PATH}`);
+  }
+
+  getPlayerRepercussionTypes(gameCode: string, authorId: string): Observable<RepercussionTypeOption[]> {
+    return this.http.get<RepercussionTypeOption[]>(`${environment.nowhereBackendUrl}${HttpConstants.REPERCUSSION_TYPES_PATH}?gameCode=${gameCode}&authorId=${authorId}`);
+  }
+
+  updatePlayer(player: Player): Observable<Player> {
+    return this.http.put<Player>(`${environment.nowhereBackendUrl}${HttpConstants.PLAYER_PATH}`, player);
   }
 
   nextGamePhase(gameCode: string) {    

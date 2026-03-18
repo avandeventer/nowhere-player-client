@@ -2,6 +2,7 @@ import { StatType } from "./stat-type";
 import { Location } from "./location";
 import { Story } from "./story";
 import { GameSessionDisplay } from "./game-session-display";
+import { Trait } from "./trait";
 
 export class AdventureMap {
     name: string = "";
@@ -10,6 +11,7 @@ export class AdventureMap {
     statTypes: StatType[] = [];
     ritual: Story = new Story();
     gameSessionDisplay: GameSessionDisplay | null = null;
+    traits: Trait[] = [];
 
     constructor() {
         this.name = "";

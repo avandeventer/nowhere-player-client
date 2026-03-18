@@ -24,27 +24,29 @@ import { WriteLocationPromptComponent } from 'src/write-location-prompt/write-lo
 import { WriteLocationOutcomesComponent } from 'src/write-location-outcomes/write-location-outcomes.component';
 import { WorldInformationComponent } from 'src/world-information/world-information.component';
 import { CollaborativeTextPhaseInfo, PhaseType } from 'src/assets/collaborative-text-phase-info';
+import { PlayerComponent } from 'src/player/player.component';
 
 @Component({
     selector: 'game-state-manager',
     templateUrl: './game-state-manager.component.html',
     styleUrls: ['./game-state-manager.component.scss'],
     imports: [
-      WritePromptComponent, 
-      WriteOutcomesComponent, 
-      AdventureComponent, 
-      LocationComponent, 
-      RitualComponent, 
+      WritePromptComponent,
+      WriteOutcomesComponent,
+      AdventureComponent,
+      LocationComponent,
+      RitualComponent,
       WriteEndingsComponent,
-      EndingComponent, 
-      MatButtonModule, 
+      EndingComponent,
+      MatButtonModule,
       GenreComponent,
-      WorldInformationComponent, 
-      CollaborativeTextComponent, 
-      VotingComponent, 
+      WorldInformationComponent,
+      CollaborativeTextComponent,
+      VotingComponent,
       WriteLocationPromptComponent,
       WriteLocationOutcomesComponent,
-      MatCardModule
+      MatCardModule,
+      PlayerComponent,
     ],
     standalone: true
 })
@@ -69,6 +71,8 @@ export class GameStateManagerComponent implements OnInit {
   collaborativeTextPhases: any = null;
   stories: any[] | null = null;
   collaborativeTextPhaseInfo: CollaborativeTextPhaseInfo | null = null;
+  isDungeonMode = false;
+  includeTraits = false;
 
   constructor(
     private gameService: GameService,
@@ -83,33 +87,39 @@ export class GameStateManagerComponent implements OnInit {
         // Load phase info when game state changes
         this.loadCollaborativeTextPhaseInfo();
       }
-      
+
       this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
       this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       this.storiesToPlayPerRound = newState.storiesToPlayPerRound as unknown as number;
       this.adventureMap = newState.adventureMap as unknown as AdventureMap;
-      
+      this.isDungeonMode = newState.gameMode === 'DUNGEON_MODE';
+
       // Check for stories changes
       if (newState.stories && JSON.stringify(this.stories) !== JSON.stringify(newState.stories)) {
         this.stories = newState.stories;
       }
-      
+
       // Check for collaborative text phase changes
       if (newState.collaborativeTextPhases && JSON.stringify(this.collaborativeTextPhases) !== JSON.stringify(newState.collaborativeTextPhases)) {
         this.collaborativeTextPhases = newState.collaborativeTextPhases;
         this.collaborativeTextPhaseChanged.emit(this.collaborativeTextPhases);
       }
-      
+
       console.log('New gameState:', this.gameState);
     });
-    
+
+    this.gameService.getFeatureFlag('includeTraits').subscribe({
+      next: (value) => { this.includeTraits = value; },
+      error: () => { this.includeTraits = false; }
+    });
+
     // Load initial phase info
     this.loadCollaborativeTextPhaseInfo();
   }
-  
+
   private loadCollaborativeTextPhaseInfo() {
     if (!this.gameCode) return;
-    
+
     this.gameService.getCollaborativeTextPhaseInfo(this.gameCode).subscribe({
       next: (phaseInfo: CollaborativeTextPhaseInfo) => {
         this.collaborativeTextPhaseInfo = phaseInfo;
@@ -193,9 +203,9 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isGameInPreamblePhase() {
-    return this.gameState === GameState.PREAMBLE 
-    || this.gameState === GameState.PREAMBLE_AGAIN 
-    || this.gameState === GameState.ENDING_PREAMBLE 
+    return this.gameState === GameState.PREAMBLE
+    || this.gameState === GameState.PREAMBLE_AGAIN
+    || this.gameState === GameState.ENDING_PREAMBLE
     || this.gameState === GameState.EPILOGUE_PREAMBLE;
   }
 
@@ -224,7 +234,10 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   isGameInCollaborativeTextPhase() {
-    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.SUBMISSION && this.gameState !== GameState.INIT && !this.isGameInPreamblePhase();
+    return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.SUBMISSION
+      && this.gameState !== GameState.INIT
+      && this.gameState !== GameState.WHO_ARE_YOU
+      && !this.isGameInPreamblePhase();
   }
 
   isGameInVotingPhase() {
@@ -242,5 +255,9 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameInLocationOutcomesCreationPhase() {
     return this.gameState === GameState.WHAT_OCCUPATIONS_ARE_THERE;
+  }
+
+  showPlayerComponent() {
+    return this.isDungeonMode && this.includeTraits;
   }
 }

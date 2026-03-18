@@ -1,0 +1,120 @@
+<!-- Summary: always visible as live preview -->
+<mat-card class="player-summary">
+  <div class="summary-name">{{ player.userName }}</div>
+  @if (player.playerClass) {
+    <div class="summary-class">{{ player.playerClass.name }}</div>
+  }
+  @if (player.traits && player.traits.length > 0) {
+    <div class="summary-traits">
+      @for (trait of player.traits; track trait.traitId) {
+        <mat-chip>{{ trait.traitLabel }}</mat-chip>
+      }
+    </div>
+  }
+</mat-card>
+
+<!-- Character creation wrapper -->
+@if (isInitMode() || isWhoAreYouMode()) {
+  <mat-card class="character-creation-card">
+    <mat-card-header>
+      <mat-card-title>
+        @if (isInitMode()) { Create Your Character }
+        @else { Choose Your Traits }
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <!-- Step 1: Class selection (INIT only, accordion) -->
+      @if (isInitMode()) {
+        <div class="creation-step">
+          <div class="step-label">
+            <span class="step-number" [class.complete]="hasSubmittedClass">1</span>
+            <span>Your Class</span>
+          </div>
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="classAccordionExpanded" (opened)="classAccordionExpanded = true" (closed)="classAccordionExpanded = false">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  @if (hasSubmittedClass && selectedClass) {
+                    <mat-icon class="done-icon">check_circle</mat-icon>
+                    {{ selectedClass.name }}
+                  } @else {
+                    Select a class
+                  }
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              @if (isLoading && availableClasses.length === 0) {
+                <p>Loading classes...</p>
+              } @else {
+                <div class="class-list">
+                  @for (playerClass of availableClasses; track playerClass.name) {
+                    <mat-card
+                      class="class-card"
+                      [class.selected]="isClassSelected(playerClass)"
+                      (click)="selectClass(playerClass)">
+                      <h3>{{ playerClass.name }}</h3>
+                      <p>{{ playerClass.description }}</p>
+                    </mat-card>
+                  }
+                </div>
+              }
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      }
+
+      <!-- Step 2: Trait selection (WHO_ARE_YOU always, INIT after class submitted) -->
+      @if (isWhoAreYouMode() || hasSubmittedClass) {
+        <div class="creation-step" [class.disabled-step]="isInitMode() && !hasSubmittedClass">
+          @if (isInitMode()) {
+            <div class="step-label">
+              <span class="step-number" [class.complete]="hasSubmittedTraits">2</span>
+              <span>Your Traits</span>
+            </div>
+          }
+
+          @if (hasSubmittedTraits) {
+            <div class="traits-done" (click)="hasSubmittedTraits = false" role="button" tabindex="0" (keydown.enter)="hasSubmittedTraits = false">
+              <mat-icon>check_circle</mat-icon>
+              <span>Traits saved!</span>
+              <mat-icon class="edit-icon">edit</mat-icon>
+            </div>
+          } @else {
+            <div class="trait-selection">
+              <p class="instructions">
+                Choose up to {{ MAX_TRAITS }} traits.
+                <span class="count">({{ selectedTraits.length }} / {{ MAX_TRAITS }})</span>
+              </p>
+              @if (isLoading && availableTraits.length === 0) {
+                <p>Loading traits...</p>
+              } @else {
+                <div class="trait-list">
+                  @for (trait of availableTraits; track trait.traitId) {
+                    <mat-chip
+                      [class.selected]="isTraitSelected(trait)"
+                      [class.disabled]="!canSelectTrait(trait)"
+                      (click)="toggleTrait(trait)">
+                      @if (isTraitSelected(trait)) {
+                        <mat-icon matChipTrailingIcon>check</mat-icon>
+                      }
+                      {{ trait.traitLabel }}
+                    </mat-chip>
+                  }
+                </div>
+              }
+              <button
+                mat-flat-button
+                [disabled]="selectedTraits.length === 0 || isLoading"
+                (click)="submitTraits()">
+                Save Traits
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+    </mat-card-content>
+  </mat-card>
+}

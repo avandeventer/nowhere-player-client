@@ -205,12 +205,19 @@
                 </textarea>
                 <mat-hint align="end">{{ additionTextControl.value?.length || 0 }} characters</mat-hint>
               </mat-form-field>
+              @if (playerRepercussionTypes.length > 0) {
+                <repercussion-toggle
+                  [repercussionTypes]="playerRepercussionTypes"
+                  (repercussionChange)="onRepercussionChange($event)"
+                  (validityChange)="onRepercussionValidityChange($event)">
+                </repercussion-toggle>
+              }
               <div class="addition-actions">
-                <button 
-                  mat-flat-button 
-                  color="primary" 
+                <button
+                  mat-flat-button
+                  color="primary"
                   (click)="onAddToSubmission()"
-                  [disabled]="additionTextControl.invalid || isLoading">
+                  [disabled]="additionTextControl.invalid || isLoading || !repercussionToggleValid">
                   Add to Submission
                 </button>
                 <button 

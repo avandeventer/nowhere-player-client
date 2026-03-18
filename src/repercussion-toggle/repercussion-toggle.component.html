@@ -1,0 +1,30 @@
+@for (repType of repercussionTypes; track repType.name) {
+  <div class="repercussion-row" [class.toggled]="isToggled(repType)">
+    <button
+      mat-icon-button
+      class="toggle-button"
+      [class.toggled]="isToggled(repType)"
+      (click)="toggle(repType)"
+      [attr.aria-label]="'Toggle ' + repType.name">
+      <mat-icon>{{ isToggled(repType) ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+    </button>
+
+    <div class="repercussion-content">
+      @if (isToggled(repType)) {
+        <span class="repercussion-description">{{ repType.description }}</span>
+        @if (repType.label) {
+          <mat-form-field appearance="outline" class="full-width">
+            <input
+              matInput
+              [placeholder]="repType.label"
+              [(ngModel)]="submissionText"
+              (ngModelChange)="onTextChange()"
+              required>
+          </mat-form-field>
+        }
+      } @else {
+        <span class="repercussion-instruction">{{ repType.instruction }}</span>
+      }
+    </div>
+  </div>
+}

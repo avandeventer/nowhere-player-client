@@ -1,5 +1,6 @@
 import { OutcomeType } from './outcome-type';
 import { PlayerVote } from './player-vote';
+import { Repercussion } from './repercussion';
 
 export interface CollaborativeTextPhase {
   phaseId: string;
@@ -34,4 +35,5 @@ export interface TextAddition {
   submissionId: string | null; // null for new submissions
   outcomeType?: string; // Optional: "success", "neutral", or "failure" - used for WHAT_WILL_BECOME_OF_US phase
   outcomeTypeWithLabel?: OutcomeType;
+  repercussion?: Repercussion;
 }

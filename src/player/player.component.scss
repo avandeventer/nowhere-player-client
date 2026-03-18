@@ -1,0 +1,194 @@
+.player-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  .summary-name {
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  .summary-class {
+    color: #1976d2;
+    font-style: italic;
+  }
+
+  .summary-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.character-creation-card {
+  mat-card-title {
+    font-size: 1.1em;
+    color: #1976d2;
+  }
+
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 12px;
+  }
+}
+
+.creation-step {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &.disabled-step {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+}
+
+.step-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #333;
+
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 0.8em;
+    font-weight: bold;
+    background-color: #e0e0e0;
+    color: #666;
+    flex-shrink: 0;
+    transition: background-color 0.2s, color 0.2s;
+
+    &.complete {
+      background-color: #1976d2;
+      color: white;
+    }
+  }
+}
+
+.done-icon {
+  color: #4caf50;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.traits-done {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4caf50;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f1f8e9;
+
+    .edit-icon {
+      opacity: 1;
+    }
+  }
+
+  mat-icon {
+    color: #4caf50;
+  }
+
+  .edit-icon {
+    margin-left: auto;
+    opacity: 0;
+    color: #888;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    transition: opacity 0.2s;
+  }
+}
+
+.class-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.class-card {
+  cursor: pointer;
+  padding: 14px 16px;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, background-color 0.2s;
+
+  h3 {
+    margin: 0 0 6px 0;
+    font-size: 1em;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  &:hover {
+    border-color: #90caf9;
+  }
+
+  &.selected {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+
+    h3 { color: #1565c0; }
+    p { color: #1976d2; }
+  }
+}
+
+.trait-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.instructions {
+  margin: 0;
+  font-size: 0.9em;
+  color: #555;
+
+  .count {
+    font-weight: bold;
+    color: #1976d2;
+  }
+}
+
+.trait-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+mat-chip {
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &.selected {
+    background-color: #1976d2;
+    color: white;
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+}

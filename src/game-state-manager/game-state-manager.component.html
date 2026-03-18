@@ -125,3 +125,7 @@
 @if (isGameInEndingPhase()) {
     <ending [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></ending>
 }
+
+@if (showPlayerComponent()) {
+    <app-player [gameCode]="gameCode" [player]="player" [gameState]="gameState" (playerDone)="setDone($event)"></app-player>
+}
