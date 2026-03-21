@@ -26,6 +26,7 @@ export class RepercussionToggleComponent implements OnChanges {
   @Input() repercussionTypes: RepercussionTypeOption[] = [];
   @Output() repercussionChange = new EventEmitter<Repercussion | null>();
   @Output() validityChange = new EventEmitter<boolean>();
+  @Output() replacesAdditionText = new EventEmitter<boolean>();
 
   toggledType: string | null = null;
   submissionText = '';
@@ -62,6 +63,7 @@ export class RepercussionToggleComponent implements OnChanges {
   }
 
   private emitChanges() {
+    this.replacesAdditionText.emit(!!(this.toggledType && this.activeType?.label));
     this.validityChange.emit(this.isValid);
     if (!this.toggledType || !this.activeType || !this.isValid) {
       this.repercussionChange.emit(null);

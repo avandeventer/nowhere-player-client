@@ -90,6 +90,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   playerRepercussionTypes: RepercussionTypeOption[] = [];
   activeRepercussion: Repercussion | null = null;
   repercussionToggleValid = true;
+  repercussionTextOn = false;
 
   constructor(private gameService: GameService) {}
 
@@ -177,6 +178,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.isStreamlinedMode = false;
       }
     });
+  }
+
+  howDoesThisResolve(): boolean {
+    return this.gameState === GameState.HOW_DOES_THIS_RESOLVE || this.gameState === GameState.HOW_DOES_THIS_RESOLVE_AGAIN;
   }
 
   private loadOutcomeTypes() {
@@ -449,6 +454,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.repercussionToggleValid = isValid;
   }
 
+  onRepercussionReplacesAdditionText(repercussionTextOn: boolean) {
+    this.repercussionTextOn = repercussionTextOn;
+  }
+
   isWhatAreWeCapableOfPhase(): boolean {
     return this.gameState === GameState.WHAT_ARE_WE_CAPABLE_OF;
   }
@@ -603,15 +612,26 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   onAddToSubmission(onComplete?: () => void) {
-    if (this.additionTextControl.invalid || !this.additionTextControl.value || !this.selectedSubmission) {
+    if (!this.selectedSubmission) {
       onComplete?.();
       return;
+    }
+
+    let addedText: string;
+    if (this.repercussionTextOn) {
+      addedText = '';
+    } else {
+      if (this.additionTextControl.invalid || !this.additionTextControl.value) {
+        onComplete?.();
+        return;
+      }
+      addedText = this.additionTextControl.value.trim();
     }
 
     const textAddition: TextAddition = {
       additionId: '',
       authorId: this.player.authorId,
-      addedText: this.additionTextControl.value.trim(),
+      addedText,
       submissionId: this.selectedSubmission.submissionId,
       repercussion: this.activeRepercussion ?? undefined,
     };
@@ -624,6 +644,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.additionTextControl.reset();
         this.selectedSubmission = null;
         this.availableSubmissions = [];
+        this.repercussionTextOn = false;
 
         this.updateAvailableSubmissions();
         this.isLoading = false;

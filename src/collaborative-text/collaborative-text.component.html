@@ -195,21 +195,24 @@
           @if (selectedSubmission) {
             <div class="addition-section">
               <h4>Add to: "{{ getSubmissionPreview(selectedSubmission) }}"</h4>
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Your addition</mat-label>
-                <textarea 
-                  matInput 
-                  [formControl]="additionTextControl"
-                  placeholder="Add your ideas to build upon this submission..."
-                  rows="3">
-                </textarea>
-                <mat-hint align="end">{{ additionTextControl.value?.length || 0 }} characters</mat-hint>
-              </mat-form-field>
-              @if (playerRepercussionTypes.length > 0) {
+              @if (!repercussionTextOn) {
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Your addition</mat-label>
+                  <textarea
+                    matInput
+                    [formControl]="additionTextControl"
+                    placeholder="Add your ideas to build upon this submission..."
+                    rows="3">
+                  </textarea>
+                  <mat-hint align="end">{{ additionTextControl.value?.length || 0 }} characters</mat-hint>
+                </mat-form-field>
+              }
+              @if (playerRepercussionTypes.length > 0 && howDoesThisResolve()) {
                 <repercussion-toggle
                   [repercussionTypes]="playerRepercussionTypes"
                   (repercussionChange)="onRepercussionChange($event)"
-                  (validityChange)="onRepercussionValidityChange($event)">
+                  (validityChange)="onRepercussionValidityChange($event)"
+                  (replacesAdditionText)="onRepercussionReplacesAdditionText($event)">
                 </repercussion-toggle>
               }
               <div class="addition-actions">
@@ -217,7 +220,7 @@
                   mat-flat-button
                   color="primary"
                   (click)="onAddToSubmission()"
-                  [disabled]="additionTextControl.invalid || isLoading || !repercussionToggleValid">
+                  [disabled]="(!repercussionTextOn && additionTextControl.invalid) || isLoading || !repercussionToggleValid">
                   Add to Submission
                 </button>
                 <button 
