@@ -67,8 +67,8 @@ export class GameService {
     return this.http.get<string>(`${environment.nowhereBackendUrl}/collaborativeText/winner?gameCode=${gameCode}`);
   }
 
-  getAvailableSubmissionsForPlayer(gameCode: string, playerId: string, requestedCount: number = 2): Observable<TextSubmission[]> {
-    return this.http.get<TextSubmission[]>(`${environment.nowhereBackendUrl}/collaborativeText/available?gameCode=${gameCode}&playerId=${playerId}&requestedCount=${requestedCount}`);
+  getAvailableSubmissionsForPlayer(gameCode: string, playerId: string, requestedCount: number = 2, showNewSubmissions: boolean = false): Observable<TextSubmission[]> {
+    return this.http.get<TextSubmission[]>(`${environment.nowhereBackendUrl}/collaborativeText/available?gameCode=${gameCode}&playerId=${playerId}&requestedCount=${requestedCount}&showNewSubmissions=${showNewSubmissions}`);
   }
 
   getVotingSubmissions(gameCode: string, playerId: string): Observable<TextSubmission[]> {

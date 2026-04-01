@@ -392,7 +392,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     });
   }
 
-  private updateAvailableSubmissions(usePhasesData: boolean = false) {
+  private updateAvailableSubmissions(usePhasesData: boolean = false, showNewSubmissions: boolean = false) {
     // If using phases data, extract the phase first
     if (usePhasesData) {
       if (!this.collaborativeTextPhases) return;
@@ -420,7 +420,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     const requestedCount = Math.max(0, 2 - currentCount);
     
     // Get submissions available to this player (with distribution logic)
-    this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId, requestedCount).subscribe({
+    this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId, requestedCount, showNewSubmissions).subscribe({
       next: (submissions) => {
         this.mergeNewSubmissions(submissions);
       },
@@ -633,7 +633,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.selectedOutcomeType = this.isSimpleMode ? this.selectedOutcomeType : null; // Clear selection after submission in collaborative mode
         this.availableSubmissions = [];
         this.maximumSubmissionsReached = false;
-        this.updateAvailableSubmissions();
+        this.updateAvailableSubmissions(false, true); // false = use existing collaborativePhase data, true = show new submissions immediately
         this.isLoading = false;
         if (this.isSimpleMode) {
           this.loadOutcomeTypes();
@@ -687,7 +687,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.availableSubmissions = [];
         this.repercussionTextOn = false;
 
-        this.updateAvailableSubmissions();
+        this.updateAvailableSubmissions(false, true); // false = use existing collaborativePhase data, true = show new submissions immediately
         this.isLoading = false;
         onComplete?.();
       },
