@@ -53,9 +53,14 @@
                   }
                 }
               </div>
-              @if (getSelectedOption()?.successText) {
+              @if (getSelectedOption()?.successText || outcomeDisplay.length > 0) {
                 <div class="success-text">
-                  <p>{{ getSelectedOption()?.successText }}</p>
+                  @if (getSelectedOption()?.successText) {
+                    <p>{{ getSelectedOption()?.successText }}</p>
+                  }
+                  @for (line of outcomeDisplay; track $index) {
+                    <p class="outcome-display-line">{{ line }}</p>
+                  }
                 </div>
               }
               @if (selectedOptionId && !getSelectedOption()?.successText) {

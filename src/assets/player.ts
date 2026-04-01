@@ -16,6 +16,7 @@ export class Player {
   playerStats: PlayerStat[];
   traits: Trait[];
   playerClass: PlayerClassOption | null;
+  displayName: string;
 
   constructor() {
     this.userName = '';
@@ -31,5 +32,6 @@ export class Player {
     this.playerStats = [];
     this.traits = [];
     this.playerClass = null;
+    this.displayName = "";
   }
 }

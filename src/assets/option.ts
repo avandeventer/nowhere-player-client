@@ -2,6 +2,12 @@ import { OutcomeStat } from "./outcome-stat";
 import { PlayerStat } from "./player-stat";
 import { Stat } from "./stat";
 
+export interface OutcomeFork {
+    // minimal shape for OutcomeFork; expand fields as needed
+    forkId?: string;
+    description?: string;
+}
+
 export class Option {
     optionId: string;
     optionText: string;
@@ -18,7 +24,7 @@ export class Option {
     playerSucceeded: boolean;
     pointsRewarded: number;
     successMarginText: string;
-
+    outcomeForks: OutcomeFork[] = [];
 
     constructor () {
         this.optionId = "";

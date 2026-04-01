@@ -1,13 +1,13 @@
 <!-- Summary: always visible as live preview -->
 <mat-card class="player-summary">
-  <div class="summary-name">{{ player.userName }}</div>
+  <div class="summary-name">{{ player.displayName }}</div>
   @if (player.playerClass) {
     <div class="summary-class">{{ player.playerClass.name }}</div>
   }
   @if (player.traits && player.traits.length > 0) {
     <div class="summary-traits">
       @for (trait of player.traits; track trait.traitId) {
-        <mat-chip>{{ trait.traitLabel }}</mat-chip>
+        <div class="trait-badge">{{ trait.traitLabel }}</div>
       }
     </div>
   }

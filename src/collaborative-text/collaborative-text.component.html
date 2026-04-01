@@ -39,20 +39,82 @@
                               <p class="submission-text">{{ option.successText }}</p>
                             }
                           }
+                          @if (selectedStory.repercussions && selectedStory.repercussions.length > 0) {
+                            <div class="repercussion-badges">
+                              @for (rep of selectedStory.repercussions; track $index) {
+                                <div class="repercussion-badge" [style.background-color]="rep.color">
+                                  @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
+                                    {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
+                                  } @else {
+                                    {{ rep.repercussionType }}
+                                  }
+                                </div>
+                              }
+                            </div>
+                          }
                         }
                       </div>
                     </mat-card-content>
                   </mat-card>
                 </div>
               }
-              @if (outcomeType.subTypes && outcomeType.subTypes.length > 0) {
+              @if (hasDeepSubTypes(outcomeType)) {
+                <!-- Deep-nested epilogue outcomeType (WRITE_EPILOGUES) -->
+                <mat-card class="outcome-type-item parent-with-subtypes">
+                  <mat-card-content>
+                    <p class="parent-label">{{ getEpiloguePlayer(outcomeType.id)?.displayName ?? outcomeType.label }}</p>
+                    @if (getEpiloguePlayer(outcomeType.id)?.traits?.length) {
+                      <div class="repercussion-badges">
+                        @for (trait of getEpiloguePlayer(outcomeType.id)!.traits; track trait.traitId) {
+                          <div class="epilogue-trait-badge">{{ trait.traitLabel }}</div>
+                        }
+                      </div>
+                    }
+                    <div class="subtypes-container">
+                      @for (subType of outcomeType.subTypes; track subType.id) {
+                        <mat-card
+                          class="subtype-item"
+                          [class.selected]="selectedOutcomeType?.subTypes?.[0]?.id === subType.id"
+                          (click)="onSelectEpilogueOutcomeType(outcomeType, subType)">
+                          <mat-card-content>
+                            <div class="outcome-badge outcome-success">{{ subType.label }}</div>
+                            @if (subType.subTypes && subType.subTypes.length > 0) {
+                              <p class="submission-text">{{ subType.subTypes[0].label }}</p>
+                              @if (subType.subTypes[0].subTypes && subType.subTypes[0].subTypes.length > 0) {
+                                <div class="outcome-badge outcome-success">{{ subType.subTypes[0].subTypes[0].label }}</div>
+                                @if (subType.subTypes[0].subTypes[0].subTypes && subType.subTypes[0].subTypes[0].subTypes.length > 0) {
+                                  <p class="submission-text">{{ subType.subTypes[0].subTypes[0].subTypes[0].label }}</p>
+                                }
+                              }
+                            }
+                          </mat-card-content>
+                        </mat-card>
+                      }
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              } @else if (outcomeType.subTypes && outcomeType.subTypes.length > 0) {
                 <!-- Parent with subTypes -->
                 <mat-card class="outcome-type-item parent-with-subtypes">
                   <mat-card-content>
-                    <p class="parent-label">{{ outcomeType.label }}</p>
+                    <p class="parent-label">{{ outcomeType.label }}
+                      @if (getRepercussionsForOutcomeType(outcomeType).length > 0) {
+                        <div class="repercussion-badges">
+                          @for (rep of getRepercussionsForOutcomeType(outcomeType); track $index) {
+                            <div class="repercussion-badge" [style.background-color]="rep.color">
+                              @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
+                                {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
+                              } @else {
+                                {{ rep.repercussionType }}
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </p>
                     <div class="subtypes-container">
                       @for (subType of outcomeType.subTypes; track subType.id) {
-                        <mat-card 
+                        <mat-card
                           class="subtype-item"
                           [class.selected]="selectedOutcomeType?.subTypes?.[0]?.id === subType.id"
                           (click)="onSelectSubType(outcomeType, subType)">
@@ -66,12 +128,25 @@
                 </mat-card>
               } @else {
                 <!-- Regular outcomeType without subTypes -->
-                <mat-card 
+                <mat-card
                   class="outcome-type-item"
                   [class.selected]="selectedOutcomeType?.id === outcomeType.id"
                   (click)="onSelectOutcomeType(outcomeType)">
                   <mat-card-content>
                     <p>{{ outcomeType.label }}</p>
+                    @if (getRepercussionsForOutcomeType(outcomeType).length > 0) {
+                      <div class="repercussion-badges">
+                        @for (rep of getRepercussionsForOutcomeType(outcomeType); track $index) {
+                          <div class="repercussion-badge" [style.background-color]="rep.color">
+                            @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
+                              {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
+                            } @else {
+                              {{ rep.repercussionType }}
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
                   </mat-card-content>
                 </mat-card>
               }
@@ -186,6 +261,19 @@
                         <mat-chip>{{ submission.additions.length || 0 }} additions</mat-chip>
                       </mat-chip-set>
                     </div>
+                    @if (getSubmissionRepercussions(submission).length > 0) {
+                      <div class="repercussion-badges">
+                        @for (rep of getSubmissionRepercussions(submission); track $index) {
+                          <div class="repercussion-badge" [style.background-color]="rep.color">
+                            @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
+                              {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
+                            } @else {
+                              {{ rep.repercussionType }}
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
                   </div>
                 </mat-card-content>
               </mat-card>

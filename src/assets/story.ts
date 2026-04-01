@@ -1,6 +1,7 @@
 import { Option } from './option';
 import { Location } from './location';
 import { EncounterLabel } from './encounter-label';
+import { Repercussion } from './repercussion';
 
 export class Story {
     prompt: string;
@@ -20,6 +21,7 @@ export class Story {
     gameCode: string;
     mainPlotStory: boolean;
     encounterLabel?: EncounterLabel;
+    repercussions?: Repercussion[];
     
     constructor() {
         this.prompt = "";
@@ -38,5 +40,6 @@ export class Story {
         this.prequelOutcomeDisplay = [];
         this.gameCode = "";
         this.mainPlotStory = false;
+        this.repercussions = [];
     }
 }

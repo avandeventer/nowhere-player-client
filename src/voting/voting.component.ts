@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { GameService } from '../services/game-session.service';
 import { TextSubmission } from '../assets/collaborative-text-phase';
+import { Repercussion } from '../assets/repercussion';
 import { PlayerVote } from '../assets/player-vote';
 import { GameState } from '../assets/game-state';
 import { ComponentType } from 'src/assets/component-type';
@@ -46,6 +47,7 @@ export class VotingComponent implements OnInit, OnChanges {
   @Input() player: any = null;
   @Input() gameSessionDisplay: GameSessionDisplay | null = null;
   @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
+  @Input() activePlayerSession: any = null;
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   submissions: TextSubmission[] = [];
@@ -178,6 +180,12 @@ export class VotingComponent implements OnInit, OnChanges {
   // Helper methods for WHAT_WILL_BECOME_OF_US phase
   isPlayerSubmission(submission: TextSubmission): boolean {
     return submission.authorId === this.player.authorId;
+  }
+
+  getSubmissionRepercussions(submission: TextSubmission): Repercussion[] {
+    return submission.additions
+      .filter(a => a.repercussion != null)
+      .map(a => a.repercussion!);
   }
 
   getOutcomeTypeClass(outcomeType: string | undefined): string {

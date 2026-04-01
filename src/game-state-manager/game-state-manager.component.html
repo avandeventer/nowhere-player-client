@@ -92,12 +92,13 @@
 }
 
 @if (isGameInVotingPhase()) {
-    <app-voting 
-      [gameCode]="gameCode" 
-      [gameState]="gameState" 
+    <app-voting
+      [gameCode]="gameCode"
+      [gameState]="gameState"
       [player]="player"
       [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
       [phaseInfo]="collaborativeTextPhaseInfo"
+      [activePlayerSession]="activePlayerSession"
       (playerDone)="setDone($event)">
     </app-voting>
 }

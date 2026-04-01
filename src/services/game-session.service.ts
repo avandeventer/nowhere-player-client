@@ -120,6 +120,10 @@ export class GameService {
     return this.http.get<RepercussionTypeOption[]>(`${environment.nowhereBackendUrl}${HttpConstants.REPERCUSSION_TYPES_PATH}?gameCode=${gameCode}&authorId=${authorId}`);
   }
 
+  getPlayerByAuthorId(gameCode: string, authorId: string): Observable<Player> {
+    return this.http.get<Player>(`${environment.nowhereBackendUrl}${HttpConstants.PLAYER_PATH}/authorId?gameCode=${gameCode}&authorId=${authorId}`);
+  }
+
   updatePlayer(player: Player): Observable<Player> {
     return this.http.put<Player>(`${environment.nowhereBackendUrl}${HttpConstants.PLAYER_PATH}`, player);
   }

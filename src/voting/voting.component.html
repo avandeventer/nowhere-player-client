@@ -12,12 +12,13 @@
       (playerDone)="playerDone.emit($event)">
     </app-compass-voting>
   } @else if (isMakeChoicePhase()) {
-    <app-story 
-      [gameCode]="gameCode" 
+    <app-story
+      [gameCode]="gameCode"
       [player]="player"
       [phaseInfo]="phaseInfo"
       [submissions]="submissions"
       [gameState]="gameState"
+      [outcomeDisplay]="activePlayerSession?.outcomeDisplay || []"
       (playerDone)="playerDone.emit($event)">
     </app-story>
   } @else if (isLoading) {
@@ -91,6 +92,19 @@
                   </div>
                 }
                 <p class="submission-text">{{ submission.currentText }}</p>
+                @if (getSubmissionRepercussions(submission).length > 0) {
+                  <div class="repercussion-badges">
+                    @for (rep of getSubmissionRepercussions(submission); track $index) {
+                      <div class="repercussion-badge" [style.background-color]="rep.color">
+                        @if (rep.repercussionType === 'Trait' || rep.repercussionType === 'Title') {
+                          {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
+                        } @else {
+                          {{ rep.repercussionType }}
+                        }
+                      </div>
+                    }
+                  </div>
+                }
                 <div class="selection-indicator">
                   @if (isSelected(submission.submissionId)) {
                     <mat-icon class="selected-icon">check_circle</mat-icon>

@@ -26,6 +26,7 @@ export class StoryComponent {
   @Input() player: any = null;
   @Input() gameState: any = null;
   @Input() submissions: TextSubmission[] = [];
+  @Input() outcomeDisplay: string[] = [];
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   selectedOptionId: string | null = null;

@@ -92,6 +92,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   repercussionToggleValid = true;
   repercussionTextOn = false;
 
+  // WRITE_EPILOGUES phase properties
+  epiloguePlayerCache: { [authorId: string]: Player } = {};
+
   constructor(private gameService: GameService) {}
 
   ngOnInit() {
@@ -191,6 +194,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         
         // Load stories for all outcomeTypes that have clarifiers
         this.loadStoriesForOutcomeTypes(outcomeTypes);
+
+        // For WRITE_EPILOGUES, load the player for each deep-nested outcomeType
+        if (this.isWriteEpiloguesPhase()) {
+          this.loadEpiloguePlayers(outcomeTypes);
+        }
         
         // Auto-select first outcomeType or first subType if available (only if no selection exists)
         if (this.selectedOutcomeType === null && this.availableOutcomeTypes.length > 0) {
@@ -291,6 +299,39 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       clarifier: parentOutcomeType.clarifier,
       subTypes: [subType]
     };
+  }
+
+  onSelectEpilogueOutcomeType(outcomeType: OutcomeType, subType: OutcomeType) {
+    this.selectedOutcomeType = {
+      id: outcomeType.id,
+      label: outcomeType.label,
+      clarifier: subType.subTypes?.[0]?.id ?? '',
+      subTypes: [subType]
+    };
+  }
+
+  isWriteEpiloguesPhase(): boolean {
+    return this.gameState === GameState.WRITE_EPILOGUES;
+  }
+
+  hasDeepSubTypes(outcomeType: OutcomeType): boolean {
+    return !!(outcomeType.subTypes && outcomeType.subTypes.length > 0 &&
+      outcomeType.subTypes[0].subTypes && outcomeType.subTypes[0].subTypes.length > 0);
+  }
+
+  getEpiloguePlayer(outcomeTypeId: string): Player | null {
+    return this.epiloguePlayerCache[outcomeTypeId] ?? null;
+  }
+
+  private loadEpiloguePlayers(outcomeTypes: OutcomeType[]) {
+    outcomeTypes.forEach(outcomeType => {
+      if (this.hasDeepSubTypes(outcomeType) && !this.epiloguePlayerCache[outcomeType.id]) {
+        this.gameService.getPlayerByAuthorId(this.gameCode, outcomeType.id).subscribe({
+          next: (player) => { this.epiloguePlayerCache = { ...this.epiloguePlayerCache, [outcomeType.id]: player }; },
+          error: (error) => { console.error('Error loading epilogue player:', error); }
+        });
+      }
+    });
   }
 
   private updatePhaseInfoFromInput() {
@@ -712,7 +753,19 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
   }
 
-  getOutcomeTypeClass(outcomeType: string | undefined): string {
+  getRepercussionsForOutcomeType(outcomeType: OutcomeType): Repercussion[] {
+    if (!outcomeType.clarifier) return [];
+    const story = this.storyCache.get(outcomeType.clarifier);
+    return story?.repercussions ?? [];
+  }
+
+  getSubmissionRepercussions(submission: TextSubmission): Repercussion[] {
+    return submission.additions
+      .filter(a => a.repercussion != null)
+      .map(a => a.repercussion!);
+  }
+
+getOutcomeTypeClass(outcomeType: string | undefined): string {
     if (!outcomeType) return '';
 
     if (outcomeType !== 'success' && outcomeType !== 'neutral' && outcomeType !== 'failure') {

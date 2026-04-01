@@ -3,4 +3,5 @@ export interface RepercussionTypeOption {
   label: string;
   instruction: string;
   description: string;
+  color: string;
 }

@@ -20,6 +20,16 @@
     flex-wrap: wrap;
     gap: 8px;
   }
+
+  .trait-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: .8rem;
+    font-weight: 600;
+    background-color: #607d8b;
+    color: #fff;
+  }
 }
 
 .character-creation-card {
