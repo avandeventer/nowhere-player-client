@@ -70,6 +70,7 @@ export class VotingComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['gameState']) {
       this.setupPhaseProperties();
+      this.hasVoted = false;
       this.loadVotingSubmissions();
     }
   }
