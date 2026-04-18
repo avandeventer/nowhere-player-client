@@ -170,21 +170,6 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
   }
 
-  private checkStreamlinedMode() {
-    this.gameService.getFeatureFlag('streamlinedCollaborativeStories').subscribe({
-      next: (isStreamlined) => {
-        this.isStreamlinedMode = isStreamlined;
-        if (isStreamlined && !this.hasSubmitted) {
-          this.loadOutcomeTypes();
-        }
-      },
-      error: (error) => {
-        console.error('Error checking streamlined mode:', error);
-        this.isStreamlinedMode = false;
-      }
-    });
-  }
-
   howDoesThisResolve(): boolean {
     return this.gameState === GameState.HOW_DOES_THIS_RESOLVE || this.gameState === GameState.HOW_DOES_THIS_RESOLVE_AGAIN;
   }
@@ -219,9 +204,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
           }
           
           // Load story for auto-selected outcomeType if it has a clarifier
-          if (this.selectedOutcomeType.clarifier) {
-            // Check cache first, if not available it will be loaded by loadStoriesForOutcomeTypes
-            this.selectedStory = this.storyCache.get(this.selectedOutcomeType.clarifier) || null;
+          // Prefer subType clarifier, fall back to parent clarifier
+          const firstSubType = this.selectedOutcomeType.subTypes?.[0];
+          const autoClarifier = firstSubType?.clarifier || this.selectedOutcomeType.clarifier || '';
+          if (autoClarifier) {
+            this.selectedStory = this.storyCache.get(autoClarifier) || null;
           }
         }
         console.log('Available outcome types:', outcomeTypes);
@@ -295,12 +282,18 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   onSelectSubType(parentOutcomeType: OutcomeType, subType: OutcomeType) {
     // Set selectedOutcomeType to the parent with a single subType array containing the selected subType
+    const clarifier = subType.clarifier || parentOutcomeType.clarifier || '';
     this.selectedOutcomeType = {
       id: parentOutcomeType.id,
       label: parentOutcomeType.label,
-      clarifier: parentOutcomeType.clarifier,
+      clarifier: clarifier,
       subTypes: [subType]
     };
+    if (clarifier) {
+      this.selectedStory = this.storyCache.get(clarifier) || null;
+    } else {
+      this.selectedStory = null;
+    }
   }
 
   onSelectEpilogueOutcomeType(outcomeType: OutcomeType, subType: OutcomeType) {
