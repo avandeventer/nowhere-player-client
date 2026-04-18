@@ -4,7 +4,58 @@
     <p class="voting-instructions">{{ phaseInfo?.phaseInstructions || 'Click on submissions to rank them from best to worst. The first one you select will be ranked #1, the second will be #2, and so on.' }}</p>
   </div>
 
-  @if (isNavigateVotingPhase()) {
+  @if (isLocationVotingPhase()) {
+    @if (hasVoted) {
+      <div class="voted-container">
+        <mat-icon class="voted-icon">check_circle</mat-icon>
+        <h2>Location Chosen!</h2>
+        <p>Your choice has been recorded. Waiting for other players...</p>
+      </div>
+    } @else if (isLoading && submissions.length === 0) {
+      <div class="loading-container">
+        <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+        <p>Loading locations...</p>
+      </div>
+    } @else {
+      <div class="fork-container">
+        <div class="fork-left">
+          <mat-icon class="traveler-icon">person</mat-icon>
+        </div>
+        <div class="fork-paths">
+          @for (submission of submissions; track submission.submissionId) {
+            <div class="fork-path">
+              <div class="path-connector" [class.path-selected]="selectedLocationId === submission.submissionId"></div>
+              <mat-card
+                class="location-vote-card"
+                [class.selected]="selectedLocationId === submission.submissionId"
+                (click)="selectLocation(submission.submissionId)">
+                <mat-card-content>
+                  @if (submission.outcomeType) {
+                    <img [src]="submission.outcomeType" [alt]="submission.currentText" class="location-vote-image" />
+                  }
+                  <p class="location-vote-label">{{ submission.currentText }}</p>
+                  @if (selectedLocationId === submission.submissionId) {
+                    <mat-icon class="location-selected-icon">check_circle</mat-icon>
+                  }
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="submit-container">
+        <button
+          mat-raised-button
+          color="primary"
+          class="submit-button"
+          [disabled]="!selectedLocationId || isLoading"
+          (click)="submitLocationVote()">
+          <mat-icon>place</mat-icon>
+          @if (isLoading) { Submitting... } @else { Choose This Location }
+        </button>
+      </div>
+    }
+  } @else if (isNavigateVotingPhase()) {
     <app-compass-voting
       [gameCode]="gameCode"
       [player]="player"

@@ -91,6 +91,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   activeRepercussion: Repercussion | null = null;
   repercussionToggleValid = true;
   repercussionTextOn = false;
+  companionRepercussionOn = false;
+  companionStory: Story | null = null;
 
   // WRITE_EPILOGUES phase properties
   epiloguePlayerCache: { [authorId: string]: Player } = {};
@@ -100,14 +102,14 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.updatePhaseInfoFromInput();
     this.loadPlayerOutcomeType();
-    this.checkStreamlinedMode();
+    // this.checkStreamlinedMode();
     this.loadCollaborativePhase();
     this.loadPlayerRepercussionTypes();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     // Reload outcome types when gameState changes (new phase)
-    if (changes['gameState'] && this.isStreamlinedMode) {
+    if (changes['gameState']) {
       // Reset selection when gameState changes (new phase)
       this.selectedOutcomeType = null;
       this.selectedStory = null;
@@ -489,6 +491,31 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   onRepercussionChange(repercussion: Repercussion | null) {
     this.activeRepercussion = repercussion;
+    this.companionRepercussionOn = this.player.playerClass?.repercussionTypes?.some((repercussionType) => repercussionType === 'COMPANION') || false;
+    if (this.companionRepercussionOn && this.activeRepercussion != null && this.selectedSubmission) {
+      const storyId = this.selectedSubmission.outcomeTypeWithLabel?.id;
+      if (storyId) {
+        if (this.storyCache.has(storyId)) {
+          this.companionStory = this.storyCache.get(storyId) ?? null;
+        } else {
+          this.gameService.getStoryByStoryId(this.gameCode, storyId).subscribe({
+              next: (storyResponseBody: any) => {
+                const story = (storyResponseBody?.responseBody?.[0] ?? storyResponseBody?.story ?? storyResponseBody) as Story;
+                this.storyCache.set(storyId, story);
+                this.companionStory = story;
+              }
+          });
+        }
+        if (this.activeRepercussion && this.companionStory && this.companionStory.encounterLabel) {
+          this.activeRepercussion.repercussionSubmission = this.companionStory!.encounterLabel!.encounterLabel ?? '';
+        }
+      }
+    } else {
+      this.companionStory = null;
+      if (this.companionRepercussionOn) {
+        this.activeRepercussion!.repercussionSubmission = '';
+      }
+    }
   }
 
   onRepercussionValidityChange(isValid: boolean) {
@@ -598,13 +625,13 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
 
     // In streamlined mode, require outcomeType selection if available
-    if (this.isStreamlinedMode && this.availableOutcomeTypes.length > 0 && !this.selectedOutcomeType) {
+    if (this.availableOutcomeTypes.length > 0 && !this.selectedOutcomeType) {
       onComplete?.();
       return;
     }
 
     // In streamlined mode, use selected outcomeType if available
-    const outcomeType: OutcomeType | null = this.isStreamlinedMode && this.selectedOutcomeType 
+    const outcomeType: OutcomeType | null = this.selectedOutcomeType 
       ? this.selectedOutcomeType
       : null;
 
@@ -635,9 +662,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.maximumSubmissionsReached = false;
         this.updateAvailableSubmissions(false, true); // false = use existing collaborativePhase data, true = show new submissions immediately
         this.isLoading = false;
-        if (this.isSimpleMode) {
-          this.loadOutcomeTypes();
-        }
+        // if (this.isSimpleMode) {
+        //   this.loadOutcomeTypes();
+        // }
         onComplete?.();
       },
       error: (error) => {
@@ -650,6 +677,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   onSelectSubmission(submission: TextSubmission) {
     this.selectedSubmission = submission;
+    if (this.activeRepercussion != null) {
+      this.onRepercussionChange(this.activeRepercussion); // Trigger update to check if companion repercussion should be shown for the newly selected submission
+    }
   }
 
   onAddToSubmission(onComplete?: () => void) {

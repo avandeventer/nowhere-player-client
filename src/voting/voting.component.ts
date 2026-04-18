@@ -209,6 +209,35 @@ export class VotingComponent implements OnInit, OnChanges {
     return this.gameState === GameState.MAKE_OUTCOME_CHOICE_VOTING;
   }
 
+  isLocationVotingPhase(): boolean {
+    return this.gameState === GameState.LOCATION_VOTING;
+  }
+
+  selectedLocationId: string = '';
+
+  selectLocation(submissionId: string) {
+    this.selectedLocationId = submissionId;
+  }
+
+  submitLocationVote() {
+    if (!this.selectedLocationId) return;
+
+    this.isLoading = true;
+    const vote = new PlayerVote(this.player.authorId, this.selectedLocationId, 1);
+
+    this.gameService.submitPlayerVotes(this.gameCode, [vote]).subscribe({
+      next: () => {
+        this.hasVoted = true;
+        this.isLoading = false;
+        this.playerDone.emit(ComponentType.VOTING);
+      },
+      error: (error) => {
+        console.error('Error submitting location vote:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
   hasStoryWithOptions(): boolean {
     return !!(this.phaseInfo?.storyToIterateOn?.options && this.phaseInfo.storyToIterateOn.options.length > 0);
   }

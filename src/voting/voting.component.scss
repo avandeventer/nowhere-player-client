@@ -346,3 +346,103 @@ app-story {
   margin-left: 8px;
   opacity: 0.9;
 }
+
+// Location voting fork layout
+.fork-container {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 24px;
+}
+
+.fork-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding-right: 16px;
+}
+
+.traveler-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: #555;
+}
+
+.fork-paths {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+.fork-path {
+  display: flex;
+  align-items: center;
+}
+
+.path-connector {
+  width: 32px;
+  height: 2px;
+  background: #ccc;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+
+  &.path-selected {
+    background: #4caf50;
+  }
+}
+
+.location-vote-card {
+  flex: 1;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+
+  mat-card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px !important;
+  }
+
+  &:hover {
+    border-color: #2196f3;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  &.selected {
+    border-color: #4caf50;
+    background: #f1f8f4;
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.3);
+  }
+}
+
+.location-vote-image {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.location-vote-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  flex: 1;
+}
+
+.location-selected-icon {
+  color: #4caf50;
+  font-size: 1.4rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+}
