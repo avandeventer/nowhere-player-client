@@ -138,31 +138,11 @@
   }
 }
 
-.submitted-card {
-  background: linear-gradient(135deg,#e8f5e8 0%,#f0f8f0 100%);
-  border: 2px solid #4caf50;
-}
-.submitted-content {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 10px 0;
-}
-.check-icon {
-  font-size: 2rem;
-  width: 2rem;
-  height: 2rem;
-}
-.submitted-text h3 {
-  margin: 0 0 5px;
-  color: #2e7d32;
-  font-size: 1.2rem;
-}
-.submitted-text p {
-  margin: 0;
-  color: #4caf50;
-  font-size: 1rem;
-}
+.submitted-card { background: linear-gradient(135deg,#e8f5e8 0%,#f0f8f0 100%); border: 2px solid #4caf50; }
+.submitted-content { display: flex; align-items: center; gap: 15px; padding: 10px 0; }
+.check-icon { font-size: 2rem; width: 2rem; height: 2rem; }
+.submitted-text h3 { margin: 0 0 5px; color: #2e7d32; font-size: 1.2rem; }
+.submitted-text p { margin: 0; color: #4caf50; font-size: 1rem; }
 
 .actions-right {
   justify-content: flex-end;
@@ -198,20 +178,9 @@
   text-align: center;
 }
 
-.outcome-success .outcome-message {
-  color: #2e7d32;
-  background-color: #e8f5e9;
-}
-
-.outcome-neutral .outcome-message {
-  color: #e65100;
-  background-color: #fff3e0;
-}
-
-.outcome-failure .outcome-message {
-  color: #c62828;
-  background-color: #ffebee;
-}
+.outcome-success .outcome-message { color: #2e7d32; background-color: #e8f5e9; }
+.outcome-neutral .outcome-message { color: #e65100; background-color: #fff3e0; }
+.outcome-failure .outcome-message { color: #c62828; background-color: #ffebee; }
 
 .outcome-badge {
   display: inline-block;
@@ -256,13 +225,8 @@
 }
 
 .epilogue-trait-badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: .8rem;
-  font-weight: 600;
+  @extend .repercussion-badge;
   background-color: #607d8b;
-  color: #fff;
 }
 
 .your-submission {
