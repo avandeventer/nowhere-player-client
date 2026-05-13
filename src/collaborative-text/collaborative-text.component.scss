@@ -220,7 +220,11 @@
 }
 
 .companion-preview {
+  display: block;
+  width: fit-content;
   margin-top: 8px;
+  margin-bottom: 20px;
+  margin-left: auto;
   background-color: #E60000;
 }
 

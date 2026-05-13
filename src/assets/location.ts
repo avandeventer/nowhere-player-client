@@ -7,11 +7,16 @@ export class Location {
     iconDirectory: String;
     locationIndex: number;
 
+    description: string;
+    selectedOptionId: string;
+
     constructor () {
         this.id = "";
         this.options = []
         this.label = "";
         this.iconDirectory = "";
         this.locationIndex = 0;
+        this.description = "";
+        this.selectedOptionId = "";
     }
 }

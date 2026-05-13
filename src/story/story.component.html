@@ -3,73 +3,83 @@
     <mat-card class="encounter-header">
       <h2>You've encountered</h2>
       <mat-card class="story-card">
-        @if (story.encounterLabel?.encounterLabel) {
+
+        <!-- Encounter label -->
+        @if (isLocationOptionChoicePhase()) {
+          @if (story.location?.label) {
+            <mat-card-header>
+              <h1>{{ story.location?.label }}</h1>
+            </mat-card-header>
+          }
+        } @else if (story.encounterLabel?.encounterLabel) {
           <mat-card-header>
             <h1>{{ story.encounterLabel?.encounterLabel }}</h1>
           </mat-card-header>
         }
+
         <mat-card-content>
-          @if (story.prompt) {
+
+          <!-- Prompt / description area -->
+          @if (isAcceptPartnerChoiceVotingPhase() && submissions.length > 0) {
+            <div class="story-prompt">
+              <p>{{ submissions[0].currentText }}</p>
+            </div>
+          } @else if (!isLocationOptionChoicePhase() && !isPartnerChoicePhase() && story.prompt) {
             <div class="story-prompt">
               <p>{{ story.prompt }}</p>
             </div>
+          } @else if (isLocationOptionChoicePhase() && story.location.description) {
+            <div class="story-prompt">
+              <p>{{ story.location.description }}</p>
+            </div>
           }
-          
-          @if (hasVoted && !getSelectedOption()) {
+
+          <!-- State: already voted -->
+          @if (hasVoted && !getEffectiveSelectedOption()) {
             <div class="voted-container">
               <mat-icon class="voted-icon">check_circle</mat-icon>
               <h2>Vote Submitted!</h2>
               <p>Thank you for voting. The results will be calculated when all players have voted.</p>
             </div>
+
+          <!-- State: not this player's turn -->
           } @else if (!isPlayerTurn) {
             <div class="voted-container">
               <mat-icon class="voted-icon">access_time</mat-icon>
               <h2>Not Your Turn!</h2>
               <p>It's not your turn to make a choice.</p>
             </div>
-          } @else if (story.options && story.options.length > 0) {
+
+          <!-- ACCEPT_PARTNER_CHOICE_WINNER: show partnership outcome -->
+          } @else if (gameState === 'ACCEPT_PARTNER_CHOICE_WINNER') {
+            @if (story.partnerIds && story.partnerIds.length > 0) {
+              <div class="success-text">Partnership accepted!</div>
+            } @else {
+              <div class="success-text">Not trustworthy enough! Partnership rejected!</div>
+            }
+
+          <!-- MAKE_PARTNER_CHOICE_VOTING: submissions as selectable options -->
+          } @else if (isPartnerChoiceVotingPhase()) {
             <div class="options-section">
               <div class="options-list">
-                @if (getSelectedOption()?.successText) {
-                  @if (getSelectedOption(); as selectedOption) {
-                    <button mat-flat-button 
-                              class="option-button" 
-                              [class.selected]="isOptionSelected(selectedOption)">
-                      {{ selectedOption.optionText }}
-                    </button>
-                  }
-                } @else {
-                  @for (option of getOptions(); track option.optionId || $index) {
-                    @if (option.optionText) {
-                      <button 
-                        mat-flat-button 
-                        class="option-button"
-                        [class.selected]="isSelected(option)"
-                        [disabled]="isLoading || isOptionSelected(option)"
-                        (click)="selectOption(option)">
-                        {{ option.optionText }}
-                      </button>
-                    }
-                  }
-                }
-              </div>
-              @if (getSelectedOption()?.successText || outcomeDisplay.length > 0) {
-                <div class="success-text">
-                  @if (getSelectedOption()?.successText) {
-                    <p>{{ getSelectedOption()?.successText }}</p>
-                  }
-                  @for (line of outcomeDisplay; track $index) {
-                    <p class="outcome-display-line">{{ line }}</p>
-                  }
-                </div>
-              }
-              @if (selectedOptionId && !getSelectedOption()?.successText) {
-                <div class="submit-container">
-                  <button 
-                    mat-flat-button 
-                    class="submit-button"
+                @for (submission of submissions; track submission.submissionId) {
+                  <button mat-flat-button class="option-button"
+                    [class.selected]="selectedOptionId === submission.submissionId"
                     [disabled]="isLoading"
-                    (click)="submitVote()">
+                    (click)="selectOptionById(submission.submissionId)">
+                    {{ submission.currentText }}
+                  </button>
+                }
+                <button mat-flat-button class="option-button"
+                  [class.selected]="selectedOptionId === '__skip__'"
+                  [disabled]="isLoading"
+                  (click)="selectOptionById('__skip__')">
+                  I don't trust any of these people
+                </button>
+              </div>
+              @if (selectedOptionId) {
+                <div class="submit-container">
+                  <button mat-flat-button class="submit-button" [disabled]="isLoading" (click)="submitPartnerChoice()">
                     @if (isLoading) {
                       <mat-icon class="loading-icon">hourglass_empty</mat-icon>
                       Submitting...
@@ -79,14 +89,86 @@
                   </button>
                 </div>
               }
+            </div>
 
-              @if (getSelectedOption()?.successText) {
-                <div class="submit-container">
-                  <button 
-                    mat-flat-button 
-                    class="submit-button"
+          <!-- ACCEPT_PARTNER_CHOICE_VOTING: Accept/Reject flow -->
+          } @else if (isAcceptPartnerChoiceVotingPhase()) {
+            <div class="options-section">
+              <div class="options-list">
+                @for (submission of submissions; track submission.submissionId) {
+                  <button mat-flat-button class="option-button"
+                    [class.selected]="selectedOptionId === submission.submissionId"
                     [disabled]="isLoading"
-                    (click)="nextGamePhase()">
+                    (click)="selectOptionById(submission.submissionId)">
+                    Accept
+                  </button>
+                }
+              </div>
+              @if (selectedOptionId) {
+                <div class="submit-container">
+                  <button mat-flat-button class="submit-button" [disabled]="isLoading" (click)="submitVote()">
+                    @if (isLoading) {
+                      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+                      Submitting...
+                    } @else {
+                      Submit
+                    }
+                  </button>
+                </div>
+              }
+              <div class="submit-container">
+                <button mat-stroked-button class="skip-button" [disabled]="isLoading" (click)="skipChoice()">
+                  Reject
+                </button>
+              </div>
+            </div>
+
+          <!-- Normal / LOCATION_OPTION_MAKE_CHOICE_VOTING option selection -->
+          } @else if (getEffectiveOptions().length > 0) {
+            <div class="options-section">
+              <div class="options-list">
+                @if (getEffectiveDisplayText()) {
+                  @if (getEffectiveSelectedOption(); as selectedOption) {
+                    <button mat-flat-button class="option-button" [class.selected]="isEffectiveOptionSelected(selectedOption)">
+                      {{ selectedOption.optionText }}
+                    </button>
+                  }
+                } @else {
+                  @for (option of getEffectiveOptions(); track option.optionId || $index) {
+                    @if (option.optionText) {
+                      <button mat-flat-button class="option-button"
+                        [class.selected]="isSelected(option)"
+                        [disabled]="isLoading"
+                        (click)="selectOption(option)">
+                        {{ option.optionText }}
+                      </button>
+                    }
+                  }
+                }
+              </div>
+              @if (getEffectiveDisplayText()) {
+                <div class="success-text">
+                  <p>{{ getEffectiveDisplayText() }}</p>
+                  @for (line of outcomeDisplay; track $index) {
+                    <p class="outcome-display-line">{{ line }}</p>
+                  }
+                </div>
+              }
+              @if (selectedOptionId && !getEffectiveDisplayText()) {
+                <div class="submit-container">
+                  <button mat-flat-button class="submit-button" [disabled]="isLoading" (click)="submitVote()">
+                    @if (isLoading) {
+                      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+                      Submitting...
+                    } @else {
+                      Submit Vote
+                    }
+                  </button>
+                </div>
+              }
+              @if (getEffectiveDisplayText()) {
+                <div class="submit-container">
+                  <button mat-flat-button class="submit-button" [disabled]="isLoading" (click)="nextGamePhase()">
                     @if (isLoading) {
                       <mat-icon class="loading-icon">hourglass_empty</mat-icon>
                       Continuing...
@@ -98,9 +180,9 @@
               }
             </div>
           }
+
         </mat-card-content>
       </mat-card>
     </mat-card>
   </div>
 }
-

@@ -1,54 +1,41 @@
-.repercussion-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 10px 12px;
-  margin: 8px 0;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  background-color: #fff;
-  transition: border-color 0.2s ease;
+.repercussion-header {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
-  &.toggled {
-    border-color: #1976d2;
-    background-color: #e3f2fd;
-  }
+.repercussion-toggle-group {
+  width: 100%;
 
-  .toggle-button {
-    flex-shrink: 0;
-    color: rgba(0, 0, 0, 0.38);
-
-    &.toggled {
-      color: #1976d2;
-    }
-
-    mat-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-    }
-  }
-
-  .repercussion-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  ::ng-deep .mat-button-toggle {
     flex: 1;
-    padding-top: 10px;
+    text-align: center;
+  }
+}
 
-    .repercussion-instruction {
-      color: rgba(0, 0, 0, 0.6);
-      font-style: italic;
-      font-size: 0.9em;
-    }
+.toggle-clarification {
+  text-align: right;
+  font-size: 0.75em;
+  color: rgba(0, 0, 0, 0.54);
+  font-style: italic;
+  margin-top: 4px;
+}
 
-    .repercussion-description {
-      font-size: 0.9em;
-      color: #1565c0;
-    }
+.repercussion-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 4px 4px;
 
-    .full-width {
-      width: 100%;
-    }
+  .repercussion-description {
+    font-size: 0.9em;
+    color: #1565c0;
+  }
+
+  .full-width {
+    width: 100%;
   }
 }

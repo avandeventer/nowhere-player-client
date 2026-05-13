@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -17,6 +18,7 @@ import { Repercussion } from '../assets/repercussion';
     CommonModule,
     FormsModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -54,6 +56,12 @@ export class RepercussionToggleComponent implements OnChanges {
 
   toggle(repType: RepercussionTypeOption) {
     this.toggledType = this.toggledType === repType.name ? null : repType.name;
+    this.submissionText = '';
+    this.emitChanges();
+  }
+
+  clearToggle() {
+    this.toggledType = null;
     this.submissionText = '';
     this.emitChanges();
   }

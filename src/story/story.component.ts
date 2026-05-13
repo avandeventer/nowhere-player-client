@@ -1,17 +1,16 @@
-import { Component, Input, Output, EventEmitter, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Story } from '../assets/story';
+import { GameState } from '../assets/game-state';
 import { TextSubmission } from '../assets/collaborative-text-phase';
 import { Option } from '../assets/option';
 import { CollaborativeTextPhaseInfo, PhaseType } from '../assets/collaborative-text-phase-info';
 import { GameService } from '../services/game-session.service';
 import { PlayerVote } from '../assets/player-vote';
 import { ComponentType } from '../assets/component-type';
-import { HttpConstants } from 'src/assets/http-constants';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-story',
@@ -37,7 +36,11 @@ export class StoryComponent {
   constructor(private gameService: GameService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.phaseInfo?.phaseType === PhaseType.VOTING && changes['submissions']) {
+    if (this.isPartnerChoiceVotingPhase() || this.isAcceptPartnerChoiceVotingPhase()) {
+      if (changes['submissions'] || changes['gameState']) {
+        this.isPlayerTurn = this.submissions.length > 0;
+      }
+    } else if (this.phaseInfo?.phaseType === PhaseType.VOTING && changes['submissions']) {
       this.isPlayerTurn = this.submissions.length > 0;
     }
 
@@ -54,26 +57,90 @@ export class StoryComponent {
     return this.phaseInfo?.storyToIterateOn;
   }
 
+  isLocationOptionChoicePhase(): boolean {
+    return this.gameState === GameState.LOCATION_OPTION_MAKE_CHOICE_VOTING 
+    || this.gameState === GameState.LOCATION_OPTION_MAKE_CHOICE_WINNER;
+  }
+
+  isPartnerChoiceVotingPhase(): boolean {
+    return this.gameState === GameState.MAKE_PARTNER_CHOICE_VOTING;
+  }
+
+  isAcceptPartnerChoiceVotingPhase(): boolean {
+    return this.gameState === GameState.ACCEPT_PARTNER_CHOICE_VOTING;
+  }
+
+  isPartnerChoicePhase(): boolean {
+    return this.gameState === GameState.MAKE_PARTNER_CHOICE_VOTING
+      || this.gameState === GameState.MAKE_PARTNER_CHOICE_WINNER
+      || this.gameState === GameState.ACCEPT_PARTNER_CHOICE_VOTING
+      || this.gameState === GameState.ACCEPT_PARTNER_CHOICE_WINNER;
+  }
+
   getOptions(): Option[] {
     return this.story?.options || [];
   }
 
-  selectOption(option: Option) {
-    if (this.hasVoted || this.isLoading) {
-      return;
+  getEffectiveOptions(): Option[] {
+    if (this.isLocationOptionChoicePhase()) {
+      return this.story?.location?.options || [];
     }
+    return this.getOptions();
+  }
+
+  getEffectiveSelectedOptionId(): string | undefined {
+    if (this.isLocationOptionChoicePhase()) {
+      return this.story?.location?.selectedOptionId || undefined;
+    }
+    return this.story?.selectedOptionId || undefined;
+  }
+
+  getEffectiveSelectedOption(): Option | undefined {
+    const selectedId = this.getEffectiveSelectedOptionId();
+    if (!selectedId) return undefined;
+    return this.getEffectiveOptions().find(o => o.optionId === selectedId);
+  }
+
+  getEffectiveDisplayText(): string | undefined {
+    const option = this.getEffectiveSelectedOption();
+    if (!option) return undefined;
+    const text = this.isLocationOptionChoicePhase() ? option.attemptText : option.successText;
+    return text || undefined;
+  }
+
+  isEffectiveOptionSelected(option: Option): boolean {
+    const selectedId = this.getEffectiveSelectedOptionId();
+    return !!selectedId && selectedId === option.optionId;
+  }
+
+  selectOption(option: Option) {
+    if (this.hasVoted || this.isLoading) return;
     this.selectedOptionId = option.optionId;
   }
 
-  getSelectedOption(): Option | undefined {
-    if (!this.story?.selectedOptionId) {
-      return undefined;
+  selectOptionById(id: string) {
+    if (this.hasVoted || this.isLoading) return;
+    this.selectedOptionId = id;
+  }
+
+  submitPartnerChoice() {
+    if (this.selectedOptionId === '__skip__') {
+      this.skipChoice();
+    } else {
+      this.submitVote();
     }
-    return this.getOptions().find(option => option.optionId === this.story?.selectedOptionId);
+  }
+
+  skipChoice() {
+    this.playerDone.emit(ComponentType.VOTING);
+  }
+
+  getSelectedOption(): Option | undefined {
+    return this.getEffectiveSelectedOption();
   }
 
   isOptionSelected(option: Option): boolean {
-    return this.story?.selectedOptionId === option.optionId;
+    return this.isEffectiveOptionSelected(option);
   }
 
   submitVote() {
@@ -83,11 +150,10 @@ export class StoryComponent {
 
     this.isLoading = true;
 
-    // Create a single PlayerVote with option.optionId as submissionId
     const playerVote = new PlayerVote(this.player.authorId, this.selectedOptionId, 1);
-    
+
     this.gameService.submitPlayerVotes(this.gameCode, [playerVote]).subscribe({
-      next: (phase) => {
+      next: () => {
         this.hasVoted = true;
         this.isLoading = false;
         this.playerDone.emit(ComponentType.VOTING);

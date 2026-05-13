@@ -242,7 +242,8 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameInVotingPhase() {
     return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.VOTING
-     || this.gameState === GameState.MAKE_OUTCOME_CHOICE_WINNER;
+     || this.gameState === GameState.MAKE_OUTCOME_CHOICE_WINNER 
+     || this.gameState === GameState.LOCATION_OPTION_MAKE_CHOICE_WINNER;
   }
 
   isGameInCollaborativeTextWinningPhase() {
