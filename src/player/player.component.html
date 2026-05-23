@@ -84,8 +84,7 @@
           } @else {
             <div class="trait-selection">
               <p class="instructions">
-                Choose up to {{ MAX_TRAITS }} traits.
-                <span class="count">({{ selectedTraits.length }} / {{ MAX_TRAITS }})</span>
+                Choose one trait.
               </p>
               @if (isLoading && availableTraits.length === 0) {
                 <p>Loading traits...</p>

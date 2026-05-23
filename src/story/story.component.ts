@@ -131,6 +131,14 @@ export class StoryComponent {
     }
   }
 
+  submitAcceptChoice() {
+    if (this.selectedOptionId === '__skip__') {
+      this.skipChoice();
+    } else {
+      this.submitVote();
+    }
+  }
+
   skipChoice() {
     this.playerDone.emit(ComponentType.VOTING);
   }

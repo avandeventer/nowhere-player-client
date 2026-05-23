@@ -44,7 +44,7 @@ export class PlayerComponent implements OnInit, OnChanges {
   hasSubmittedTraits = false;
 
   isLoading = false;
-  readonly MAX_TRAITS = 3;
+  readonly MAX_TRAITS = 1;
 
   constructor(private gameService: GameService) {}
 
@@ -135,11 +135,10 @@ export class PlayerComponent implements OnInit, OnChanges {
   }
 
   toggleTrait(trait: Trait) {
-    const index = this.selectedTraits.findIndex(t => t.traitId === trait.traitId);
-    if (index !== -1) {
-      this.selectedTraits.splice(index, 1);
-    } else if (this.selectedTraits.length < this.MAX_TRAITS) {
-      this.selectedTraits.push(trait);
+    if (this.isTraitSelected(trait)) {
+      this.selectedTraits = [];
+    } else {
+      this.selectedTraits = [trait];
     }
   }
 
@@ -148,7 +147,7 @@ export class PlayerComponent implements OnInit, OnChanges {
   }
 
   canSelectTrait(trait: Trait): boolean {
-    return this.isTraitSelected(trait) || this.selectedTraits.length < this.MAX_TRAITS;
+    return this.isTraitSelected(trait) || this.selectedTraits.length === 0;
   }
 
   submitTraits() {
