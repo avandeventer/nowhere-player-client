@@ -62,6 +62,11 @@
                 <!-- Deep-nested epilogue outcomeType (WRITE_EPILOGUES) -->
                 <mat-card class="outcome-type-item parent-with-subtypes">
                   <mat-card-content>
+                    @if (outcomeType.headers?.length) {
+                      @for (header of outcomeType.headers; track $index) {
+                        <div class="outcome-badge outcome-success">{{ header }}</div>
+                      }
+                    }
                     <p class="parent-label">{{ getEpiloguePlayer(outcomeType.id)?.displayName ?? outcomeType.label }}</p>
                     @if (getEpiloguePlayer(outcomeType.id)?.traits?.length) {
                       <div class="repercussion-badges">
@@ -97,6 +102,11 @@
                 <!-- Parent with subTypes -->
                 <mat-card class="outcome-type-item parent-with-subtypes">
                   <mat-card-content>
+                    @if (outcomeType.headers?.length) {
+                      @for (header of outcomeType.headers; track $index) {
+                        <div class="outcome-badge outcome-success">{{ header }}</div>
+                      }
+                    }
                     <p class="parent-label">{{ outcomeType.label }}
                       @if (getRepercussionsForOutcomeType(outcomeType).length > 0) {
                         <div class="repercussion-badges">
@@ -133,6 +143,11 @@
                   [class.selected]="selectedOutcomeType?.id === outcomeType.id"
                   (click)="onSelectOutcomeType(outcomeType)">
                   <mat-card-content>
+                    @if (outcomeType.headers?.length) {
+                      @for (header of outcomeType.headers; track $index) {
+                        <div class="outcome-badge outcome-success">{{ header }}</div>
+                      }
+                    }
                     <p>{{ outcomeType.label }}</p>
                     @if (getRepercussionsForOutcomeType(outcomeType).length > 0) {
                       <div class="repercussion-badges">
@@ -157,7 +172,7 @@
     </mat-card>
   }
 
-  @if (isLoading) {
+  @if (isLoading || isAutoSubmitting) {
     <div class="loading-container">
       <mat-spinner diameter="40"></mat-spinner>
       <p>Loading collaborative text...</p>
@@ -216,7 +231,7 @@
             mat-flat-button 
             color="primary" 
             (click)="onSubmitNewText()"
-            [disabled]="newTextControl.invalid || isLoading || (availableOutcomeTypes.length > 0 && !selectedOutcomeType)">
+            [disabled]="newTextControl.invalid || isLoading || isAutoSubmitting || (availableOutcomeTypes.length > 0 && !selectedOutcomeType)">
             {{ getSubmitButtonText() }}
           </button>
         </mat-card-actions>
@@ -314,7 +329,7 @@
                   mat-flat-button
                   color="primary"
                   (click)="onAddToSubmission()"
-                  [disabled]="(!repercussionTextOn && additionTextControl.invalid) || isLoading || !repercussionToggleValid">
+                  [disabled]="(!repercussionTextOn && additionTextControl.invalid) || isLoading || isAutoSubmitting || !repercussionToggleValid">
                   Add to Submission
                 </button>
                 <button 

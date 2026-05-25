@@ -61,6 +61,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   availableSubmissions: TextSubmission[] = [];
   selectedSubmission: TextSubmission | null = null;
   isLoading = false;
+  isAutoSubmitting = false;
   hasSubmitted = false;
   showNewSubmission = true;
   
@@ -122,9 +123,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       const currentSession = changes['activePlayerSession'].currentValue as ActivePlayerSession;
       const previousSession = changes['activePlayerSession'].previousValue as ActivePlayerSession;
 
-      if (currentSession?.writeTimerDone
-          && (!previousSession || !previousSession.writeTimerDone)) {
+      if (currentSession?.writeTimerDone && (!previousSession || !previousSession.writeTimerDone)) {
         console.log('Auto-submitting due to writeTimerDone');
+        this.isAutoSubmitting = true;
         this.isLoading = true;
         let completedCount = 0;
         const checkDone = () => {
@@ -137,6 +138,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         };
         this.onSubmitNewText(checkDone);
         this.onAddToSubmission(checkDone);
+      }
+
+      if (!currentSession?.writeTimerDone && previousSession?.writeTimerDone) {
+        this.isAutoSubmitting = false;
       }
     }
     

@@ -115,10 +115,8 @@
                   <button mat-flat-button class="submit-button" [disabled]="isLoading" (click)="submitAcceptChoice()">
                     @if (isLoading) {
                       <mat-icon class="loading-icon">hourglass_empty</mat-icon>
-                      Submitting...
-                    } @else {
-                      Submit
                     }
+                    {{ isLoading ? 'Submitting...' : 'Submit' }}
                   </button>
                 </div>
               }
@@ -160,10 +158,8 @@
                   <button mat-flat-button class="submit-button" [disabled]="isLoading" (click)="submitVote()">
                     @if (isLoading) {
                       <mat-icon class="loading-icon">hourglass_empty</mat-icon>
-                      Submitting...
-                    } @else {
-                      Submit Vote
                     }
+                    {{ isLoading ? 'Submitting...' : 'Submit Vote' }}
                   </button>
                 </div>
               }
@@ -172,10 +168,8 @@
                   <button mat-flat-button class="submit-button" [disabled]="isLoading" (click)="nextGamePhase()">
                     @if (isLoading) {
                       <mat-icon class="loading-icon">hourglass_empty</mat-icon>
-                      Continuing...
-                    } @else {
-                      Continue
                     }
+                    {{ isLoading ? 'Continuing...' : 'Continue' }}
                   </button>
                 </div>
               }

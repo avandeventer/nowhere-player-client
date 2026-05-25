@@ -223,6 +223,10 @@ export class VotingComponent implements OnInit, OnChanges {
     this.selectedLocationId = submissionId;
   }
 
+  getSelectedLocationSubmission(): TextSubmission | null {
+    return this.submissions.find(s => s.submissionId === this.selectedLocationId) ?? null;
+  }
+
   submitLocationVote() {
     if (!this.selectedLocationId) return;
 

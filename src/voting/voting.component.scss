@@ -446,3 +446,34 @@ app-story {
   height: 1.4rem;
   flex-shrink: 0;
 }
+
+.location-description-drawer {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin-bottom 0.35s ease;
+  margin-bottom: 0;
+
+  &.open {
+    max-height: 300px;
+    opacity: 1;
+    margin-bottom: 20px;
+  }
+}
+
+.location-drawer-header {
+  margin: 0 0 16px;
+  color: #1976d2;
+  font-size: 16px;
+}
+
+.location-description-text {
+  margin: 0;
+  padding: 16px 20px;
+  background: #f1f8f4;
+  border-radius: 0 8px 8px 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  font-family: "Courier New", monospace;
+}

@@ -43,6 +43,12 @@
           }
         </div>
       </div>
+      <div class="location-description-drawer" [class.open]="selectedLocationId">
+        @if (getSelectedLocationSubmission(); as selected) {
+          <h4 class="location-drawer-header">{{ selected.currentText }}</h4>
+          <p class="location-description-text">{{ selected.originalText }}</p>
+        }
+      </div>
       <div class="submit-container">
         <button
           mat-raised-button
