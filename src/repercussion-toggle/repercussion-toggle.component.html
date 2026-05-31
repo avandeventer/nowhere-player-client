@@ -24,7 +24,11 @@
 </mat-button-toggle-group>
 
 <div class="repercussion-content toggled">
-  @if (activeType) {
-    <span class="repercussion-description">{{ activeType.description }}</span>
+  @if (activeType || companionLabel) {
+    <span class="repercussion-description">
+      @if (activeType) { {{ activeType.description }} }
+      @if (activeType && companionLabel) { · }
+      @if (companionLabel) { {{ companionLabel }} }
+    </span>
   }
 </div>

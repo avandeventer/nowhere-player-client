@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +11,7 @@ import { Trait } from '../assets/trait';
 import { PlayerClassOption } from '../assets/player-class-option';
 import { ComponentType } from '../assets/component-type';
 import { GameState } from '../assets/game-state';
+import { TraitBadgesComponent } from '../trait-badges/trait-badges.component';
 
 @Component({
   selector: 'app-player',
@@ -24,6 +25,7 @@ import { GameState } from '../assets/game-state';
     MatChipsModule,
     MatExpansionModule,
     MatIconModule,
+    TraitBadgesComponent,
   ]
 })
 export class PlayerComponent implements OnInit, OnChanges {
@@ -176,3 +178,4 @@ export class PlayerComponent implements OnInit, OnChanges {
     }
   }
 }
+

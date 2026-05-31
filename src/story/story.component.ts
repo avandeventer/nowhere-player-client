@@ -45,7 +45,8 @@ export class StoryComponent {
     }
 
     if (this.phaseInfo?.phaseType === PhaseType.WINNING && changes['phaseInfo']) {
-      this.isPlayerTurn = this.phaseInfo?.storyToIterateOn?.playerIds?.includes(this.player?.authorId) ?? false;
+      this.isPlayerTurn = this.phaseInfo?.storyToIterateOn?.playerIds?.includes(this.player?.authorId) || this.phaseInfo?.storyToIterateOn?.partnerIds?.includes(this.player?.authorId) 
+      || false;
     }
   }
 

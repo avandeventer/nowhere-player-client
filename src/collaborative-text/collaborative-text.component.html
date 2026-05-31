@@ -39,19 +39,7 @@
                               <p class="submission-text">{{ option.successText }}</p>
                             }
                           }
-                          @if (selectedStory.repercussions && selectedStory.repercussions.length > 0) {
-                            <div class="repercussion-badges">
-                              @for (rep of selectedStory.repercussions; track $index) {
-                                <div class="repercussion-badge" [style.background-color]="rep.color">
-                                  @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
-                                    {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
-                                  } @else {
-                                    {{ rep.repercussionType }}
-                                  }
-                                </div>
-                              }
-                            </div>
-                          }
+                          <repercussion-badges [repercussions]="selectedStory.repercussions || []"></repercussion-badges>
                         }
                       </div>
                     </mat-card-content>
@@ -69,11 +57,7 @@
                     }
                     <p class="parent-label">{{ getEpiloguePlayer(outcomeType.id)?.displayName ?? outcomeType.label }}</p>
                     @if (getEpiloguePlayer(outcomeType.id)?.traits?.length) {
-                      <div class="repercussion-badges">
-                        @for (trait of getEpiloguePlayer(outcomeType.id)!.traits; track trait.traitId) {
-                          <div class="epilogue-trait-badge">{{ trait.traitLabel }}</div>
-                        }
-                      </div>
+                      <trait-badges [traits]="getEpiloguePlayer(outcomeType.id)!.traits"></trait-badges>
                     }
                     <div class="subtypes-container">
                       @for (subType of outcomeType.subTypes; track subType.id) {
@@ -108,19 +92,7 @@
                       }
                     }
                     <p class="parent-label">{{ outcomeType.label }}
-                      @if (getRepercussionsForOutcomeType(outcomeType).length > 0) {
-                        <div class="repercussion-badges">
-                          @for (rep of getRepercussionsForOutcomeType(outcomeType); track $index) {
-                            <div class="repercussion-badge" [style.background-color]="rep.color">
-                              @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
-                                {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
-                              } @else {
-                                {{ rep.repercussionType }}
-                              }
-                            </div>
-                          }
-                        </div>
-                      }
+                      <repercussion-badges [repercussions]="getRepercussionsForOutcomeType(outcomeType)"></repercussion-badges>
                     </p>
                     <div class="subtypes-container">
                       @for (subType of outcomeType.subTypes; track subType.id) {
@@ -149,19 +121,7 @@
                       }
                     }
                     <p>{{ outcomeType.label }}</p>
-                    @if (getRepercussionsForOutcomeType(outcomeType).length > 0) {
-                      <div class="repercussion-badges">
-                        @for (rep of getRepercussionsForOutcomeType(outcomeType); track $index) {
-                          <div class="repercussion-badge" [style.background-color]="rep.color">
-                            @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
-                              {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
-                            } @else {
-                              {{ rep.repercussionType }}
-                            }
-                          </div>
-                        }
-                      </div>
-                    }
+                    <repercussion-badges [repercussions]="getRepercussionsForOutcomeType(outcomeType)"></repercussion-badges>
                   </mat-card-content>
                 </mat-card>
               }
@@ -256,10 +216,18 @@
                 (click)="onSelectSubmission(submission)">
                 <mat-card-content>
                   <div class="submission-preview">
-                    @if (submission.outcomeTypeWithLabel && submission.outcomeTypeWithLabel.subTypes && submission.outcomeTypeWithLabel.subTypes.length > 0) {
-                      <p class="submission-text">
-                        {{ submission.outcomeTypeWithLabel.label }}
-                      </p>
+                    @if (submission.outcomeTypeWithLabel) {
+                        @if (submission.outcomeTypeWithLabel.headers?.length) {
+                            @for (header of submission.outcomeTypeWithLabel.headers; track $index) {
+                              <div class="outcome-badge outcome-success">{{ header }}</div>
+                            }
+                        }
+
+                        @if (submission.outcomeTypeWithLabel.subTypes && submission.outcomeTypeWithLabel.subTypes.length > 0) {
+                          <p class="submission-text">
+                            {{ submission.outcomeTypeWithLabel.label }}
+                          </p>
+                        }
                     }
                     @if (submission.outcomeType) {
                       <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeType)">
@@ -276,19 +244,7 @@
                         <mat-chip>{{ submission.additions.length || 0 }} additions</mat-chip>
                       </mat-chip-set>
                     </div>
-                    @if (getSubmissionRepercussions(submission).length > 0) {
-                      <div class="repercussion-badges">
-                        @for (rep of getSubmissionRepercussions(submission); track $index) {
-                          <div class="repercussion-badge" [style.background-color]="rep.color">
-                            @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
-                              {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
-                            } @else {
-                              {{ rep.repercussionType }}
-                            }
-                          </div>
-                        }
-                      </div>
-                    }
+                    <repercussion-badges [repercussions]="getSubmissionRepercussions(submission)"></repercussion-badges>
                   </div>
                 </mat-card-content>
               </mat-card>
@@ -310,15 +266,11 @@
                   <mat-hint align="end">{{ additionTextControl.value?.length || 0 }} characters</mat-hint>
                 </mat-form-field>
               }
-                @if (companionRepercussionOn && activeRepercussion && companionStory?.encounterLabel) {
-                  <div class="repercussion-badge companion-preview">
-                    {{ 'Companion: ' + companionStory!.encounterLabel!.encounterLabel }}
-                  </div>
-                }
 
               @if (playerRepercussionTypes.length > 0 && howDoesThisResolve()) {
                 <repercussion-toggle
                   [repercussionTypes]="playerRepercussionTypes"
+                  [companionLabel]="(companionRepercussionOn && activeRepercussion && companionStory?.encounterLabel) ? companionStory!.encounterLabel!.encounterLabel : null"
                   (repercussionChange)="onRepercussionChange($event)"
                   (validityChange)="onRepercussionValidityChange($event)"
                   (replacesAdditionText)="onRepercussionReplacesAdditionText($event)">

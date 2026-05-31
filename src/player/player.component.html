@@ -6,9 +6,7 @@
   }
   @if (player.traits && player.traits.length > 0) {
     <div class="summary-traits">
-      @for (trait of player.traits; track trait.traitId) {
-        <div class="trait-badge">{{ trait.traitLabel }}</div>
-      }
+      <trait-badges [traits]="player.traits"></trait-badges>
     </div>
   }
 </mat-card>

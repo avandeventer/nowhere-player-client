@@ -1,0 +1,13 @@
+@if (repercussions.length > 0) {
+  <div class="repercussion-badges">
+    @for (rep of repercussions; track $index) {
+      <div class="repercussion-badge" [style.background-color]="rep.color">
+        @if (rep.repercussionSubmission != null && rep.repercussionSubmission.trim() !== '') {
+          {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
+        } @else {
+          {{ rep.repercussionType }}
+        }
+      </div>
+    }
+  </div>
+}

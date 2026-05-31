@@ -22,7 +22,11 @@
           <!-- Prompt / description area -->
           @if (isAcceptPartnerChoiceVotingPhase() && submissions.length > 0) {
             <div class="story-prompt">
-              <p>{{ submissions[0].currentText }}</p>
+              @if (phaseInfo?.activePlayers?.[0]; as activePlayer) {
+                <p>{{ activePlayer.displayName }} has offered to partner up! Do you accept?</p>
+              } @else {
+                <p>Someone has offered to partner up! Do you accept?</p>
+              }
             </div>
           } @else if (!isLocationOptionChoicePhase() && !isPartnerChoicePhase() && story.prompt) {
             <div class="story-prompt">

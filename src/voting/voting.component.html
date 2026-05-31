@@ -69,6 +69,11 @@
       (playerDone)="playerDone.emit($event)">
     </app-compass-voting>
   } @else if (isMakeChoicePhase()) {
+    @if (phaseInfo?.storyToIterateOn?.partnerIds?.includes(player.authorId)) {
+      <div class="partnered-badge-overlay">
+        <div class="partnered-badge"><mat-icon>how_to_reg</mat-icon> Partnered up!</div>
+      </div>
+    }
     <app-story
       [gameCode]="gameCode"
       [player]="player"
@@ -102,6 +107,11 @@
       <p>Thank you for voting. The results will be calculated when all players have voted.</p>
     </div>
   } @else {
+    @if (isMakeOutcomeChoiceVotingPhase() && phaseInfo?.storyToIterateOn?.partnerIds?.includes(player.authorId)) {
+      <div class="partnered-badge-overlay partnered-badge-above">
+        <div class="partnered-badge"><mat-icon>how_to_reg</mat-icon> Partnered up!</div>
+      </div>
+    }
     <div class="submissions-container">
       <!-- Selection Summary -->
       @if (selectedSubmissions.length > 0) {
@@ -149,19 +159,7 @@
                   </div>
                 }
                 <p class="submission-text">{{ submission.currentText }}</p>
-                @if (getSubmissionRepercussions(submission).length > 0) {
-                  <div class="repercussion-badges">
-                    @for (rep of getSubmissionRepercussions(submission); track $index) {
-                      <div class="repercussion-badge" [style.background-color]="rep.color">
-                        @if (rep.repercussionType === 'Trait' || rep.repercussionType === 'Title') {
-                          {{ rep.repercussionType }}: {{ rep.repercussionSubmission }}
-                        } @else {
-                          {{ rep.repercussionType }}
-                        }
-                      </div>
-                    }
-                  </div>
-                }
+                <repercussion-badges [repercussions]="getSubmissionRepercussions(submission)"></repercussion-badges>
                 <div class="selection-indicator">
                   @if (isSelected(submission.submissionId)) {
                     <mat-icon class="selected-icon">check_circle</mat-icon>

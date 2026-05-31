@@ -1,4 +1,5 @@
 import { GameState } from "./game-state";
+import { Player } from "./player";
 import { Story } from "./story";
 
 export enum CollaborativeMode {
@@ -22,5 +23,6 @@ export interface CollaborativeTextPhaseInfo {
   showGameBoard?: boolean;
   storyToIterateOn?: Story;
   locationVotingSubmissions?: { submissionId: string; currentText: string; outcomeType?: string }[];
+  activePlayers?: Player[]
 }
 

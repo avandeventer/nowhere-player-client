@@ -26,6 +26,7 @@ import { Repercussion } from '../assets/repercussion';
 })
 export class RepercussionToggleComponent implements OnChanges {
   @Input() repercussionTypes: RepercussionTypeOption[] = [];
+  @Input() companionLabel: string | null = null;
   @Output() repercussionChange = new EventEmitter<Repercussion | null>();
   @Output() validityChange = new EventEmitter<boolean>();
   @Output() replacesAdditionText = new EventEmitter<boolean>();

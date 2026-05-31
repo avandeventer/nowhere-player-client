@@ -20,6 +20,7 @@ import { CollaborativeTextPhaseInfo } from '../assets/collaborative-text-phase-i
 import { OutcomeType } from 'src/assets/outcome-type';
 import { StoryComponent } from '../story/story.component';
 import { CompassVotingComponent } from '../compass-voting/compass-voting.component';
+import { RepercussionBadgesComponent } from '../repercussion-badges/repercussion-badges.component';
 
 @Component({
   selector: 'app-voting',
@@ -36,7 +37,8 @@ import { CompassVotingComponent } from '../compass-voting/compass-voting.compone
     MatIconModule,
     MatSelectModule,
     StoryComponent,
-    CompassVotingComponent
+    CompassVotingComponent,
+    RepercussionBadgesComponent
   ],
   templateUrl: './voting.component.html',
   styleUrl: './voting.component.scss'

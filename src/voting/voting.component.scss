@@ -14,6 +14,37 @@ app-story {
   margin-bottom: 30px;
 }
 
+.partnered-badge-overlay {
+  position: relative;
+  height: 0;
+  z-index: 1;
+
+  &.partnered-badge-above .partnered-badge {
+    top: -20px;
+  }
+}
+
+.partnered-badge {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #1976d2;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .phase-question {
   font-size: 2rem;
   font-weight: bold;

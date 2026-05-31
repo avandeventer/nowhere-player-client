@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +21,8 @@ import { ComponentType } from 'src/assets/component-type';
 import { RepercussionTypeOption } from 'src/assets/repercussion-type-option';
 import { Repercussion } from 'src/assets/repercussion';
 import { RepercussionToggleComponent } from 'src/repercussion-toggle/repercussion-toggle.component';
+import { RepercussionBadgesComponent } from 'src/repercussion-badges/repercussion-badges.component';
+import { TraitBadgesComponent } from 'src/trait-badges/trait-badges.component';
 @Component({
   selector: 'collaborative-text',
   templateUrl: './collaborative-text.component.html',
@@ -38,6 +40,8 @@ import { RepercussionToggleComponent } from 'src/repercussion-toggle/repercussio
     MatIconModule,
     MatProgressSpinnerModule,
     RepercussionToggleComponent,
+    RepercussionBadgesComponent,
+    TraitBadgesComponent,
   ],
   standalone: true
 })
@@ -201,7 +205,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
               id: firstOutcomeType.id,
               label: firstOutcomeType.label,
               clarifier: firstOutcomeType.clarifier,
-              subTypes: [firstOutcomeType.subTypes[0]]
+              subTypes: [firstOutcomeType.subTypes[0]],
+              headers: firstOutcomeType?.headers
             };
           } else {
             // Otherwise select the outcomeType itself
@@ -291,6 +296,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.selectedOutcomeType = {
       id: parentOutcomeType.id,
       label: parentOutcomeType.label,
+      headers: parentOutcomeType.headers,
       clarifier: clarifier,
       subTypes: [subType]
     };
@@ -423,6 +429,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.gameService.getAvailableSubmissionsForPlayer(this.gameCode, this.player.authorId, requestedCount, showNewSubmissions).subscribe({
       next: (submissions) => {
         this.mergeNewSubmissions(submissions);
+        if (this.activeRepercussion != null) {
+          this.onRepercussionChange(this.activeRepercussion); // Trigger update to check if companion repercussion should be shown for the newly selected submission
+        }
       },
       error: (error) => {
         console.error('Error getting available submissions:', error);
@@ -713,7 +722,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         this.additionTextControl.reset();
         this.selectedSubmission = null;
         this.availableSubmissions = [];
-        this.repercussionTextOn = false;
+        this.repercussionTextOn = false;  
 
         this.updateAvailableSubmissions(false, true); // false = use existing collaborativePhase data, true = show new submissions immediately
         this.isLoading = false;
@@ -803,3 +812,4 @@ getOutcomeTypeClass(outcomeType: string | undefined): string {
     return `outcome-${outcomeType}`;
   }
 }
+

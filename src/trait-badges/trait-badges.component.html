@@ -1,0 +1,9 @@
+@if (traits.length > 0) {
+  <div class="trait-badges">
+    @for (trait of traits; track trait.traitId) {
+      <div class="trait-badge" [style.background-color]="getBadgeColor(trait.traitType)">
+        {{ getBadgePrefix(trait.traitType) }}: {{ trait.traitLabel }}
+      </div>
+    }
+  </div>
+}
