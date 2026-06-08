@@ -141,7 +141,7 @@ export class StoryComponent {
   }
 
   skipChoice() {
-    this.playerDone.emit(ComponentType.VOTING);
+    this.gameService.nextGamePhase(this.gameCode);
   }
 
   getSelectedOption(): Option | undefined {

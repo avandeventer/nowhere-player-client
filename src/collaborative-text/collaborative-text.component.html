@@ -179,9 +179,6 @@
                 rows="4"
                 maxlength="150">
               </textarea>
-              @if ((newTextControl.value?.length || 0) >= 120) {
-                <mat-hint align="start" class="limit-warning">Submit so others can add to your idea!</mat-hint>
-              }
               <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/150</mat-hint>
             </mat-form-field>
           }
@@ -196,6 +193,14 @@
           </button>
         </mat-card-actions>
       </mat-card>
+    }
+
+    <!-- Contribution Phase Banner -->
+    @if (isCollaborativeMode && contributionPhaseActive && !hasSubmitted && phaseInfo?.phaseTypeInstructions) {
+      <div class="contribution-phase-banner">
+        <mat-icon>auto_awesome</mat-icon>
+        <span>{{ phaseInfo?.phaseTypeInstructions }}</span>
+      </div>
     }
 
     <!-- Existing Submissions Section (only for collaborative mode) -->

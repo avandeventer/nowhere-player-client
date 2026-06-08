@@ -15,6 +15,7 @@ export class ActivePlayerSession {
     repercussions: RepercussionOutput;
     startTimer: boolean;
     writeTimerDone: boolean;
+    contributionPhaseActive: boolean;
 
     constructor() {
             this.playerId = "";
@@ -29,5 +30,6 @@ export class ActivePlayerSession {
             this.repercussions = new RepercussionOutput();
             this.startTimer = false;
             this.writeTimerDone = false;
+            this.contributionPhaseActive = false;
     }
 }

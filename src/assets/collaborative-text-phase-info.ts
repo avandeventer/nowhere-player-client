@@ -23,6 +23,7 @@ export interface CollaborativeTextPhaseInfo {
   showGameBoard?: boolean;
   storyToIterateOn?: Story;
   locationVotingSubmissions?: { submissionId: string; currentText: string; outcomeType?: string }[];
-  activePlayers?: Player[]
+  activePlayers?: Player[];
+  phaseTypeInstructions?: string;
 }
 

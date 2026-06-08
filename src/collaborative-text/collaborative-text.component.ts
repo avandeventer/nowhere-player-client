@@ -91,6 +91,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   selectedStory: Story | null = null;
   storyCache: Map<string, Story> = new Map();
 
+  contributionPhaseActive = false;
+
   // Repercussion properties
   playerRepercussionTypes: RepercussionTypeOption[] = [];
   activeRepercussion: Repercussion | null = null;
@@ -110,6 +112,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     // this.checkStreamlinedMode();
     this.loadCollaborativePhase();
     this.loadPlayerRepercussionTypes();
+    if (this.activePlayerSession?.contributionPhaseActive) {
+      this.contributionPhaseActive = true;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -147,6 +152,17 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       if (!currentSession?.writeTimerDone && previousSession?.writeTimerDone) {
         this.isAutoSubmitting = false;
       }
+
+      if (currentSession?.contributionPhaseActive && (!previousSession || !previousSession.contributionPhaseActive)) {
+        this.contributionPhaseActive = true;
+        if (!this.hasSubmitted) {
+          this.updateAvailableSubmissions(false, true);
+        }
+      }
+
+      if (!currentSession?.contributionPhaseActive && previousSession?.contributionPhaseActive) {
+        this.contributionPhaseActive = false;
+      }
     }
     
     // Update phase info when input changes
@@ -155,9 +171,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
     
     // When collaborative text phases change, check if submissions actually changed
-    if (this.collaborativeTextPhases 
-        && this.isGameInCollaborativeTextPhase() 
-        && this.hasSubmitted
+    if (this.collaborativeTextPhases
+        && this.isGameInCollaborativeTextPhase()
+        && (this.hasSubmitted || this.contributionPhaseActive)
         && !this.maximumSubmissionsReached
     ) {
       const phaseId: string = this.phaseInfo?.phaseId.toString() || '';
@@ -412,8 +428,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       // Update the collaborative phase data
       this.collaborativePhase = phase;
 
-      // Only load available submissions if player has already submitted
-      if (!this.hasSubmitted) {
+      if (!this.hasSubmitted && !this.contributionPhaseActive) {
         return;
       }
     } else {
