@@ -1,7 +1,9 @@
 <div class="collaborative-text-container">
   <div class="phase-header">
-    <h2>{{ phaseQuestion }}</h2>
-    <p class="instructions">{{ phaseInstructions }}</p>
+    <p class="instructions">
+      <span class="collaborative-mode-title">{{ phaseQuestion }}</span>
+      <span [innerHTML]="phaseInstructions"></span>
+    </p>
     @if (phaseInstructions && collaborativeMode) {
       <p class="instructions">
         <span class="collaborative-mode-title">{{ getCollaborativeModeLabel() }}</span>
@@ -184,11 +186,11 @@
           }
         </mat-card-content>
         <mat-card-actions class="actions-right">
-          <button 
-            mat-flat-button 
-            color="primary" 
+          <button
+            mat-flat-button
+            color="primary"
             (click)="onSubmitNewText()"
-            [disabled]="newTextControl.invalid || isLoading || isAutoSubmitting || (availableOutcomeTypes.length > 0 && !selectedOutcomeType)">
+            [disabled]="(!activePlayerSession?.startTimer && !activePlayerSession?.contributionPhaseActive) || newTextControl.invalid || isLoading || isAutoSubmitting || (availableOutcomeTypes.length > 0 && !selectedOutcomeType)">
             {{ getSubmitButtonText() }}
           </button>
         </mat-card-actions>

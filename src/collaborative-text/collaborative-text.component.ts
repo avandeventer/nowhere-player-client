@@ -115,6 +115,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     if (this.activePlayerSession?.contributionPhaseActive) {
       this.contributionPhaseActive = true;
     }
+    if (!this.activePlayerSession?.startTimer && !this.activePlayerSession?.contributionPhaseActive) {
+      this.newTextControl.disable();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -162,6 +165,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
       if (!currentSession?.contributionPhaseActive && previousSession?.contributionPhaseActive) {
         this.contributionPhaseActive = false;
+      }
+
+      if ((currentSession?.startTimer && !previousSession?.startTimer) 
+        || (currentSession?.contributionPhaseActive && !previousSession.contributionPhaseActive)) {
+        this.newTextControl.enable();
+      } else if ((!currentSession?.startTimer && previousSession?.startTimer)
+        || (!currentSession?.contributionPhaseActive && previousSession.contributionPhaseActive)
+      ) {
+        this.newTextControl.disable();
       }
     }
     
@@ -380,9 +392,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   getCollaborativeModeLabel(): string {
     if (this.collaborativeMode === CollaborativeMode.RAPID_FIRE) {
-      return 'RAPID FIRE';
+      return 'Rapid Fire';
     } else if (this.collaborativeMode === CollaborativeMode.SHARE_TEXT) {
-      return 'COLLABORATIVE MODE';
+      return 'Collaborative Mode';
     }
     return '';
   }
@@ -580,6 +592,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   getSubmitButtonText(): string {
+    if (!this.activePlayerSession?.startTimer && !this.activePlayerSession.contributionPhaseActive) {
+      return 'Start Timer to Begin';
+    }
     switch (this.gameState) {
       case GameState.WHAT_DO_WE_FEAR:
         return 'Submit Fear';

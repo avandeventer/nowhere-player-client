@@ -4,6 +4,11 @@
   padding: 20px;
 }
 
+.collaborative-instruction {
+  background: var(--mat-optgroup-label-text-color) !important;
+  color: var(--mat-option-selected-state-layer-color) !important;
+}
+
 .phase-header {
   text-align: center;
   margin-bottom: 30px;
@@ -19,6 +24,8 @@
     .collaborative-mode-title {
       font-weight: bold;
       display: block;
+      font-size: 18px;
+      color: rgb(0,0,0);
       margin-bottom: 5px;
     }
   }
