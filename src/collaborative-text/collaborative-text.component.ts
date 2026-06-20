@@ -568,6 +568,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     return this.phaseInfo?.phaseType === PhaseType.SUBMISSION;
   }
 
+  getCharacterLimit(): number {
+    return this.phaseInfo?.collaborativePhaseTypeInstructions?.characterLimit
+      ?? (this.isSimpleMode ? 30 : 150);
+  }
+
   // Helper methods for simple mode
   getSimpleModeLabel(): string {
     switch (this.gameState) {

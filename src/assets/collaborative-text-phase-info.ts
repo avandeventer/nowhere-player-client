@@ -13,6 +13,12 @@ export enum PhaseType {
   WINNING = 'WINNING'
 }
 
+export interface CollaborativePhaseTypeInstructions {
+  phaseModeInstructions: string;
+  contributionPhaseInstructions: string;
+  characterLimit: number;
+}
+
 export interface CollaborativeTextPhaseInfo {
   phaseId: GameState;
   phaseQuestion: string;
@@ -24,6 +30,6 @@ export interface CollaborativeTextPhaseInfo {
   storyToIterateOn?: Story;
   locationVotingSubmissions?: { submissionId: string; currentText: string; outcomeType?: string }[];
   activePlayers?: Player[];
-  phaseTypeInstructions?: string;
+  collaborativePhaseTypeInstructions?: CollaborativePhaseTypeInstructions;
 }
 

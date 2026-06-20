@@ -164,24 +164,24 @@
             }
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>{{ getSimpleModeLabel() }}</mat-label>
-              <input 
-                matInput 
+              <input
+                matInput
                 [formControl]="newTextControl"
                 [placeholder]="getSimpleModePlaceholder()"
-                maxlength="30">
-              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/30</mat-hint>
+                [attr.maxlength]="getCharacterLimit()">
+              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/{{ getCharacterLimit() }}</mat-hint>
             </mat-form-field>
           } @else {
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>{{ phaseQuestion.toLowerCase() }}</mat-label>
-              <textarea 
-                matInput 
+              <textarea
+                matInput
                 [formControl]="newTextControl"
                 placeholder="Be creative and descriptive..."
                 rows="4"
-                maxlength="150">
+                [attr.maxlength]="getCharacterLimit()">
               </textarea>
-              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/150</mat-hint>
+              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/{{ getCharacterLimit() }}</mat-hint>
             </mat-form-field>
           }
         </mat-card-content>
@@ -198,10 +198,10 @@
     }
 
     <!-- Contribution Phase Banner -->
-    @if (isCollaborativeMode && contributionPhaseActive && !hasSubmitted && phaseInfo?.phaseTypeInstructions) {
+    @if (isCollaborativeMode && contributionPhaseActive && !hasSubmitted && phaseInfo?.collaborativePhaseTypeInstructions?.contributionPhaseInstructions) {
       <div class="contribution-phase-banner">
         <mat-icon>auto_awesome</mat-icon>
-        <span>{{ phaseInfo?.phaseTypeInstructions }}</span>
+        <span>{{ phaseInfo?.collaborativePhaseTypeInstructions?.contributionPhaseInstructions }}</span>
       </div>
     }
 
