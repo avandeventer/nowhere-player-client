@@ -23,6 +23,7 @@ import { Repercussion } from 'src/assets/repercussion';
 import { RepercussionToggleComponent } from 'src/repercussion-toggle/repercussion-toggle.component';
 import { RepercussionBadgesComponent } from 'src/repercussion-badges/repercussion-badges.component';
 import { TraitBadgesComponent } from 'src/trait-badges/trait-badges.component';
+import { Trait } from 'src/assets/trait';
 @Component({
   selector: 'collaborative-text',
   templateUrl: './collaborative-text.component.html',
@@ -103,6 +104,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   // WRITE_EPILOGUES phase properties
   epiloguePlayerCache: { [authorId: string]: Player } = {};
+  destinyAchieved = false;
+
+  // DEFINING_TRAITS_VOTING phase properties
+  selectedDefiningTrait: OutcomeType | null = null;
+  selectedPriceTrait: OutcomeType | null = null;
 
   constructor(private gameService: GameService) {}
 
@@ -128,6 +134,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       this.selectedStory = null;
       this.hasSubmitted = false;
       this.showNewSubmission = true;
+      this.destinyAchieved = false;
+      this.selectedDefiningTrait = null;
+      this.selectedPriceTrait = null;
       this.loadOutcomeTypes();
     }
 
@@ -359,13 +368,40 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   private loadEpiloguePlayers(outcomeTypes: OutcomeType[]) {
     outcomeTypes.forEach(outcomeType => {
-      if (this.hasDeepSubTypes(outcomeType) && !this.epiloguePlayerCache[outcomeType.id]) {
+      if (!this.epiloguePlayerCache[outcomeType.id]) {
         this.gameService.getPlayerByAuthorId(this.gameCode, outcomeType.id).subscribe({
           next: (player) => { this.epiloguePlayerCache = { ...this.epiloguePlayerCache, [outcomeType.id]: player }; },
           error: (error) => { console.error('Error loading epilogue player:', error); }
         });
       }
     });
+  }
+
+  isDefiningTraitsPhase(): boolean {
+    return this.gameState === GameState.DEFINING_TRAITS_VOTING;
+  }
+
+  getDestinyTraits(player: Player | null): Trait[] {
+    return player?.traits?.filter(t => t.traitType === 'DESTINY') ?? [];
+  }
+
+  onSelectDefiningTrait(trait: OutcomeType) {
+    this.selectedDefiningTrait = trait;
+    this.updateDefiningTraitSelection();
+  }
+
+  onSelectPriceTrait(trait: OutcomeType) {
+    this.selectedPriceTrait = trait;
+    this.updateDefiningTraitSelection();
+  }
+
+  private updateDefiningTraitSelection() {
+    if (this.selectedDefiningTrait) {
+      this.selectedOutcomeType = {
+        ...this.selectedDefiningTrait,
+        subTypes: this.selectedPriceTrait ? [this.selectedPriceTrait] : []
+      };
+    }
   }
 
   private updatePhaseInfoFromInput() {
@@ -661,6 +697,15 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   onSubmitNewText(onComplete?: () => void) {
+    // DEFINING_TRAITS_VOTING: bypass textarea, require both trait selections
+    if (this.isDefiningTraitsPhase()) {
+      if (!this.selectedDefiningTrait || !this.selectedPriceTrait) {
+        onComplete?.();
+        return;
+      }
+      this.newTextControl.setValue(this.selectedDefiningTrait.label || 'selected');
+    }
+
     if (this.newTextControl.invalid || !this.newTextControl.value) {
       onComplete?.();
       return;
@@ -673,7 +718,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     }
 
     // In streamlined mode, use selected outcomeType if available
-    const outcomeType: OutcomeType | null = this.selectedOutcomeType 
+    const outcomeType: OutcomeType | null = this.selectedOutcomeType
       ? this.selectedOutcomeType
       : null;
 
@@ -688,7 +733,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       authorId: this.player.authorId,
       addedText: this.newTextControl.value.trim(),
       submissionId: null, // This indicates a new submission
-      outcomeType: outcomeTypeId,
+      outcomeType: this.isWriteEpiloguesPhase() && this.destinyAchieved ? 'DESTINY_ACHIEVED' : outcomeTypeId,
       outcomeTypeWithLabel: this.selectedOutcomeType ? this.selectedOutcomeType : undefined // Include outcomeType for streamlined mode or WHAT_WILL_BECOME_OF_US
     };
 

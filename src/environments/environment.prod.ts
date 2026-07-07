@@ -1,5 +1,5 @@
 export const environment = {
-    production: false,
+    production: true,
     firebaseConfig: {
       apiKey: "AIzaSyC3tQbxhZ5uWH0JdWoWu9NxnS5qEQ6SwZE",
       authDomain: "nowhere-af065.firebaseapp.com",
@@ -8,5 +8,5 @@ export const environment = {
       storageBucket: "nowhere-af065.appspot.com",
       messagingSenderId: "556057816518",
       appId: "1:556057816518:web:1838e2dfb510f6b3"    },
-    nowhereBackendUrl: "https://nowhere-java-sandbox-556057816518.us-east4.run.app"
+    nowhereBackendUrl: "https://nowhere-java-556057816518.us-east4.run.app"
   };

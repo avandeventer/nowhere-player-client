@@ -1,13 +1,11 @@
-﻿import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { GameService } from '../services/game-session.service';
 import { Player } from '../assets/player';
-import { Trait } from '../assets/trait';
 import { PlayerClassOption } from '../assets/player-class-option';
 import { ComponentType } from '../assets/component-type';
 import { GameState } from '../assets/game-state';
@@ -22,7 +20,6 @@ import { TraitBadgesComponent } from '../trait-badges/trait-badges.component';
     CommonModule,
     MatButtonModule,
     MatCardModule,
-    MatChipsModule,
     MatExpansionModule,
     MatIconModule,
     TraitBadgesComponent,
@@ -34,19 +31,12 @@ export class PlayerComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.INIT;
   @Output() playerDone = new EventEmitter<ComponentType>();
 
-  // Class selection (INIT mode)
   availableClasses: PlayerClassOption[] = [];
   selectedClass: PlayerClassOption | null = null;
   hasSubmittedClass = false;
   classAccordionExpanded = true;
 
-  // Trait selection (INIT and WHO_ARE_YOU modes)
-  availableTraits: Trait[] = [];
-  selectedTraits: Trait[] = [];
-  hasSubmittedTraits = false;
-
   isLoading = false;
-  readonly MAX_TRAITS = 1;
 
   constructor(private gameService: GameService) {}
 
@@ -61,9 +51,10 @@ export class PlayerComponent implements OnInit, OnChanges {
   }
 
   private loadPlayerData() {
-    if (this.isInitMode() || this.isWhoAreYouMode()) {
+    if (this.isInitMode()) {
       this.loadClasses();
-      this.loadTraits();
+    } else if (this.isWhoAreYouMode()) {
+      this.playerDone.emit(ComponentType.WHO_ARE_YOU);
     }
   }
 
@@ -75,7 +66,6 @@ export class PlayerComponent implements OnInit, OnChanges {
     return this.gameState === GameState.WHO_ARE_YOU;
   }
 
-  // Class methods
   private loadClasses() {
     this.isLoading = true;
     this.gameService.getPlayerClasses().subscribe({
@@ -112,7 +102,7 @@ export class PlayerComponent implements OnInit, OnChanges {
         this.classAccordionExpanded = false;
         this.player = updatedPlayer;
         this.isLoading = false;
-        this.checkAndEmitDone();
+        this.playerDone.emit(ComponentType.INIT);
       },
       error: (error) => {
         console.error('Error updating player class:', error);
@@ -120,62 +110,4 @@ export class PlayerComponent implements OnInit, OnChanges {
       }
     });
   }
-
-  // Trait methods
-  private loadTraits() {
-    this.isLoading = true;
-    this.gameService.getTraits(this.gameCode).subscribe({
-      next: (traits) => {
-        this.availableTraits = traits;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading traits:', error);
-        this.isLoading = false;
-      }
-    });
-  }
-
-  toggleTrait(trait: Trait) {
-    if (this.isTraitSelected(trait)) {
-      this.selectedTraits = [];
-    } else {
-      this.selectedTraits = [trait];
-    }
-  }
-
-  isTraitSelected(trait: Trait): boolean {
-    return this.selectedTraits.some(t => t.traitId === trait.traitId);
-  }
-
-  canSelectTrait(trait: Trait): boolean {
-    return this.isTraitSelected(trait) || this.selectedTraits.length === 0;
-  }
-
-  submitTraits() {
-    if (this.selectedTraits.length === 0) return;
-    this.isLoading = true;
-    const updatedPlayer: Player = { ...this.player, traits: this.selectedTraits };
-    this.gameService.updatePlayer(updatedPlayer).subscribe({
-      next: () => {
-        this.hasSubmittedTraits = true;
-        this.player = updatedPlayer;
-        this.isLoading = false;
-        this.checkAndEmitDone();
-      },
-      error: (error) => {
-        console.error('Error updating player traits:', error);
-        this.isLoading = false;
-      }
-    });
-  }
-
-  private checkAndEmitDone() {
-    if (this.isWhoAreYouMode() && this.hasSubmittedTraits) {
-      this.playerDone.emit(ComponentType.WHO_ARE_YOU);
-    } else if (this.isInitMode() && this.hasSubmittedClass && this.hasSubmittedTraits) {
-      this.playerDone.emit(ComponentType.INIT);
-    }
-  }
 }
-
