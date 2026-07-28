@@ -4,7 +4,8 @@ import { Story } from "./story";
 
 export enum CollaborativeMode {
   RAPID_FIRE = 'RAPID_FIRE',
-  SHARE_TEXT = 'SHARE_TEXT'
+  SHARE_TEXT = 'SHARE_TEXT',
+  CHOOSE = "CHOOSE"
 }
 
 export enum PhaseType {

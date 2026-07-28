@@ -14,7 +14,7 @@ import { GameState } from '../assets/game-state';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
 import { GameSessionDisplay } from '../assets/game-session-display';
 import { CollaborativeTextPhaseInfo, CollaborativeMode, PhaseType } from '../assets/collaborative-text-phase-info';
-import { OutcomeType } from '../assets/outcome-type';
+import { Header, OutcomeType } from '../assets/outcome-type';
 import { Story } from '../assets/story';
 import { ActivePlayerSession } from 'src/assets/active-player-session';
 import { ComponentType } from 'src/assets/component-type';
@@ -81,6 +81,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   
   isSimpleMode = false;
   isCollaborativeMode = false;
+  isChooseMode = false;
   
   // WHAT_WILL_BECOME_OF_US phase properties
   playerOutcomeType: OutcomeType | null = null;
@@ -89,6 +90,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   isStreamlinedMode = false;
   availableOutcomeTypes: OutcomeType[] = [];
   selectedOutcomeType: OutcomeType | null = null;
+  selectedParentOutcomeType: OutcomeType | null = null;
   selectedStory: Story | null = null;
   storyCache: Map<string, Story> = new Map();
 
@@ -109,6 +111,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   // DEFINING_TRAITS_VOTING phase properties
   selectedDefiningTrait: OutcomeType | null = null;
   selectedPriceTrait: OutcomeType | null = null;
+  focusedTrait: OutcomeType | null = null;
 
   constructor(private gameService: GameService) {}
 
@@ -137,6 +140,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       this.destinyAchieved = false;
       this.selectedDefiningTrait = null;
       this.selectedPriceTrait = null;
+      this.focusedTrait = null;
       this.loadOutcomeTypes();
     }
 
@@ -245,9 +249,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
               subTypes: [firstOutcomeType.subTypes[0]],
               headers: firstOutcomeType?.headers
             };
+            this.onSelectSubType(firstOutcomeType, firstOutcomeType.subTypes[0]);
           } else {
             // Otherwise select the outcomeType itself
             this.selectedOutcomeType = firstOutcomeType;
+            this.onSelectOutcomeType(firstOutcomeType);
           }
           
           // Load story for auto-selected outcomeType if it has a clarifier
@@ -301,8 +307,16 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.selectedOutcomeType = outcomeType;
     
     // If outcomeType has a clarifier (storyId), get the story from cache
+    this.selectClarifier(outcomeType);
+  }
+
+  private selectClarifier(outcomeType: OutcomeType) {
     if (outcomeType.clarifier) {
-      this.selectedStory = this.storyCache.get(outcomeType.clarifier) || null;
+      const cached = this.storyCache.get(outcomeType.clarifier);
+      this.selectedStory = cached || null;
+      if (!cached) {
+        this.loadStoryForOutcomeType(outcomeType.clarifier);
+      }
     } else {
       this.selectedStory = null;
     }
@@ -315,8 +329,9 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
           const story = response.responseBody[0];
           this.storyCache.set(storyId, story);
           
-          // Update selectedStory if this is the currently selected outcomeType's story
-          if (this.selectedOutcomeType?.clarifier === storyId) {
+          // Update selectedStory if this matches what is currently focused
+          const activeClarifier = this.focusedTrait?.clarifier || this.selectedOutcomeType?.clarifier;
+          if (activeClarifier === storyId) {
             this.selectedStory = story;
           }
         }
@@ -330,6 +345,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   onSelectSubType(parentOutcomeType: OutcomeType, subType: OutcomeType) {
     // Set selectedOutcomeType to the parent with a single subType array containing the selected subType
     const clarifier = subType.clarifier || parentOutcomeType.clarifier || '';
+    this.selectedParentOutcomeType = parentOutcomeType; // Store the parent for reference
     this.selectedOutcomeType = {
       id: parentOutcomeType.id,
       label: parentOutcomeType.label,
@@ -359,6 +375,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   hasDeepSubTypes(outcomeType: OutcomeType): boolean {
     return !!(outcomeType.subTypes && outcomeType.subTypes.length > 0 &&
+      outcomeType.subTypes[0] &&
       outcomeType.subTypes[0].subTypes && outcomeType.subTypes[0].subTypes.length > 0);
   }
 
@@ -381,17 +398,60 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     return this.gameState === GameState.DEFINING_TRAITS_VOTING;
   }
 
+  getSelectedOutcomeLabel(): string {
+    if (!this.selectedOutcomeType) return '';
+    if (this.isWriteEpiloguesPhase()) {
+      const parts: string[] = (this.selectedParentOutcomeType?.subTypes ?? [])
+        .map(st => st.label)
+        .filter(Boolean);
+      const destinyTrait = this.getDestinyTraits(
+        this.getEpiloguePlayer(this.availableOutcomeTypes[0]?.id ?? '')
+      ).at(0);
+      const destinyLabel = (this.destinyAchieved ? 'destiny achieved: ' : 'destiny not achieved: ')
+        + (destinyTrait?.traitLabel ?? '');
+      parts.push(destinyLabel);
+      return parts.join(', ');
+    }
+    return this.selectedOutcomeType.subTypes && this.selectedOutcomeType.subTypes.length > 0
+      ? this.selectedOutcomeType.subTypes[0].label
+      : this.selectedOutcomeType.label;
+  }
+
+  getOutcomeTypesPanelTitle(): string {
+    if (this.isWriteEpiloguesPhase()) {
+      return 'Take everything into account';
+    }
+
+    return this.isChooseMode ? 'Choose from the options below' : 'Choose an Outcome';
+  }
+
+  getOutcomeTypesPanelSubtitle(): string {
+    if (this.isWriteEpiloguesPhase()) {
+      return 'Select for more information';
+    }
+
+    return this.isChooseMode ? 'Make one of each selection' : 'Select one to write about';
+  }
+
   getDestinyTraits(player: Player | null): Trait[] {
-    return player?.traits?.filter(t => t.traitType === 'DESTINY') ?? [];
+    return player?.traits?.filter(t => t.traitType?.name === 'Destiny') ?? [];
   }
 
   onSelectDefiningTrait(trait: OutcomeType) {
+    this.focusedTrait = trait;
     this.selectedDefiningTrait = trait;
+    if (this.selectedPriceTrait?.id === trait.id) {
+      this.selectedPriceTrait = null;
+    }
     this.updateDefiningTraitSelection();
   }
 
   onSelectPriceTrait(trait: OutcomeType) {
+    this.focusedTrait = trait;
     this.selectedPriceTrait = trait;
+    if (this.selectedDefiningTrait?.id === trait.id) {
+      this.selectedDefiningTrait = null;
+    }
     this.updateDefiningTraitSelection();
   }
 
@@ -402,6 +462,19 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         subTypes: this.selectedPriceTrait ? [this.selectedPriceTrait] : []
       };
     }
+
+    if (this.focusedTrait) {
+      this.selectClarifier(this.focusedTrait);
+    }
+  }
+
+  isStoryDisplayActive(outcomeType: OutcomeType): boolean {
+    if (this.isDefiningTraitsPhase()) {
+      return this.focusedTrait?.id === outcomeType.id;
+    }
+    return this.selectedOutcomeType?.id === outcomeType.id ||
+      (!!outcomeType.subTypes && outcomeType.subTypes.length > 0 &&
+       this.selectedOutcomeType?.id === outcomeType.subTypes[0]?.id);
   }
 
   private updatePhaseInfoFromInput() {
@@ -424,6 +497,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     // Set backward compatibility flags
     this.isSimpleMode = this.phaseInfo.collaborativeMode === CollaborativeMode.RAPID_FIRE;
     this.isCollaborativeMode = this.phaseInfo.collaborativeMode === CollaborativeMode.SHARE_TEXT;
+    this.isChooseMode = this.phaseInfo.collaborativeMode === CollaborativeMode.CHOOSE;
   }
 
   getCollaborativeModeLabel(): string {
@@ -431,6 +505,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       return 'Rapid Fire';
     } else if (this.collaborativeMode === CollaborativeMode.SHARE_TEXT) {
       return 'Collaborative Mode';
+    } else if (this.collaborativeMode === CollaborativeMode.CHOOSE) {
+      return 'Choose';
     }
     return '';
   }
@@ -728,14 +804,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       ? outcomeType.subTypes[0].id
       : outcomeType?.id;
 
-    const textAddition: TextAddition = {
-      additionId: '',
-      authorId: this.player.authorId,
-      addedText: this.newTextControl.value.trim(),
-      submissionId: null, // This indicates a new submission
-      outcomeType: this.isWriteEpiloguesPhase() && this.destinyAchieved ? 'DESTINY_ACHIEVED' : outcomeTypeId,
-      outcomeTypeWithLabel: this.selectedOutcomeType ? this.selectedOutcomeType : undefined // Include outcomeType for streamlined mode or WHAT_WILL_BECOME_OF_US
-    };
+      if (this.isWriteEpiloguesPhase()) {
+        
+      }
+
+    const textAddition: TextAddition = this.buildTextAddition(outcomeTypeId);
 
     this.isLoading = true;
     this.gameService.submitTextAddition(this.gameCode, textAddition).subscribe({
@@ -760,6 +833,55 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
         onComplete?.();
       }
     });
+  }
+
+  private buildTextAddition(outcomeTypeId: string | undefined): TextAddition {
+
+    if (this.isWriteEpiloguesPhase()) {
+      if (this.selectedOutcomeType && this.selectedOutcomeType.subTypes && this.selectedOutcomeType.subTypes.length > 0) {
+        this.selectedOutcomeType = this.buildEpilogueSelectedOutcomeType(this.selectedOutcomeType);
+      }
+    }
+
+    return {
+      additionId: '',
+      authorId: this.player.authorId,
+      addedText: this.newTextControl.value?.trim() ?? '',
+      submissionId: null, // This indicates a new submission
+      outcomeType: outcomeTypeId,
+      outcomeTypeWithLabel: this.selectedOutcomeType ? this.selectedOutcomeType : undefined
+    };
+  }
+
+  private buildEpilogueSelectedOutcomeType(selectedOutcomeType: OutcomeType): OutcomeType {
+    if (!selectedOutcomeType.headers) {
+      selectedOutcomeType.headers = [];
+    }
+
+    // set outcomeTypeWithLabel subTypes to the headers on outcomeTypeWithLabel in a for loop, if subTypes exist
+    if (this.selectedParentOutcomeType?.subTypes) {
+      for (let i = 0; i < this.selectedParentOutcomeType.subTypes.length; i++) {
+        const header: Header = {
+          label: this.selectedParentOutcomeType.subTypes[i].label || '',
+          color: '#0288d1'
+        };
+
+        selectedOutcomeType.headers[i] = header;
+      }
+    }
+
+    const destinyOutcomeLabel = this.destinyAchieved ? 'destiny achieved: ' : 'destiny not achieved: ';
+    const destinyTrait: Trait | undefined = this.getDestinyTraits(this.getEpiloguePlayer(this.availableOutcomeTypes[0].id)).at(0);
+
+    selectedOutcomeType.headers.push(
+      {
+        label: destinyOutcomeLabel + (destinyTrait?.traitLabel || ''),
+        color: destinyTrait?.traitType.color || ''
+      }
+    );
+    selectedOutcomeType.subTypes = [];
+
+    return selectedOutcomeType;
   }
 
   onSelectSubmission(submission: TextSubmission) {

@@ -143,7 +143,7 @@ mat-form-field.disabled {
   }
   
   &.selected {
-    border-color: #4caf50;
+    border-color: var(--action-color);
     background-color: #e8f5e8;
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
   }
@@ -167,7 +167,7 @@ mat-form-field.disabled {
 }
 
 .image-option.selected .image-label {
-  color: #4caf50;
+  color: var(--action-color);
   font-weight: 600;
 }
 

@@ -80,7 +80,7 @@ app-story {
 }
 
 .voted-icon {
-  color: #4caf50;
+  color: var(--action-color);
 }
 
 @keyframes spin {
@@ -226,7 +226,7 @@ app-story {
 }
 
 .selected-icon {
-  color: #4caf50;
+  color: var(--action-color);
   font-size: 2rem;
   width: 2rem;
   height: 2rem;
@@ -312,7 +312,7 @@ app-story {
 }
 
 .outcome-success {
-  border-left-color: #4caf50 !important;
+  border-left-color: var(--action-color) !important;
   background-color: #f1f8f4;
 }
 
@@ -342,7 +342,7 @@ app-story {
 }
 
 .outcome-badge.outcome-success {
-  background-color: #4caf50;
+  background-color: var(--action-color);
   color: white;
 }
 
@@ -422,7 +422,7 @@ app-story {
   transition: background 0.2s ease;
 
   &.path-selected {
-    background: #4caf50;
+    background: var(--action-color);
   }
 }
 
@@ -448,7 +448,7 @@ app-story {
   }
 
   &.selected {
-    border-color: #4caf50;
+    border-color: var(--action-color);
     background: #f1f8f4;
     box-shadow: 0 3px 12px rgba(76, 175, 80, 0.3);
   }
@@ -471,7 +471,7 @@ app-story {
 }
 
 .location-selected-icon {
-  color: #4caf50;
+  color: var(--action-color);
   font-size: 1.4rem;
   width: 1.4rem;
   height: 1.4rem;

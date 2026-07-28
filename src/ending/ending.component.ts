@@ -37,24 +37,24 @@ export class EndingComponent implements OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['activePlayerSession']
+      if (changes['activePlayerSession']
         && changes['activePlayerSession']?.currentValue?.playerId === this.player.authorId) {
-          if(!this.playerTurn && !this.isDone) {
-            this.playerTurn = true;
-            this.getPlayerEnding(this.player.authorId);
+        if(!this.playerTurn && !this.isDone) {
+          this.playerTurn = true;
+          this.getPlayerEnding(this.player.authorId);
         }
-        } else {
-          this.playerTurn = false;
-          this.playerEnding = new Ending();
-        }
-        
-        const currentState = changes['gameState'] 
-            ? changes['gameState'].currentValue : this.gameState;
-  
-        if (currentState !== GameState.ENDING) {
-          this.isDone = false;
-        }
-      }  
+      } else {
+        this.playerTurn = false;
+        this.playerEnding = new Ending();
+      }
+      
+      const currentState = changes['gameState'] 
+          ? changes['gameState'].currentValue : this.gameState;
+
+      if (currentState !== GameState.ENDING) {
+        this.isDone = false;
+      }
+    }  
 
     getPlayerEnding(playerId: string) {
         const params = {

@@ -86,7 +86,7 @@
 }
 
 .done-icon {
-  color: #4caf50;
+  color: var(--action-color);
   font-size: 20px;
   width: 20px;
   height: 20px;
@@ -98,7 +98,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #4caf50;
+  color: var(--action-color);
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -113,7 +113,7 @@
   }
 
   mat-icon {
-    color: #4caf50;
+    color: var(--action-color);
   }
 
   .edit-icon {

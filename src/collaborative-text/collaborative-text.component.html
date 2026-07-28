@@ -16,14 +16,14 @@
   @if ((!hasSubmitted || isSimpleMode) && availableOutcomeTypes.length > 0) {
     <mat-card class="outcome-types-card">
       <mat-card-header>
-        <mat-card-title>Choose an Option</mat-card-title>
-        <mat-card-subtitle>Select one to write about</mat-card-subtitle>
+        <mat-card-title>{{ getOutcomeTypesPanelTitle() }}</mat-card-title>
+        <mat-card-subtitle>{{ getOutcomeTypesPanelSubtitle() }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="outcome-types-scroll">
           @for (outcomeType of availableOutcomeTypes; track outcomeType.id) {
             <div class="outcome-type-wrapper" [class.has-subtypes]="outcomeType.subTypes && outcomeType.subTypes.length > 0">
-              @if (selectedOutcomeType?.id === outcomeType.id && selectedStory) {
+              @if (isStoryDisplayActive(outcomeType) && selectedStory) {
                 <div class="story-display">
                   @if (selectedStory.encounterLabel?.encounterLabel) {
                     <p class="encounter-label-text">When we encountered {{ selectedStory.encounterLabel?.encounterLabel }} last time</p>
@@ -33,7 +33,7 @@
                       <div class="submission-preview">
                         <p class="submission-text">{{ selectedStory.prompt }}</p>
                         @if (selectedStory.selectedOptionId) {
-                          @for (option of selectedStory.options; track option.optionId) {
+                          @for (option of (selectedStory.options ?? []); track option.optionId) {
                             @if (option.optionId === selectedStory.selectedOptionId) {
                               <div class="outcome-badge outcome-success">
                                 {{ option.optionText }}
@@ -54,7 +54,7 @@
                   <mat-card-content>
                     @if (outcomeType.headers?.length) {
                       @for (header of outcomeType.headers; track $index) {
-                        <div class="outcome-badge outcome-success">{{ header }}</div>
+                        <div class="outcome-badge outcome-success" [style.background-color]="header.color">{{ header.label }}</div>
                       }
                     }
                     <p class="parent-label">{{ getEpiloguePlayer(outcomeType.id)?.displayName ?? outcomeType.label }}</p>
@@ -62,7 +62,8 @@
                       <trait-badges [traits]="getDestinyTraits(getEpiloguePlayer(outcomeType.id))"></trait-badges>
                     }
                     <div class="subtypes-container">
-                      @for (subType of outcomeType.subTypes; track subType.id) {
+                      @for (subType of outcomeType.subTypes; track $index) {
+                        @if (subType) {
                         <mat-card
                           class="subtype-item"
                           [class.selected]="selectedOutcomeType?.subTypes?.[0]?.id === subType.id"
@@ -80,6 +81,7 @@
                             }
                           </mat-card-content>
                         </mat-card>
+                        }
                       }
                     </div>
                   </mat-card-content>
@@ -90,7 +92,7 @@
                   <mat-card-content>
                     @if (outcomeType.headers?.length) {
                       @for (header of outcomeType.headers; track $index) {
-                        <div class="outcome-badge outcome-success">{{ header }}</div>
+                        <div class="outcome-badge outcome-success" [style.background-color]="header.color">{{ header.label }}</div>
                       }
                     }
                     <p class="parent-label">{{ isWriteEpiloguesPhase() ? (getEpiloguePlayer(outcomeType.id)?.displayName ?? outcomeType.label) : outcomeType.label }}
@@ -102,7 +104,8 @@
                       <trait-badges [traits]="getDestinyTraits(getEpiloguePlayer(outcomeType.id))"></trait-badges>
                     }
                     <div class="subtypes-container">
-                      @for (subType of outcomeType.subTypes; track subType.id) {
+                      @for (subType of outcomeType.subTypes; track $index) {
+                        @if (subType) {
                         <mat-card
                           class="subtype-item"
                           [class.selected]="selectedOutcomeType?.subTypes?.[0]?.id === subType.id"
@@ -111,6 +114,7 @@
                             <p>{{ subType.label }}</p>
                           </mat-card-content>
                         </mat-card>
+                        }
                       }
                     </div>
                   </mat-card-content>
@@ -121,13 +125,21 @@
                   <mat-card class="outcome-type-item"
                     [class.selected]="selectedDefiningTrait?.id === outcomeType.id || selectedPriceTrait?.id === outcomeType.id">
                     <mat-card-content>
+                      @if (outcomeType.headers?.length) {
+                        @for (header of outcomeType.headers; track $index) {
+                          <div class="outcome-badge outcome-success" [style.background-color]="header.color">{{ header.label }}</div>
+                        }
+                      }
+
                       <p>{{ outcomeType.label }}</p>
                       <div style="display:flex;gap:8px;margin-top:4px;">
-                        <button mat-stroked-button
-                          [color]="selectedDefiningTrait?.id === outcomeType.id ? 'primary' : ''"
+                        <button mat-flat-button
+                          class="option-button"
+                          [class.selected]="selectedDefiningTrait?.id === outcomeType.id"
                           (click)="onSelectDefiningTrait(outcomeType)">Defining</button>
-                        <button mat-stroked-button
-                          [color]="selectedPriceTrait?.id === outcomeType.id ? 'warn' : ''"
+                        <button mat-flat-button
+                          class="option-button"
+                          [class.selected]="selectedPriceTrait?.id === outcomeType.id"
                           (click)="onSelectPriceTrait(outcomeType)">Price</button>
                       </div>
                     </mat-card-content>
@@ -141,7 +153,7 @@
                     <mat-card-content>
                       @if (outcomeType.headers?.length) {
                         @for (header of outcomeType.headers; track $index) {
-                          <div class="outcome-badge outcome-success">{{ header }}</div>
+                          <div class="outcome-badge outcome-success" [style.background-color]="header.color">{{ header.label }}</div>
                         }
                       }
                       <p>{{ outcomeType.label }}</p>
@@ -168,9 +180,9 @@
       <mat-card class="submission-card" [class.outcome-highlight]="playerOutcomeType || selectedOutcomeType" [ngClass]="(playerOutcomeType || selectedOutcomeType) ? getOutcomeTypeClass((selectedOutcomeType || playerOutcomeType)?.id) : ''">
         <mat-card-header>
           <mat-card-title>{{ phaseQuestion }}</mat-card-title>
-          @if (selectedOutcomeType) {
+          @if (selectedOutcomeType && !isChooseMode) {
             <mat-card-subtitle class="outcome-message">
-              {{ selectedOutcomeType.subTypes && selectedOutcomeType.subTypes.length > 0 ? selectedOutcomeType.subTypes[0].label : selectedOutcomeType.label }}
+              {{ getSelectedOutcomeLabel() }}
             </mat-card-subtitle>
           } @else if (playerOutcomeType) {
             <mat-card-subtitle class="outcome-message">{{ playerOutcomeType.label }}</mat-card-subtitle>
@@ -194,19 +206,7 @@
                 [attr.maxlength]="getCharacterLimit()">
               <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/{{ getCharacterLimit() }}</mat-hint>
             </mat-form-field>
-          } @else if (!isDefiningTraitsPhase()) {
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>{{ phaseQuestion.toLowerCase() }}</mat-label>
-              <textarea
-                matInput
-                [formControl]="newTextControl"
-                placeholder="Be creative and descriptive..."
-                rows="4"
-                [attr.maxlength]="getCharacterLimit()">
-              </textarea>
-              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/{{ getCharacterLimit() }}</mat-hint>
-            </mat-form-field>
-          } @else {
+          } @else if (isChooseMode) {
             <!-- DEFINING_TRAITS_VOTING: show selection summary instead of textarea -->
             @if (selectedDefiningTrait || selectedPriceTrait) {
               <div style="margin-top:8px;">
@@ -218,14 +218,26 @@
                 }
               </div>
             }
+          } @else {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ phaseQuestion.toLowerCase() }}</mat-label>
+              <textarea
+                matInput
+                [formControl]="newTextControl"
+                placeholder="Be creative and descriptive..."
+                rows="4"
+                [attr.maxlength]="getCharacterLimit()">
+              </textarea>
+              <mat-hint align="end">{{ newTextControl.value?.length || 0 }}/{{ getCharacterLimit() }}</mat-hint>
+            </mat-form-field>
           }
         </mat-card-content>
         @if (isWriteEpiloguesPhase()) {
           <mat-card-content>
             <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
               <span>Did they achieve their destiny?</span>
-              <button mat-stroked-button [color]="destinyAchieved ? 'primary' : ''" (click)="destinyAchieved = true">Yes</button>
-              <button mat-stroked-button [color]="!destinyAchieved ? 'warn' : ''" (click)="destinyAchieved = false">No</button>
+              <button mat-flat-button class="option-button" [class.selected]="destinyAchieved" (click)="destinyAchieved = true">Yes</button>
+              <button mat-flat-button class="option-button" [class.selected]="!destinyAchieved" (click)="destinyAchieved = false">No</button>
             </div>
           </mat-card-content>
         }
@@ -233,8 +245,9 @@
           <button
             mat-flat-button
             color="primary"
+            class="action-button"
             (click)="onSubmitNewText()"
-            [disabled]="(!activePlayerSession?.startTimer && !activePlayerSession?.contributionPhaseActive) || isLoading || isAutoSubmitting || (availableOutcomeTypes.length > 0 && !selectedOutcomeType) || (isDefiningTraitsPhase() && (!selectedDefiningTrait || !selectedPriceTrait)) || (!isDefiningTraitsPhase() && (newTextControl.invalid || !newTextControl.value))">
+            [disabled]="(!activePlayerSession?.startTimer && !activePlayerSession?.contributionPhaseActive) || isLoading || isAutoSubmitting || (availableOutcomeTypes.length > 0 && !selectedOutcomeType) || (isChooseMode && (!selectedDefiningTrait || !selectedPriceTrait)) || (!isChooseMode && (newTextControl.invalid || !newTextControl.value))">
             {{ getSubmitButtonText() }}
           </button>
         </mat-card-actions>
@@ -270,7 +283,7 @@
                     @if (submission.outcomeTypeWithLabel) {
                         @if (submission.outcomeTypeWithLabel.headers?.length) {
                             @for (header of submission.outcomeTypeWithLabel.headers; track $index) {
-                              <div class="outcome-badge outcome-success">{{ header }}</div>
+                              <div class="outcome-badge outcome-success" [style.background-color]="header.color">{{ header.label }}</div>
                             }
                         }
 

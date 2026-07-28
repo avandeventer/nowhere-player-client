@@ -208,7 +208,8 @@ export class VotingComponent implements OnInit, OnChanges {
     || this.gameState === GameState.LOCATION_OPTION_MAKE_CHOICE_VOTING
     || this.gameState === GameState.LOCATION_OPTION_MAKE_CHOICE_WINNER
     || this.gameState === GameState.MAKE_PARTNER_CHOICE_VOTING
-    || this.gameState === GameState.ACCEPT_PARTNER_CHOICE_VOTING;
+    || this.gameState === GameState.ACCEPT_PARTNER_CHOICE_VOTING
+    || this.gameState === GameState.ENDING;
   }
 
   isMakeOutcomeChoiceVotingPhase(): boolean {
