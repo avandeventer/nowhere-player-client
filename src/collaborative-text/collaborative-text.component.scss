@@ -9,9 +9,26 @@
   color: var(--mat-option-selected-state-layer-color) !important;
 }
 
+mat-card-title {
+  font-weight: bold !important;
+  text-align: left !important;
+  font-size: 1rem !important;
+}
+
+mat-card-subtitle {
+  font-size: 0.8rem !important;
+}
+
 .phase-header {
   text-align: center;
   margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  mat-card-header {
+    padding-bottom: 12px;
+  }
   h2 {
     color: #1976d2;
     margin-bottom: 10px;

@@ -1,14 +1,18 @@
 <div class="collaborative-text-container">
   <div class="phase-header">
-    <p class="instructions">
-      <span class="collaborative-mode-title">{{ phaseQuestion }}</span>
-      <span [innerHTML]="phaseInstructions"></span>
-    </p>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ phaseQuestion }}</mat-card-title>
+        <mat-card-subtitle><span [innerHTML]="phaseInstructions"></span></mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
     @if (phaseInstructions && collaborativeMode) {
-      <p class="instructions">
-        <span class="collaborative-mode-title">{{ getCollaborativeModeLabel() }}</span>
-        <span [innerHTML]="collaborativeModeInstructions"></span>
-      </p>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>{{ getCollaborativeModeLabel() }}</mat-card-title>
+          <mat-card-subtitle><span [innerHTML]="collaborativeModeInstructions"></span></mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
     }
   </div>
 
