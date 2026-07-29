@@ -422,7 +422,14 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       return 'Take everything into account';
     }
 
-    return this.isChooseMode ? 'Choose from the options below' : 'Choose an Outcome';
+    if (this.isChooseMode) {
+      return 'Choose from the options below';
+    }
+
+    return (this.availableOutcomeTypes.length === 1 
+      && (!this.availableOutcomeTypes[0].subTypes 
+      || this.availableOutcomeTypes[0].subTypes.length <= 1)
+      ? 'Iterate on this prompt' : 'Select one to write about');
   }
 
   getOutcomeTypesPanelSubtitle(): string {
@@ -430,7 +437,11 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
       return 'Select for more information';
     }
 
-    return this.isChooseMode ? 'Make one of each selection' : 'Select one to write about';
+    if (this.isChooseMode) {
+      return 'Make one of each selection';
+    }
+
+    return '';
   }
 
   getDestinyTraits(player: Player | null): Trait[] {
