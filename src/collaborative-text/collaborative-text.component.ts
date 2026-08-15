@@ -522,6 +522,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     return '';
   }
 
+  isStoryWritingPhase(): boolean {
+    return this.collaborativeMode === CollaborativeMode.SHARE_TEXT && !this.isWriteEpiloguesPhase();
+  }
+
   private loadCollaborativePhase() {
     this.isLoading = true;
     this.gameService.getCollaborativeTextPhase(this.gameCode).subscribe({

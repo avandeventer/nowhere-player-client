@@ -328,14 +328,14 @@
                   <textarea
                     matInput
                     [formControl]="additionTextControl"
-                    placeholder="Add your ideas to build upon this submission..."
+                    placeholder="Build on this submission..."
                     rows="3">
                   </textarea>
                   <mat-hint align="end">{{ additionTextControl.value?.length || 0 }} characters</mat-hint>
                 </mat-form-field>
               }
 
-              @if (playerRepercussionTypes.length > 0 && howDoesThisResolve()) {
+              @if (playerRepercussionTypes.length > 0 && isStoryWritingPhase()) {
                 <repercussion-toggle
                   [repercussionTypes]="playerRepercussionTypes"
                   [companionLabel]="(companionRepercussionOn && activeRepercussion && companionStory?.encounterLabel) ? companionStory!.encounterLabel!.encounterLabel : null"
