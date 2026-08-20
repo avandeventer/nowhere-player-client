@@ -136,9 +136,16 @@
             <p>You can only vote on resolutions for <strong>{{ playerOutcomeType.label }}</strong></p>
           </div>
         }
+        @if (getCommonOriginalText(); as commonText) {
+          <mat-card class="submission-card common-root-card">
+            <mat-card-content>
+              <p class="submission-text">{{ commonText }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
         @for (submission of submissions; track submission.submissionId) {
-          <mat-card 
-            class="submission-card" 
+          <mat-card
+            class="submission-card"
             [class.selected]="isSelected(submission.submissionId)"
             [class.outcome-highlight]="submission.outcomeTypeWithLabel"
             [ngClass]="submission.outcomeTypeWithLabel ? getOutcomeTypeClass(submission.outcomeTypeWithLabel.id) : ''"
@@ -158,7 +165,9 @@
                     <span class="ranking-number">{{ getRanking(submission.submissionId) }}</span>
                   </div>
                 }
-                <p class="submission-text">{{ submission.currentText }}</p>
+                @if (getUniqueAddedText(submission)) {
+                  <p class="submission-text">{{ getUniqueAddedText(submission) }}</p>
+                }
                 <repercussion-badges [repercussions]="getSubmissionRepercussions(submission)"></repercussion-badges>
                 <div class="selection-indicator">
                   @if (isSelected(submission.submissionId)) {

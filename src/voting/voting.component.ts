@@ -191,6 +191,19 @@ export class VotingComponent implements OnInit, OnChanges {
       .map(a => a.repercussion!);
   }
 
+  getCommonOriginalText(): string | null {
+    if (this.submissions.length === 0) return null;
+    const first = this.submissions[0].originalText;
+    if (!first) return null;
+    return this.submissions.every(s => s.originalText === first) ? first : null;
+  }
+
+  getUniqueAddedText(submission: TextSubmission): string {
+    const common = this.getCommonOriginalText();
+    if (!common) return submission.currentText;
+    return submission.currentText.substring(common.length).trim();
+  }
+
   getOutcomeTypeClass(outcomeType: string | undefined): string {
     if (!outcomeType) return '';
 

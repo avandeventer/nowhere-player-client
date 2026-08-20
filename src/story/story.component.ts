@@ -50,6 +50,15 @@ export class StoryComponent {
     }
   }
 
+  getEncounterHeader(): string {
+    const names = this.phaseInfo?.activePlayers?.map(p => p.displayName) || [];
+    if (names.length === 0) return "You've encountered";
+    if (names.length === 1) return `${names[0]} has encountered`;
+    if (names.length === 2) return `${names[0]} and ${names[1]} have encountered`;
+    return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]} have encountered`;
+  }
+
+
   nextGamePhase() {
     this.gameService.nextGamePhase(this.gameCode);
   }

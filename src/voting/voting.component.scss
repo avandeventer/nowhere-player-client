@@ -152,6 +152,13 @@ app-story {
   position: relative;
 }
 
+.common-root-card {
+  cursor: default;
+  border: 2px solid var(--action-color);
+  background-color: #f1f8f4;
+  pointer-events: none;
+}
+
 .submission-card:hover {
   border-color: #2196f3;
   transform: translateY(-2px);
