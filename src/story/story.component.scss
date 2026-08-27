@@ -1,3 +1,26 @@
+.location-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  transform-origin: center;
+  animation: location-background-zoom-in 1.4s ease-out;
+}
+
+@keyframes location-background-zoom-in {
+  from {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0.15;
+  }
+}
+
 .story-container {
   margin: 16px 0;
   max-width: 600px;
@@ -6,7 +29,7 @@
 }
 
 .encounter-header {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--mat-optgroup-label-text-color) !important;
   border: 2px solid rgba(255, 255, 255, 0.3);
   padding: 16px;
   border-radius: 8px;

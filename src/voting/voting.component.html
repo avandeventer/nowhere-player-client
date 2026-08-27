@@ -83,6 +83,7 @@
       [outcomeDisplay]="activePlayerSession?.outcomeDisplay || []"
       (playerDone)="playerDone.emit($event)">
     </app-story>
+    
   } @else if (isLoading) {
     <div class="loading-container">
       <mat-icon class="loading-icon">hourglass_empty</mat-icon>

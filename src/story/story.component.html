@@ -1,4 +1,10 @@
 @if (story) {
+  @if (isPlayerTurn && story.location?.iconDirectory) {
+    <div class="location-background"
+      [style.background-image]="'url(' + story.location!.iconDirectory!.toString() + ')'">
+    </div>
+  }
+
   <div class="story-container">
     <mat-card class="encounter-header">
       <h2>{{ getEncounterHeader() }}</h2>
