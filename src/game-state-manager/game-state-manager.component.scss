@@ -14,10 +14,28 @@
     position: relative;
     z-index: 103;
     pointer-events: auto;
-    
+
     &.pulse-button {
       animation: pulse-flash 1.5s ease-in-out infinite;
     }
+
+    &[disabled] {
+      animation: none;
+    }
+
+    .loading-icon {
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

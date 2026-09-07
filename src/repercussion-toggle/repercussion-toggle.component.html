@@ -27,7 +27,6 @@
   @if (activeType || companionLabel) {
     <span class="repercussion-description">
       @if (activeType) { {{ activeType.description }} }
-      @if (activeType && companionLabel) { · }
       @if (companionLabel) { {{ companionLabel }} }
     </span>
   }

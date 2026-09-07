@@ -8,6 +8,7 @@ import { GameState } from '../assets/game-state';
 import { TextSubmission } from '../assets/collaborative-text-phase';
 import { Option } from '../assets/option';
 import { CollaborativeTextPhaseInfo, PhaseType } from '../assets/collaborative-text-phase-info';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { GameService } from '../services/game-session.service';
 import { PlayerVote } from '../assets/player-vote';
 import { ComponentType } from '../assets/component-type';
@@ -15,7 +16,7 @@ import { ComponentType } from '../assets/component-type';
 @Component({
   selector: 'app-story',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './story.component.html',
   styleUrl: './story.component.scss'
 })

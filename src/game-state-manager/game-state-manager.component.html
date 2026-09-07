@@ -1,13 +1,19 @@
 <div class="action-buttons-container">
     @if (isGameInitialized() && player.firstPlayer) {
-        <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button">
-            Start game?
+        <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button" [disabled]="isContinuing">
+            @if (isContinuing) {
+              <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+            }
+            {{ isContinuing ? 'Starting...' : 'Start game?' }}
         </button>
     }
     
     @if ((isGameInPreamblePhase() || isGameInCollaborativeTextWinningPhase()) && player.firstPlayer) {
-        <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button">
-            Continue
+        <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button" [disabled]="isContinuing">
+            @if (isContinuing) {
+              <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+            }
+            {{ isContinuing ? 'Continuing...' : 'Continue' }}
         </button>
     }
     
@@ -21,8 +27,9 @@
 <app-world-information [gameCode]="gameCode" [phaseInfo]="collaborativeTextPhaseInfo"></app-world-information>
 
 @if (isGameInitialized()) {
-    <!-- <mat-card class="stat-board">
-        <div>{{player.userName}}</div>
+    @if (!isDungeonMode) {
+        <mat-card class="stat-board">
+            <div>{{player.userName}}</div>
 
         @if (player.playerStats && player.playerStats.length > 0) {
             @for (playerStat of player.playerStats; track playerStat) {
@@ -31,7 +38,8 @@
                 }
             }
         }
-    </mat-card><br> -->
+        </mat-card><br>
+    }
 
     <mat-card class="story">Hello {{player.userName}}!
         @if(adventureMap) {
@@ -46,15 +54,15 @@
     <p>Have someone read the text on screen!</p>
 }
 
-@if (isGameInCollaborativeTextWinningPhase()) {
-    <div class="phase-header">
-        <h2>{{ collaborativeTextPhaseInfo?.phaseQuestion }}</h2>
-        <p class="instructions">{{ collaborativeTextPhaseInfo?.phaseInstructions }}</p>
-    </div>
-}
-
 @if (isGameInWritePromptsPhase()) {
     <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></write-prompt>
+}
+
+@if (showPhaseHeader()) {
+    <div class="phase-header">
+        <h1 class="phase-question">{{ getPhaseHeaderQuestion() }}</h1>
+        <p class="phase-instructions">{{ getPhaseHeaderInstructions() }}</p>
+    </div>
 }
 
 @if (isGameInCollaborativeTextPhase()) {
@@ -127,6 +135,6 @@
     <ending [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></ending>
 }
 
-@if (showPlayerComponent()) {
+@if (showPlayerTraitsComponent()) {
     <app-player [gameCode]="gameCode" [player]="player" [gameState]="gameState" (playerDone)="setDone($event)"></app-player>
 }

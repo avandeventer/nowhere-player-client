@@ -14,6 +14,7 @@ import { RitualComponent } from 'src/ritual/ritual.component';
 import { ComponentType, ComponentTypeGameStateMap } from 'src/assets/component-type';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { WriteEndingsComponent } from 'src/write-endings/write-endings.component';
 import { GenreComponent } from 'src/genre/genre.component';
 import { EndingComponent } from 'src/ending/ending.component';
@@ -46,6 +47,7 @@ import { PlayerComponent } from 'src/player/player.component';
       WriteLocationPromptComponent,
       WriteLocationOutcomesComponent,
       MatCardModule,
+      MatIconModule,
       PlayerComponent,
     ],
     standalone: true
@@ -72,7 +74,7 @@ export class GameStateManagerComponent implements OnInit {
   stories: any[] | null = null;
   collaborativeTextPhaseInfo: CollaborativeTextPhaseInfo | null = null;
   isDungeonMode = false;
-  includeTraits = false;
+  isContinuing = false;
 
   constructor(
     private gameService: GameService,
@@ -84,6 +86,7 @@ export class GameStateManagerComponent implements OnInit {
       if (this.gameState !== newState.gameState as unknown as GameState) {
         this.gameState = newState.gameState as unknown as GameState;
         this.gameStateChanged.emit(this.gameState);
+        this.isContinuing = false;
         // Load phase info when game state changes
         this.loadCollaborativeTextPhaseInfo();
       }
@@ -108,11 +111,6 @@ export class GameStateManagerComponent implements OnInit {
       console.log('New gameState:', this.gameState);
     });
 
-    this.gameService.getFeatureFlag('includeTraits').subscribe({
-      next: (value) => { this.includeTraits = value; },
-      error: () => { this.includeTraits = false; }
-    });
-
     // Load initial phase info
     this.loadCollaborativeTextPhaseInfo();
   }
@@ -132,6 +130,7 @@ export class GameStateManagerComponent implements OnInit {
   }
 
   nextGamePhase() {
+    this.isContinuing = true;
     this.gameService.nextGamePhase(this.gameCode);
   }
 
@@ -250,6 +249,26 @@ export class GameStateManagerComponent implements OnInit {
     return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.WINNING && this.gameState !== GameState.MAKE_OUTCOME_CHOICE_WINNER;
   }
 
+  showPhaseHeader(): boolean {
+    return this.isGameInCollaborativeTextPhase()
+      || this.isGameInVotingPhase()
+      || this.isGameInCollaborativeTextWinningPhase();
+  }
+
+  getPhaseHeaderQuestion(): string {
+    return this.collaborativeTextPhaseInfo?.phaseQuestion
+      || (this.isGameInVotingPhase() ? 'Vote on submissions' : 'Collaborative Writing');
+  }
+
+  getPhaseHeaderInstructions(): string {
+    if (this.collaborativeTextPhaseInfo?.phaseInstructions) {
+      return this.collaborativeTextPhaseInfo.phaseInstructions;
+    }
+    return this.isGameInVotingPhase()
+      ? 'Click on submissions to rank them from best to worst. The first one you select will be ranked #1, the second will be #2, and so on.'
+      : 'Work together to build your story!';
+  }
+
   isGameInLocationCreationPhase() {
     return this.gameState === GameState.WHERE_CAN_WE_GO;
   }
@@ -258,7 +277,7 @@ export class GameStateManagerComponent implements OnInit {
     return this.gameState === GameState.WHAT_OCCUPATIONS_ARE_THERE;
   }
 
-  showPlayerComponent() {
-    return this.isDungeonMode && this.includeTraits;
+  showPlayerTraitsComponent() {
+    return this.isDungeonMode
   }
 }

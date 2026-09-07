@@ -654,27 +654,29 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.activeRepercussion = repercussion;
     this.companionRepercussionOn = this.player.playerClass?.repercussionTypes?.some((repercussionType) => repercussionType === 'COMPANION') || false;
     if (this.companionRepercussionOn && this.activeRepercussion != null && this.selectedSubmission) {
-      const storyId = this.selectedSubmission.outcomeTypeWithLabel?.id;
+      const storyId = this.gameState === GameState.WHAT_HAPPENS_HERE
+        ? this.selectedSubmission.outcomeTypeWithLabel?.subTypes?.[0]?.clarifier
+        : this.selectedSubmission.outcomeTypeWithLabel?.id;
       if (storyId) {
         if (this.storyCache.has(storyId)) {
           this.companionStory = this.storyCache.get(storyId) ?? null;
         } else {
           this.gameService.getStoryByStoryId(this.gameCode, storyId).subscribe({
-              next: (storyResponseBody: any) => {
-                const story = (storyResponseBody?.responseBody?.[0] ?? storyResponseBody?.story ?? storyResponseBody) as Story;
-                this.storyCache.set(storyId, story);
-                this.companionStory = story;
-              }
+            next: (storyResponseBody: any) => {
+              const story = (storyResponseBody?.responseBody?.[0] ?? storyResponseBody?.story ?? storyResponseBody) as Story;
+              this.storyCache.set(storyId, story);
+              this.companionStory = story;
+            }
           });
         }
-        if (this.activeRepercussion && this.companionStory && this.companionStory.encounterLabel) {
-          this.activeRepercussion.repercussionSubmission = this.companionStory!.encounterLabel!.encounterLabel ?? '';
+        if (this.activeRepercussion && this.companionStory?.encounterLabel?.encounterLabel) {
+          this.activeRepercussion.repercussionSubmission = this.companionStory.encounterLabel.encounterLabel;
         }
       }
     } else {
       this.companionStory = null;
-      if (this.companionRepercussionOn) {
-        this.activeRepercussion!.repercussionSubmission = '';
+      if (this.companionRepercussionOn && this.activeRepercussion) {
+        this.activeRepercussion.repercussionSubmission = '';
       }
     }
   }

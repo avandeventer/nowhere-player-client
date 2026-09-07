@@ -1,9 +1,4 @@
-<div class="voting-container">
-  <div class="voting-header">
-    <h1 class="phase-question">{{ phaseQuestion }}</h1>
-    <p class="voting-instructions">{{ phaseInfo?.phaseInstructions || 'Click on submissions to rank them from best to worst. The first one you select will be ranked #1, the second will be #2, and so on.' }}</p>
-  </div>
-
+<div class="phase-container">
   @if (isLocationVotingPhase()) {
     @if (hasVoted) {
       <div class="voted-container">

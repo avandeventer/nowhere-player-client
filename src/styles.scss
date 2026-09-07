@@ -42,6 +42,44 @@ body {
   width: 100%;
 }
 
+.phase-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.phase-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.phase-question {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.phase-instructions {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .phase-container {
+    padding: 15px;
+  }
+
+  .phase-question {
+    font-size: 1.5rem;
+  }
+}
+
 mat-form-field {
   display: block;
   margin-bottom: 16px;

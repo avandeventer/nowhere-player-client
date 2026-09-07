@@ -56,29 +56,22 @@ export class VotingComponent implements OnInit, OnChanges {
   selectedSubmissions: string[] = []; // Array of submission IDs in order of selection
   isLoading = false;
   hasVoted = false;
-  phaseQuestion = '';
   playerOutcomeType: OutcomeType | null = null;
 
   constructor(private gameService: GameService) {}
 
   ngOnInit() {
-    this.setupPhaseProperties();
     this.loadPlayerOutcomeType();
     if (this.gameState !== GameState.NAVIGATE_VOTING) {
       this.loadVotingSubmissions();
     }
   }
-  
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['gameState']) {
-      this.setupPhaseProperties();
       this.hasVoted = false;
       this.loadVotingSubmissions();
     }
-  }
-
-  private setupPhaseProperties() {
-      this.phaseQuestion = this.phaseInfo?.phaseQuestion || 'Vote on submissions';
   }
 
   private loadVotingSubmissions() {

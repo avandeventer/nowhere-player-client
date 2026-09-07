@@ -1,20 +1,12 @@
-<div class="collaborative-text-container">
-  <div class="phase-header">
-    <mat-card>
+<div class="phase-container">
+  @if (phaseInstructions && collaborativeMode) {
+    <mat-card class="collaborative-mode-card">
       <mat-card-header>
-        <mat-card-title>{{ phaseQuestion }}</mat-card-title>
-        <mat-card-subtitle><span [innerHTML]="phaseInstructions"></span></mat-card-subtitle>
+        <mat-card-title>{{ getCollaborativeModeLabel() }}</mat-card-title>
+        <mat-card-subtitle><span [innerHTML]="collaborativeModeInstructions"></span></mat-card-subtitle>
       </mat-card-header>
     </mat-card>
-    @if (phaseInstructions && collaborativeMode) {
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>{{ getCollaborativeModeLabel() }}</mat-card-title>
-          <mat-card-subtitle><span [innerHTML]="collaborativeModeInstructions"></span></mat-card-subtitle>
-        </mat-card-header>
-      </mat-card>
-    }
-  </div>
+  }
 
   <!-- Outcome Types Selection -->
   @if ((!hasSubmitted || isSimpleMode) && availableOutcomeTypes.length > 0) {

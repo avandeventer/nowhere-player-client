@@ -1,14 +1,3 @@
-.voting-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.voting-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
 app-story {
   display: block;
   margin-bottom: 30px;
@@ -43,19 +32,6 @@ app-story {
     width: 18px;
     height: 18px;
   }
-}
-
-.phase-question {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.voting-instructions {
-  font-size: 1.1rem;
-  color: #666;
-  margin: 0;
 }
 
 .loading-container, .no-submissions, .voted-container {
@@ -263,14 +239,6 @@ app-story {
 
 // Responsive design
 @media (max-width: 768px) {
-  .voting-container {
-    padding: 15px;
-  }
-  
-  .phase-question {
-    font-size: 1.5rem;
-  }
-  
   .submission-content {
     gap: 10px;
   }

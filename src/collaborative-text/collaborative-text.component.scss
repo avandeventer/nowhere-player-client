@@ -1,9 +1,3 @@
-.collaborative-text-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
 .collaborative-instruction {
   background: var(--mat-optgroup-label-text-color) !important;
   color: var(--mat-option-selected-state-layer-color) !important;
@@ -19,32 +13,11 @@ mat-card-subtitle {
   font-size: 0.8rem !important;
 }
 
-.phase-header {
-  text-align: center;
-  margin-bottom: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.collaborative-mode-card {
+  margin-bottom: 20px;
 
   mat-card-header {
-    padding-bottom: 12px;
-  }
-  h2 {
-    color: #1976d2;
-    margin-bottom: 10px;
-  }
-  .instructions {
-    color: #666;
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 10px;
-    .collaborative-mode-title {
-      font-weight: bold;
-      display: block;
-      font-size: 18px;
-      color: rgb(0,0,0);
-      margin-bottom: 5px;
-    }
+    padding-bottom: 16px;
   }
 }
 
@@ -149,10 +122,6 @@ mat-card-subtitle {
 
 // Responsive design
 @media (max-width: 768px) {
-  .collaborative-text-container {
-    padding: 10px;
-  }
-
   .submissions-grid {
     grid-template-columns: 1fr;
   }
