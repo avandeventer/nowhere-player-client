@@ -9,7 +9,7 @@ import { Player } from '../assets/player';
 import { PlayerClassOption } from '../assets/player-class-option';
 import { ComponentType } from '../assets/component-type';
 import { GameState } from '../assets/game-state';
-import { TraitBadgesComponent } from '../trait-badges/trait-badges.component';
+import { PlayerDrawerComponent } from '../player-drawer/player-drawer.component';
 
 @Component({
   selector: 'app-player',
@@ -22,7 +22,7 @@ import { TraitBadgesComponent } from '../trait-badges/trait-badges.component';
     MatCardModule,
     MatExpansionModule,
     MatIconModule,
-    TraitBadgesComponent,
+    PlayerDrawerComponent,
   ]
 })
 export class PlayerComponent implements OnInit, OnChanges {

@@ -70,11 +70,57 @@
 @media (max-width: 768px) {
   .action-buttons-container {
     padding: 12px;
-    
+
     .action-button {
       font-size: 14px;
       padding: 8px 16px;
     }
   }
+}
+
+.pyre-vignette {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 250vmax;
+  height: 250vmax;
+  z-index: 40; // stays under the player-drawer's z-index: 900
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 0,
+    transparent 15vmax,
+    rgba(0, 0, 0, 0.6) 42vmax,
+    rgba(0, 0, 0, 0.6) 260vmax
+  );
+  animation: pyre-flicker 2.2s ease-in-out infinite;
+}
+
+@keyframes pyre-flicker {
+  0%   { scale: 1;    opacity: 1; }
+  15%  { scale: 1.04; opacity: 0.94; }
+  32%  { scale: 0.97; opacity: 1; }
+  48%  { scale: 1.06; opacity: 0.9; }
+  63%  { scale: 0.99; opacity: 1; }
+  80%  { scale: 1.03; opacity: 0.95; }
+  100% { scale: 1;    opacity: 1; }
+}
+
+.collaborative-phase-loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: 41; // paint above the vignette
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-pyre {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
 }
 

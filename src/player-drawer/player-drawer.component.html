@@ -1,0 +1,31 @@
+<div class="player-drawer" #sheet [class.dragging]="dragging" [class.entering]="entering" [style.transform]="'translateY(' + translateY + 'px)'">
+  <button type="button" class="drawer-tab" #tab matRipple
+          (pointerdown)="onPointerDown($event)"
+          (pointermove)="onPointerMove($event)"
+          (pointerup)="onPointerUp()"
+          (pointercancel)="onPointerUp()"
+          (click)="onTabClick()"
+          [attr.aria-expanded]="expanded"
+          aria-controls="player-drawer-content">
+    <span class="drag-handle" aria-hidden="true"></span>
+    <div class="tab-row">
+      <span class="tab-name">{{ player.displayName }}</span>
+      @if (destinyTraits().length > 0) {
+        <div class="tab-destinies">
+          @for (destiny of destinyTraits(); track destiny.traitId) {
+            <span class="tab-destiny" [style.background-color]="destiny.traitType.color">
+              Destiny: {{ destiny.traitLabel }}
+            </span>
+          }
+        </div>
+      }
+    </div>
+  </button>
+
+  <div id="player-drawer-content" class="drawer-content" [attr.inert]="expanded ? null : ''">
+    @if (player.playerClass) {
+      <div class="content-class">{{ player.playerClass.name }}</div>
+    }
+    <trait-badges [traits]="nonDestinyTraits()"></trait-badges>
+  </div>
+</div>

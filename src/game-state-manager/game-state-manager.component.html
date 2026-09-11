@@ -61,15 +61,26 @@
 @if (showPhaseHeader()) {
     <div class="phase-header">
         <h1 class="phase-question">{{ getPhaseHeaderQuestion() }}</h1>
-        <p class="phase-instructions">{{ getPhaseHeaderInstructions() }}</p>
+        @if (isGameInCollaborativeTextWinningPhase()) {
+            <mat-card class="instructions">
+                <p class="phase-instructions">{{ getPhaseHeaderInstructions() }}</p>
+            </mat-card>
+        } @else {
+            <p class="phase-instructions">{{ getPhaseHeaderInstructions() }}</p>
+        }
     </div>
 }
 
-@if (isGameInCollaborativeTextPhase()) {
-    <collaborative-text 
-      [gameCode]="gameCode" 
-      [gameState]="gameState" 
-      [player]="player" 
+@if (isLoadingCollaborativePhase()) {
+    <div class="pyre-vignette" [@pyreVignette]></div>
+    <div class="collaborative-phase-loading">
+        <img src="assets/images/pyre.gif" alt="Pyre" class="loading-pyre">
+    </div>
+} @else if (isGameInCollaborativeTextPhase()) {
+    <collaborative-text
+      [gameCode]="gameCode"
+      [gameState]="gameState"
+      [player]="player"
       [collaborativeTextPhases]="collaborativeTextPhases"
       [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
       [phaseInfo]="collaborativeTextPhaseInfo"
@@ -77,6 +88,16 @@
       (collaborativeTextPhaseChanged)="onCollaborativeTextPhaseChanged($event)"
       (playerDone)="setDone($event)">
     </collaborative-text>
+} @else if (isGameInVotingPhase()) {
+    <app-voting
+      [gameCode]="gameCode"
+      [gameState]="gameState"
+      [player]="player"
+      [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
+      [phaseInfo]="collaborativeTextPhaseInfo"
+      [activePlayerSession]="activePlayerSession"
+      (playerDone)="setDone($event)">
+    </app-voting>
 }
 
 @if (isGameInLocationCreationPhase()) {
@@ -97,18 +118,6 @@
       [activePlayerSession]="activePlayerSession"
       (playerDone)="setDone($event)">
     </write-location-outcomes>
-}
-
-@if (isGameInVotingPhase()) {
-    <app-voting
-      [gameCode]="gameCode"
-      [gameState]="gameState"
-      [player]="player"
-      [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
-      [phaseInfo]="collaborativeTextPhaseInfo"
-      [activePlayerSession]="activePlayerSession"
-      (playerDone)="setDone($event)">
-    </app-voting>
 }
 
 @if (isLocationSelect()) {

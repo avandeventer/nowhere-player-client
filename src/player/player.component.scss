@@ -1,37 +1,3 @@
-.player-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-
-  .summary-name {
-    font-weight: bold;
-    font-size: 1.1em;
-  }
-
-  .summary-class {
-    color: #1976d2;
-    font-style: italic;
-  }
-
-  .summary-traits {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .trait-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: .8rem;
-    font-weight: 600;
-    background-color: #607d8b;
-    color: #fff;
-  }
-}
-
 .character-creation-card {
   mat-card-title {
     font-size: 1.1em;

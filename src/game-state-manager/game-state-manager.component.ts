@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { GameService } from '../services/game-session.service';
 import { HttpClient } from '@angular/common/http';
 import { GameState } from 'src/assets/game-state';
@@ -50,7 +51,15 @@ import { PlayerComponent } from 'src/player/player.component';
       MatIconModule,
       PlayerComponent,
     ],
-    standalone: true
+    standalone: true,
+    animations: [
+      trigger('pyreVignette', [
+        transition(':leave', [
+          style({ animation: 'none' }), // freeze the flicker so the disperse starts from a clean scale
+          animate('1000ms ease-in', style({ transform: 'scale(6)', opacity: 0 }))
+        ])
+      ])
+    ]
 })
 export class GameStateManagerComponent implements OnInit {
   @Input() gameCode: string = "";
@@ -63,7 +72,7 @@ export class GameStateManagerComponent implements OnInit {
       console.log('Skipped done event for component type with game phase', donePhase, this.gameState)
     }
   }
-  gameState: GameState = GameState.INIT;
+  gameState: GameState = null as unknown as GameState;
   @Output() gameStateChanged = new EventEmitter<GameState>();
   @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
@@ -75,6 +84,7 @@ export class GameStateManagerComponent implements OnInit {
   collaborativeTextPhaseInfo: CollaborativeTextPhaseInfo | null = null;
   isDungeonMode = false;
   isContinuing = false;
+  isLoadingPhaseInfo = false;
 
   constructor(
     private gameService: GameService,
@@ -118,15 +128,38 @@ export class GameStateManagerComponent implements OnInit {
   private loadCollaborativeTextPhaseInfo() {
     if (!this.gameCode) return;
 
+    this.isLoadingPhaseInfo = true;
     this.gameService.getCollaborativeTextPhaseInfo(this.gameCode).subscribe({
       next: (phaseInfo: CollaborativeTextPhaseInfo) => {
         this.collaborativeTextPhaseInfo = phaseInfo;
+        this.isLoadingPhaseInfo = false;
       },
       error: (error) => {
         console.error('Error loading collaborative text phase info:', error);
         this.collaborativeTextPhaseInfo = null;
+        this.isLoadingPhaseInfo = false;
       }
     });
+  }
+
+  // True only while collaborativeTextPhaseInfo is being (re)fetched for a gameState that isn't
+  // one of the other explicitly-named phases below — i.e. a SUBMISSION/VOTING/WINNING phase
+  // (showPhaseHeader/isGameInCollaborativeTextPhase/isGameInVotingPhase) whose data hasn't
+  // arrived yet. WHO_ARE_YOU is excluded to match isGameInCollaborativeTextPhase's own exclusion.
+  isLoadingCollaborativePhase(): boolean {
+    return this.isLoadingPhaseInfo
+      && this.gameState !== GameState.WHO_ARE_YOU
+      && !this.isGameInitialized()
+      && !this.isGameInPreamblePhase()
+      && !this.isGameInWritePromptsPhase()
+      && !this.isGameInLocationCreationPhase()
+      && !this.isGameInLocationOutcomesCreationPhase()
+      && !this.isLocationSelect()
+      && !this.isGameInWriteOutcomesPhase()
+      && !this.isGameInAdventurePhase()
+      && !this.isGameInRitualPhase()
+      && !this.isGameInWriteEndingsPhase()
+      && !this.isGameInEndingPhase();
   }
 
   nextGamePhase() {
@@ -241,8 +274,10 @@ export class GameStateManagerComponent implements OnInit {
 
   isGameInVotingPhase() {
     return this.collaborativeTextPhaseInfo?.phaseType === PhaseType.VOTING
-     || this.gameState === GameState.MAKE_OUTCOME_CHOICE_WINNER 
-     || this.gameState === GameState.LOCATION_OPTION_MAKE_CHOICE_WINNER;
+     || this.gameState === GameState.MAKE_OUTCOME_CHOICE_WINNER
+     || this.gameState === GameState.LOCATION_OPTION_MAKE_CHOICE_WINNER
+     || this.gameState === GameState.MAKE_PARTNER_CHOICE_WINNER
+     || this.gameState === GameState.ACCEPT_PARTNER_CHOICE_WINNER;
   }
 
   isGameInCollaborativeTextWinningPhase() {
