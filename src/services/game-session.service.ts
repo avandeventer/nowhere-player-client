@@ -129,14 +129,6 @@ export class GameService {
   }
 
   nextGamePhase(gameCode: string) {    
-    this.http.put(environment.nowhereBackendUrl + HttpConstants.NEXT_GAME_SESSION_PATH + '?gameCode=' + gameCode, {})
-    .subscribe({
-      next: (response) => {
-        console.log('Game phase updated', response);
-      },
-      error: (error) => {
-        console.error('Error updating game phase', error);
-      },
-    });
+    return this.http.put(environment.nowhereBackendUrl + HttpConstants.NEXT_GAME_SESSION_PATH + '?gameCode=' + gameCode, {});
   }
 }

@@ -1,3 +1,4 @@
+<div class="game-content" [class.has-player-drawer]="showPlayerTraitsComponent()">
 <div class="action-buttons-container">
     @if (isGameInitialized() && player.firstPlayer) {
         <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button" [disabled]="isContinuing">
@@ -50,23 +51,27 @@
     </mat-card>
 }
 
-@if (isGameInPreamblePhase()) {
-    <p>Have someone read the text on screen!</p>
-}
-
 @if (isGameInWritePromptsPhase()) {
     <write-prompt [gameCode]="gameCode" [gameState]="gameState" [player]="player" [activePlayerSession]="activePlayerSession" (playerDone)="setDone($event)"></write-prompt>
 }
 
 @if (showPhaseHeader()) {
     <div class="phase-header">
-        <h1 class="phase-question">{{ getPhaseHeaderQuestion() }}</h1>
-        @if (isGameInCollaborativeTextWinningPhase()) {
+        @if (!isGameInPreamblePhase()) {
+            <h1 class="phase-question">{{ getPhaseHeaderQuestion() }}</h1>
+        }
+        @if (isGameInCollaborativeTextWinningPhase() || isGameInPreamblePhase() || isGameInVotingPhase()) {
             <mat-card class="instructions">
                 <p class="phase-instructions">{{ getPhaseHeaderInstructions() }}</p>
             </mat-card>
         } @else {
             <p class="phase-instructions">{{ getPhaseHeaderInstructions() }}</p>
+        }
+
+        @if (isGameInPreamblePhase()) {
+            <mat-card class="story">
+                {{ getPhaseHeaderQuestion() }}
+            </mat-card>
         }
     </div>
 }
@@ -147,3 +152,4 @@
 @if (showPlayerTraitsComponent()) {
     <app-player [gameCode]="gameCode" [player]="player" [gameState]="gameState" (playerDone)="setDone($event)"></app-player>
 }
+</div>

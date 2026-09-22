@@ -47,7 +47,9 @@
           }
 
           <!-- State: already voted -->
-          @if (hasVoted && !getEffectiveSelectedOption()) {
+          @if (areVotingSubmissionsLoading) {
+            <mat-spinner diameter="36" style="margin: 0 auto;"></mat-spinner>
+          } @else if (hasVoted && !getEffectiveSelectedOption()) {
             <div class="voted-container">
               <mat-icon class="voted-icon">check_circle</mat-icon>
               <h2>Vote Submitted!</h2>
@@ -55,7 +57,7 @@
             </div>
 
           <!-- State: not this player's turn -->
-          } @else if (!isPlayerTurn) {
+          } @else if (!isPlayerTurn && !areVotingSubmissionsLoading) {
             <div class="voted-container">
               <mat-icon class="voted-icon">access_time</mat-icon>
               <h2>Not Your Turn!</h2>

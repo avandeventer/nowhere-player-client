@@ -1,3 +1,13 @@
+.game-content.has-player-drawer {
+  // Reserves just enough scroll clearance for the player-drawer's collapsed
+  // tab (which floats fixed above this content) so the page can always be
+  // scrolled far enough to expose a bottom-anchored button underneath it.
+  // The var is published by player-drawer itself from its measured tab
+  // height, so devices where the drawer sits comfortably clear of content
+  // don't get any extra space they don't need.
+  padding-bottom: calc(var(--player-drawer-tab-height, 64px) + 16px);
+}
+
 .action-buttons-container {
   position: fixed;
   top: 0;
@@ -122,5 +132,11 @@
   width: 100%;
   max-width: 300px;
   height: auto;
+}
+
+// Match .phase-instructions' font size for the preamble question card,
+// without touching the shared, global mat-card.story rule used elsewhere.
+.phase-header mat-card.story {
+  font-size: 1.1rem;
 }
 

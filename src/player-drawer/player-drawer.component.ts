@@ -5,6 +5,8 @@ import { Player } from '../assets/player';
 import { Trait } from '../assets/trait';
 import { TraitBadgesComponent } from '../trait-badges/trait-badges.component';
 
+const TAB_HEIGHT_CSS_VAR = '--player-drawer-tab-height';
+
 @Component({
   selector: 'player-drawer',
   standalone: true,
@@ -46,6 +48,7 @@ export class PlayerDrawerComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.resizeObserver?.disconnect();
+    document.documentElement.style.removeProperty(TAB_HEIGHT_CSS_VAR);
   }
 
   private measure() {
@@ -55,6 +58,10 @@ export class PlayerDrawerComponent implements AfterViewInit, OnDestroy {
     if (!this.dragging) {
       this.translateY = this.expanded ? 0 : this.collapsedTranslate;
     }
+    // Published globally so any page content that can end up underneath this
+    // fixed, always-on-top drawer can reserve exactly enough scroll clearance
+    // to clear its collapsed tab, without guessing a fixed pixel value.
+    document.documentElement.style.setProperty(TAB_HEIGHT_CSS_VAR, `${tabHeight}px`);
   }
 
   onPointerDown(event: PointerEvent) {

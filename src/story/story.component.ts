@@ -27,6 +27,7 @@ export class StoryComponent {
   @Input() gameState: any = null;
   @Input() submissions: TextSubmission[] = [];
   @Input() outcomeDisplay: string[] = [];
+  @Input() areVotingSubmissionsLoading: boolean = false;
   @Output() playerDone = new EventEmitter<ComponentType>();
 
   selectedOptionId: string | null = null;
@@ -61,7 +62,15 @@ export class StoryComponent {
 
 
   nextGamePhase() {
-    this.gameService.nextGamePhase(this.gameCode);
+    this.isLoading = true;
+    this.gameService.nextGamePhase(this.gameCode).subscribe({
+      next: () => {
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   get story(): Story | undefined {
@@ -136,7 +145,7 @@ export class StoryComponent {
 
   submitPartnerChoice() {
     if (this.selectedOptionId === '__skip__') {
-      this.skipChoice();
+      this.nextGamePhase();
     } else {
       this.submitVote();
     }
@@ -144,14 +153,10 @@ export class StoryComponent {
 
   submitAcceptChoice() {
     if (this.selectedOptionId === '__skip__') {
-      this.skipChoice();
+      this.nextGamePhase();
     } else {
       this.submitVote();
     }
-  }
-
-  skipChoice() {
-    this.gameService.nextGamePhase(this.gameCode);
   }
 
   getSelectedOption(): Option | undefined {

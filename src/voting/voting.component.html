@@ -76,6 +76,7 @@
       [submissions]="submissions"
       [gameState]="gameState"
       [outcomeDisplay]="activePlayerSession?.outcomeDisplay || []"
+      [areVotingSubmissionsLoading]="isLoading"
       (playerDone)="playerDone.emit($event)">
     </app-story>
     
@@ -135,6 +136,11 @@
         @if (getCommonOriginalText(); as commonText) {
           <mat-card class="submission-card common-root-card">
             <mat-card-content>
+              @if (submissions[0]?.outcomeTypeWithLabel; as forkOutcomeType) {
+                <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(forkOutcomeType.id)">
+                  {{ forkOutcomeType.label }}
+                </div>
+              }
               <p class="submission-text">{{ commonText }}</p>
             </mat-card-content>
           </mat-card>
@@ -148,13 +154,8 @@
             (click)="onSubmissionToggle(submission.submissionId)">
             <mat-card-content>
               <div class="submission-content">
-                @if (submission.outcomeTypeWithLabel) {
-                  <div class="outcome-badge" [ngClass]="getOutcomeTypeClass(submission.outcomeTypeWithLabel.id)">
-                    {{ submission.outcomeTypeWithLabel.label }}
-                    @if (isPlayerSubmission(submission)) {
-                      <span class="your-submission">(Your submission)</span>
-                    }
-                  </div>
+                @if (isPlayerSubmission(submission)) {
+                  <span class="your-submission">(Your submission)</span>
                 }
                 @if (isSelected(submission.submissionId)) {
                   <div class="ranking-badge">

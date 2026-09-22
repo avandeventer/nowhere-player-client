@@ -16,6 +16,7 @@ export class ActivePlayerSession {
     startTimer: boolean;
     writeTimerDone: boolean;
     contributionPhaseActive: boolean;
+    nextGameStateLoading: boolean;
 
     constructor() {
             this.playerId = "";
@@ -31,5 +32,6 @@ export class ActivePlayerSession {
             this.startTimer = false;
             this.writeTimerDone = false;
             this.contributionPhaseActive = false;
+            this.nextGameStateLoading = false;
     }
 }

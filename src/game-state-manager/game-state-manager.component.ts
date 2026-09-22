@@ -147,24 +147,23 @@ export class GameStateManagerComponent implements OnInit {
   // (showPhaseHeader/isGameInCollaborativeTextPhase/isGameInVotingPhase) whose data hasn't
   // arrived yet. WHO_ARE_YOU is excluded to match isGameInCollaborativeTextPhase's own exclusion.
   isLoadingCollaborativePhase(): boolean {
-    return this.isLoadingPhaseInfo
+    return (this.isLoadingPhaseInfo || this.activePlayerSession?.nextGameStateLoading)
       && this.gameState !== GameState.WHO_ARE_YOU
       && !this.isGameInitialized()
-      && !this.isGameInPreamblePhase()
-      && !this.isGameInWritePromptsPhase()
       && !this.isGameInLocationCreationPhase()
       && !this.isGameInLocationOutcomesCreationPhase()
-      && !this.isLocationSelect()
-      && !this.isGameInWriteOutcomesPhase()
       && !this.isGameInAdventurePhase()
       && !this.isGameInRitualPhase()
-      && !this.isGameInWriteEndingsPhase()
-      && !this.isGameInEndingPhase();
   }
 
   nextGamePhase() {
     this.isContinuing = true;
-    this.gameService.nextGamePhase(this.gameCode);
+    this.gameService.nextGamePhase(this.gameCode).subscribe({
+      // isContinuing resets once Firestore delivers the real gameState change (see ngOnInit)
+      error: () => {
+        this.isContinuing = false;
+      }
+    });
   }
 
   startTimer() {
@@ -287,7 +286,8 @@ export class GameStateManagerComponent implements OnInit {
   showPhaseHeader(): boolean {
     return this.isGameInCollaborativeTextPhase()
       || this.isGameInVotingPhase()
-      || this.isGameInCollaborativeTextWinningPhase();
+      || this.isGameInCollaborativeTextWinningPhase()
+      || this.isGameInPreamblePhase();
   }
 
   getPhaseHeaderQuestion(): string {
