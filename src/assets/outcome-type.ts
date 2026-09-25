@@ -8,5 +8,6 @@ export interface OutcomeType {
   label: string;
   headers?: Header[];
   clarifier?: string;
+  assignedPlayerId?: string;
   subTypes?: OutcomeType[];
 }

@@ -16,6 +16,8 @@ const TAB_HEIGHT_CSS_VAR = '--player-drawer-tab-height';
 })
 export class PlayerDrawerComponent implements AfterViewInit, OnDestroy {
   @Input() player: Player = new Player();
+  // True when the drawer shows someone other than the current player
+  @Input() assigned = false;
 
   @ViewChild('sheet', { static: true }) sheetRef!: ElementRef<HTMLElement>;
   @ViewChild('tab', { static: true }) tabRef!: ElementRef<HTMLElement>;

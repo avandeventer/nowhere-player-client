@@ -56,6 +56,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() activePlayerSession: any = null;
   @Output() playerDone = new EventEmitter<ComponentType>();
   @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
+  // The player whose story/epilogue the current player is writing for (falls back to the current player)
+  @Output() assignedPlayerLoaded = new EventEmitter<Player>();
 
   // Form controls
   newTextControl = new FormControl('', [Validators.required, Validators.minLength(1)]);
@@ -228,7 +230,8 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.gameService.getOutcomeTypes(this.gameCode, this.player.authorId).subscribe({
       next: (outcomeTypes) => {
         this.availableOutcomeTypes = outcomeTypes;
-        
+        this.loadAssignedPlayer(outcomeTypes[0]?.assignedPlayerId);
+
         // Load stories for all outcomeTypes that have clarifiers
         this.loadStoriesForOutcomeTypes(outcomeTypes);
 
@@ -381,6 +384,31 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   getEpiloguePlayer(outcomeTypeId: string): Player | null {
     return this.epiloguePlayerCache[outcomeTypeId] ?? null;
+  }
+
+  private loadAssignedPlayer(assignedPlayerId: string | undefined) {
+    if (!assignedPlayerId || assignedPlayerId === this.player.authorId) {
+      this.assignedPlayerLoaded.emit(this.player);
+      return;
+    }
+    const cached = this.epiloguePlayerCache[assignedPlayerId];
+    if (cached) {
+      this.assignedPlayerLoaded.emit(cached);
+      return;
+    }
+    const requestedGameState = this.gameState;
+    this.gameService.getPlayerByAuthorId(this.gameCode, assignedPlayerId).subscribe({
+      next: (assignedPlayer) => {
+        this.epiloguePlayerCache = { ...this.epiloguePlayerCache, [assignedPlayerId]: assignedPlayer };
+        if (this.gameState === requestedGameState) {
+          this.assignedPlayerLoaded.emit(assignedPlayer);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading assigned player:', error);
+        this.assignedPlayerLoaded.emit(this.player);
+      }
+    });
   }
 
   private loadEpiloguePlayers(outcomeTypes: OutcomeType[]) {

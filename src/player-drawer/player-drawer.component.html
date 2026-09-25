@@ -1,4 +1,4 @@
-<div class="player-drawer" #sheet [class.dragging]="dragging" [class.entering]="entering" [style.transform]="'translateY(' + translateY + 'px)'">
+<div class="player-drawer" #sheet [class.assigned]="assigned" [class.dragging]="dragging" [class.entering]="entering" [style.transform]="'translateY(' + translateY + 'px)'">
   <button type="button" class="drawer-tab" #tab matRipple
           (pointerdown)="onPointerDown($event)"
           (pointermove)="onPointerMove($event)"

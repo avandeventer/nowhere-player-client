@@ -1,4 +1,4 @@
-<div class="game-content" [class.has-player-drawer]="showPlayerTraitsComponent()">
+<div class="game-content" [class.has-player-drawer]="showPlayerDrawer()">
 <div class="action-buttons-container">
     @if (isGameInitialized() && player.firstPlayer) {
         <button mat-flat-button (click)="nextGamePhase()" class="action-button pulse-button" [disabled]="isContinuing">
@@ -91,6 +91,7 @@
       [phaseInfo]="collaborativeTextPhaseInfo"
       [activePlayerSession]="activePlayerSession"
       (collaborativeTextPhaseChanged)="onCollaborativeTextPhaseChanged($event)"
+      (assignedPlayerLoaded)="assignedPlayer = $event"
       (playerDone)="setDone($event)">
     </collaborative-text>
 } @else if (isGameInVotingPhase()) {
@@ -151,5 +152,9 @@
 
 @if (showPlayerTraitsComponent()) {
     <app-player [gameCode]="gameCode" [player]="player" [gameState]="gameState" (playerDone)="setDone($event)"></app-player>
+}
+
+@if (showPlayerDrawer()) {
+    <player-drawer [player]="assignedPlayer ?? player" [assigned]="!!assignedPlayer && assignedPlayer.authorId !== player.authorId"></player-drawer>
 }
 </div>

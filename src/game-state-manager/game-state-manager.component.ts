@@ -27,6 +27,7 @@ import { WriteLocationOutcomesComponent } from 'src/write-location-outcomes/writ
 import { WorldInformationComponent } from 'src/world-information/world-information.component';
 import { CollaborativeTextPhaseInfo, PhaseType } from 'src/assets/collaborative-text-phase-info';
 import { PlayerComponent } from 'src/player/player.component';
+import { PlayerDrawerComponent } from 'src/player-drawer/player-drawer.component';
 
 @Component({
     selector: 'game-state-manager',
@@ -50,6 +51,7 @@ import { PlayerComponent } from 'src/player/player.component';
       MatCardModule,
       MatIconModule,
       PlayerComponent,
+      PlayerDrawerComponent,
     ],
     standalone: true,
     animations: [
@@ -83,6 +85,8 @@ export class GameStateManagerComponent implements OnInit {
   stories: any[] | null = null;
   collaborativeTextPhaseInfo: CollaborativeTextPhaseInfo | null = null;
   isDungeonMode = false;
+  // Player whose story/epilogue is being written for, reported by collaborative-text
+  assignedPlayer: Player | null = null;
   isContinuing = false;
   isLoadingPhaseInfo = false;
 
@@ -97,6 +101,7 @@ export class GameStateManagerComponent implements OnInit {
         this.gameState = newState.gameState as unknown as GameState;
         this.gameStateChanged.emit(this.gameState);
         this.isContinuing = false;
+        this.assignedPlayer = null;
         // Load phase info when game state changes
         this.loadCollaborativeTextPhaseInfo();
       }
@@ -314,5 +319,19 @@ export class GameStateManagerComponent implements OnInit {
 
   showPlayerTraitsComponent() {
     return this.isDungeonMode
+  }
+
+  // Submission phases write for another player, so the drawer only appears (for that player)
+  // in the states that have an assigned player, once that player has loaded.
+  showPlayerDrawer() {
+    if (!this.isDungeonMode) return false;
+    if (!this.isGameInCollaborativeTextPhase()) return true;
+    return this.isGameInAssignedPlayerPhase() && this.assignedPlayer !== null;
+  }
+
+  private isGameInAssignedPlayerPhase() {
+    return this.gameState === GameState.HOW_DOES_THIS_RESOLVE
+      || this.gameState === GameState.HOW_DOES_THIS_RESOLVE_AGAIN
+      || this.gameState === GameState.WRITE_EPILOGUES;
   }
 }

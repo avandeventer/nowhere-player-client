@@ -9,7 +9,6 @@ import { Player } from '../assets/player';
 import { PlayerClassOption } from '../assets/player-class-option';
 import { ComponentType } from '../assets/component-type';
 import { GameState } from '../assets/game-state';
-import { PlayerDrawerComponent } from '../player-drawer/player-drawer.component';
 
 @Component({
   selector: 'app-player',
@@ -22,7 +21,6 @@ import { PlayerDrawerComponent } from '../player-drawer/player-drawer.component'
     MatCardModule,
     MatExpansionModule,
     MatIconModule,
-    PlayerDrawerComponent,
   ]
 })
 export class PlayerComponent implements OnInit, OnChanges {
