@@ -55,7 +55,6 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Input() activePlayerSession: any = null;
   @Output() playerDone = new EventEmitter<ComponentType>();
-  @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
   // The player whose story/epilogue the current player is writing for (falls back to the current player)
   @Output() assignedPlayerLoaded = new EventEmitter<Player>();
 

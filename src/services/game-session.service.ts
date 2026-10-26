@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Firestore, doc, docData } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpConstants } from 'src/assets/http-constants';
@@ -26,7 +26,6 @@ export class GameService {
     storiesToWritePerRound: number | null;
     storiesToPlayPerRound: number | null;
     adventureMap: any | null;
-    collaborativeTextPhases: any | null;
     stories: any[] | null;
     gameMode: string | null;
   }> {
@@ -39,7 +38,6 @@ export class GameService {
         storiesToWritePerRound: data?.storiesToWritePerRound ?? null,
         storiesToPlayPerRound: data?.storiesToPlayPerRound ?? null,
         adventureMap: data?.adventureMap ?? null,
-        collaborativeTextPhases: data?.collaborativeTextPhases ?? null,
         stories: data?.stories ?? null,
         gameMode: data?.gameMode ?? null,
       }))
@@ -48,6 +46,13 @@ export class GameService {
 
   submitGenre(gameCode: string, authorId: string, value: string | null) {
     return this.http.put(environment.nowhereBackendUrl + HttpConstants.GENRE_PATH + "?gameCode=" + gameCode + "&authorId=" + authorId, { genre: value });
+  }
+
+  // Collaborative text submissions are stored one document each under the phase, not on the game
+  // session document. phasePath (the phase document's full path) comes from CollaborativeTextPhaseInfo.
+  listenForPhaseSubmissions(phasePath: string): Observable<TextSubmission[]> {
+    const submissionsRef = collection(this.firestore, `${phasePath}/submissions`);
+    return collectionData(submissionsRef) as Observable<TextSubmission[]>;
   }
 
   // Collaborative Text Methods

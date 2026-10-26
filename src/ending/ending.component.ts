@@ -77,7 +77,7 @@ export class EndingComponent implements OnInit {
                 new Location(),
                 new Story(),
                 "", 
-                [this.player.userName + "'s legacy:", this.playerEnding.endingBody],
+                [this.playerEnding.endingBody],
                 false,
                 "",
                 [],

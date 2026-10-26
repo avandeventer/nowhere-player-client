@@ -90,7 +90,6 @@
       [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
       [phaseInfo]="collaborativeTextPhaseInfo"
       [activePlayerSession]="activePlayerSession"
-      (collaborativeTextPhaseChanged)="onCollaborativeTextPhaseChanged($event)"
       (assignedPlayerLoaded)="assignedPlayer = $event"
       (playerDone)="setDone($event)">
     </collaborative-text>

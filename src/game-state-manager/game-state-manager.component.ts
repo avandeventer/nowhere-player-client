@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { GameService } from '../services/game-session.service';
 import { HttpClient } from '@angular/common/http';
@@ -63,7 +64,7 @@ import { PlayerDrawerComponent } from 'src/player-drawer/player-drawer.component
       ])
     ]
 })
-export class GameStateManagerComponent implements OnInit {
+export class GameStateManagerComponent implements OnInit, OnDestroy {
   @Input() gameCode: string = "";
   @Input() player: Player = new Player();
   @Input() setDone(donePhase: ComponentType) {
@@ -76,12 +77,13 @@ export class GameStateManagerComponent implements OnInit {
   }
   gameState: GameState = null as unknown as GameState;
   @Output() gameStateChanged = new EventEmitter<GameState>();
-  @Output() collaborativeTextPhaseChanged = new EventEmitter<any>();
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   storiesToWritePerRound: number = 1;
   storiesToPlayPerRound: number = 1;
   adventureMap: AdventureMap | null = null;
   collaborativeTextPhases: any = null;
+  private phaseSubmissionsSubscription?: Subscription;
+  private listeningPhasePath: string | null = null;
   stories: any[] | null = null;
   collaborativeTextPhaseInfo: CollaborativeTextPhaseInfo | null = null;
   isDungeonMode = false;
@@ -117,12 +119,6 @@ export class GameStateManagerComponent implements OnInit {
         this.stories = newState.stories;
       }
 
-      // Check for collaborative text phase changes
-      if (newState.collaborativeTextPhases && JSON.stringify(this.collaborativeTextPhases) !== JSON.stringify(newState.collaborativeTextPhases)) {
-        this.collaborativeTextPhases = newState.collaborativeTextPhases;
-        this.collaborativeTextPhaseChanged.emit(this.collaborativeTextPhases);
-      }
-
       console.log('New gameState:', this.gameState);
     });
 
@@ -138,13 +134,41 @@ export class GameStateManagerComponent implements OnInit {
       next: (phaseInfo: CollaborativeTextPhaseInfo) => {
         this.collaborativeTextPhaseInfo = phaseInfo;
         this.isLoadingPhaseInfo = false;
+        this.listenForPhaseSubmissions(phaseInfo);
       },
       error: (error) => {
         console.error('Error loading collaborative text phase info:', error);
         this.collaborativeTextPhaseInfo = null;
         this.isLoadingPhaseInfo = false;
+        this.listenForPhaseSubmissions(null);
       }
     });
+  }
+
+  // Submissions live in their own Firestore documents ({phasePath}/submissions), not on the game session.
+  // While a submission phase is active, listen to its submissions and hand them to collaborative-text in
+  // the { [phaseId]: { submissions } } shape it watches for new submissions.
+  private listenForPhaseSubmissions(phaseInfo: CollaborativeTextPhaseInfo | null) {
+    const phasePath = phaseInfo?.phaseType === PhaseType.SUBMISSION ? phaseInfo.phasePath ?? null : null;
+    if (phasePath === this.listeningPhasePath) return;
+
+    this.phaseSubmissionsSubscription?.unsubscribe();
+    this.phaseSubmissionsSubscription = undefined;
+    this.listeningPhasePath = phasePath;
+    if (!phasePath || !phaseInfo) return;
+
+    const phaseId = phaseInfo.phaseId.toString();
+    this.phaseSubmissionsSubscription = this.gameService.listenForPhaseSubmissions(phasePath)
+      .subscribe((submissions) => {
+        const phases = { [phaseId]: { phaseId, submissions } };
+        if (JSON.stringify(this.collaborativeTextPhases) !== JSON.stringify(phases)) {
+          this.collaborativeTextPhases = phases;
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.phaseSubmissionsSubscription?.unsubscribe();
   }
 
   // True only while collaborativeTextPhaseInfo is being (re)fetched for a gameState that isn't
@@ -209,12 +233,6 @@ export class GameStateManagerComponent implements OnInit {
   isValidGameState (component: ComponentType, state: GameState): boolean {
     return ComponentTypeGameStateMap[component].includes(state);
   };
-
-  onCollaborativeTextPhaseChanged(phases: any) {
-    // This method will be called by the collaborative-text component
-    // when it needs to notify about phase changes
-    this.collaborativeTextPhaseChanged.emit(phases);
-  }
 
   isGameInitialized() {
     return this.gameState === GameState.INIT;

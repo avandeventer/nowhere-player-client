@@ -32,5 +32,8 @@ export interface CollaborativeTextPhaseInfo {
   locationVotingSubmissions?: { submissionId: string; currentText: string; outcomeType?: string }[];
   activePlayers?: Player[];
   collaborativePhaseTypeInstructions?: CollaborativePhaseTypeInstructions;
+  // Full path of the Firestore phase document holding this phase's submissions,
+  // e.g. gameSessions/{gameCode}/rounds/{round}/phases/{phaseId}
+  phasePath?: string;
 }
 
