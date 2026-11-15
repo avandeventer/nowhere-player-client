@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { WriteEndingsComponent } from 'src/write-endings/write-endings.component';
 import { GenreComponent } from 'src/genre/genre.component';
 import { EndingComponent } from 'src/ending/ending.component';
-import { AdventureMap } from 'src/assets/adventure-map';
+import { GameSessionDisplay } from 'src/assets/game-session-display';
 import { CollaborativeTextComponent } from 'src/collaborative-text/collaborative-text.component';
 import { VotingComponent } from 'src/voting/voting.component';
 import { WriteLocationPromptComponent } from 'src/write-location-prompt/write-location-prompt.component';
@@ -80,11 +80,11 @@ export class GameStateManagerComponent implements OnInit, OnDestroy {
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
   storiesToWritePerRound: number = 1;
   storiesToPlayPerRound: number = 1;
-  adventureMap: AdventureMap | null = null;
-  collaborativeTextPhases: any = null;
+  // Loaded once at startup (GET /display): the welcome screen's map name and the world-information drawer
+  gameSessionDisplay: GameSessionDisplay | null = null;
+collaborativeTextPhases: any = null;
   private phaseSubmissionsSubscription?: Subscription;
   private listeningPhasePath: string | null = null;
-  stories: any[] | null = null;
   collaborativeTextPhaseInfo: CollaborativeTextPhaseInfo | null = null;
   isDungeonMode = false;
   // Player whose story/epilogue is being written for, reported by collaborative-text
@@ -106,24 +106,28 @@ export class GameStateManagerComponent implements OnInit, OnDestroy {
         this.assignedPlayer = null;
         // Load phase info when game state changes
         this.loadCollaborativeTextPhaseInfo();
-      }
+}
 
       this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
       this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       this.storiesToPlayPerRound = newState.storiesToPlayPerRound as unknown as number;
-      this.adventureMap = newState.adventureMap as unknown as AdventureMap;
       this.isDungeonMode = newState.gameMode === 'DUNGEON_MODE';
-
-      // Check for stories changes
-      if (newState.stories && JSON.stringify(this.stories) !== JSON.stringify(newState.stories)) {
-        this.stories = newState.stories;
-      }
 
       console.log('New gameState:', this.gameState);
     });
 
     // Load initial phase info
     this.loadCollaborativeTextPhaseInfo();
+    this.loadGameSessionDisplay();
+  }
+
+  private loadGameSessionDisplay() {
+    if (!this.gameCode) return;
+
+    this.gameService.getGameSessionDisplay(this.gameCode).subscribe({
+      next: (display) => this.gameSessionDisplay = display,
+      error: (error) => console.error('Error loading game session display', error)
+    });
   }
 
   private loadCollaborativeTextPhaseInfo() {

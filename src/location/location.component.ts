@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivePlayerSession } from "src/assets/active-player-session";
 import { GameState } from "src/assets/game-state";
 import { HttpConstants } from "src/assets/http-constants";
@@ -20,13 +20,12 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner"
     standalone: true,
     styleUrl: './location.style.scss'
 })
-export class LocationComponent implements OnInit, OnChanges {
+export class LocationComponent implements OnInit {
     @Input() gameState: GameState = GameState.ROUND1;
     @Input() gameCode: string = "";
     @Input() player: Player = new Player();
     @Input() activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
     @Input() storiesToPlayPerRound: number = 1;
-    @Input() stories: Story[] | null = null;
     @Output() playerDone = new EventEmitter<ComponentType>();
     buttonTransforms: { [key: string]: string } = {};
     mapSize: number = 500;
@@ -48,20 +47,6 @@ export class LocationComponent implements OnInit, OnChanges {
     ngOnInit(): void {
       this.getLocations(this.gameCode);
       console.log("Stories to play per round" + this.storiesToPlayPerRound);
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-      if (changes['stories'] && !changes['stories'].isFirstChange()) {
-        const previousStories = changes['stories'].previousValue;
-        const currentStories = changes['stories'].currentValue;
-        
-        // Check if stories actually changed
-        if (JSON.stringify(previousStories) !== JSON.stringify(currentStories)) {
-          // Block selection and reload locations
-          this.isLoadingSelection = true;
-          this.getLocations(this.gameCode);
-        }
-      }
     }
 
     ngAfterViewInit() {

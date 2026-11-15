@@ -25,7 +25,7 @@
     }
 </div>
 
-<app-world-information [gameCode]="gameCode" [phaseInfo]="collaborativeTextPhaseInfo"></app-world-information>
+<app-world-information [gameCode]="gameCode" [phaseInfo]="collaborativeTextPhaseInfo" [gameSessionDisplay]="gameSessionDisplay"></app-world-information>
 
 @if (isGameInitialized()) {
     @if (!isDungeonMode) {
@@ -43,8 +43,8 @@
     }
 
     <mat-card class="story">Hello {{player.userName}}!
-        @if(adventureMap) {
-            Welcome to {{adventureMap.name}}!
+        @if(gameSessionDisplay?.adventureMapName) {
+            Welcome to {{gameSessionDisplay?.adventureMapName}}!
         } @else {
             We will soon generate our world
         }
@@ -87,8 +87,7 @@
       [gameState]="gameState"
       [player]="player"
       [collaborativeTextPhases]="collaborativeTextPhases"
-      [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
-      [phaseInfo]="collaborativeTextPhaseInfo"
+[phaseInfo]="collaborativeTextPhaseInfo"
       [activePlayerSession]="activePlayerSession"
       (assignedPlayerLoaded)="assignedPlayer = $event"
       (playerDone)="setDone($event)">
@@ -98,7 +97,6 @@
       [gameCode]="gameCode"
       [gameState]="gameState"
       [player]="player"
-      [gameSessionDisplay]="adventureMap?.gameSessionDisplay || null"
       [phaseInfo]="collaborativeTextPhaseInfo"
       [activePlayerSession]="activePlayerSession"
       (playerDone)="setDone($event)">
@@ -126,7 +124,7 @@
 }
 
 @if (isLocationSelect()) {
-    <location [gameCode]="gameCode" [gameState]="gameState" [player]="player" [storiesToPlayPerRound]="storiesToPlayPerRound" [stories]="stories" (playerDone)="setDone($event)"></location>
+    <location [gameCode]="gameCode" [gameState]="gameState" [player]="player" [storiesToPlayPerRound]="storiesToPlayPerRound" (playerDone)="setDone($event)"></location>
 }
 
 @if (isGameInWriteOutcomesPhase()) {

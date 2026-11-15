@@ -8,6 +8,8 @@ export class GameSessionDisplay {
     neutralText: string;
     failureText: string;
     entity: string;
+    // Filled in by GET /display from the game's adventure map; not part of the stored display
+    adventureMapName: string;
 
     constructor() {
         this.mapDescription = "";
@@ -19,6 +21,7 @@ export class GameSessionDisplay {
         this.neutralText = "";
         this.failureText = "";
         this.entity = "";
+        this.adventureMapName = "";
     }
 }
 

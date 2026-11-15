@@ -12,7 +12,6 @@ import { GameService } from '../services/game-session.service';
 import { Player } from '../assets/player';
 import { GameState } from '../assets/game-state';
 import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
-import { GameSessionDisplay } from '../assets/game-session-display';
 import { CollaborativeTextPhaseInfo, CollaborativeMode, PhaseType } from '../assets/collaborative-text-phase-info';
 import { Header, OutcomeType } from '../assets/outcome-type';
 import { Story } from '../assets/story';
@@ -51,8 +50,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.INIT;
   @Input() player: Player = new Player();
   @Input() collaborativeTextPhases: any = null;
-  @Input() gameSessionDisplay: GameSessionDisplay | null = null;
-  @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
+@Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Input() activePlayerSession: any = null;
   @Output() playerDone = new EventEmitter<ComponentType>();
   // The player whose story/epilogue the current player is writing for (falls back to the current player)
@@ -1001,7 +999,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   }
 
   getOutcomeTypeLabel(submission: TextSubmission): string {
-    const entityName = this.gameSessionDisplay?.entity || 'the Entity';
+    const entityName = 'the Entity';
     if (!submission.outcomeType || !submission.outcomeTypeWithLabel) return '';
     switch (submission.outcomeType) {
       case 'success':
@@ -1023,7 +1021,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
   getOutcomeTypeMessage(outcomeType: string | undefined): string {
     if (!outcomeType) return '';
-    const entityName = this.gameSessionDisplay?.entity || 'the Entity';
+    const entityName = 'the Entity';
     switch (outcomeType) {
       case 'success':
         return `IMPRESSED ${entityName}`;

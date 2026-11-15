@@ -15,7 +15,6 @@ import { Repercussion } from '../assets/repercussion';
 import { PlayerVote } from '../assets/player-vote';
 import { GameState } from '../assets/game-state';
 import { ComponentType } from 'src/assets/component-type';
-import { GameSessionDisplay } from '../assets/game-session-display';
 import { CollaborativeTextPhaseInfo } from '../assets/collaborative-text-phase-info';
 import { OutcomeType } from 'src/assets/outcome-type';
 import { StoryComponent } from '../story/story.component';
@@ -47,8 +46,7 @@ export class VotingComponent implements OnInit, OnChanges {
   @Input() gameCode: string = '';
   @Input() gameState: GameState = GameState.WHERE_ARE_WE_VOTE;
   @Input() player: any = null;
-  @Input() gameSessionDisplay: GameSessionDisplay | null = null;
-  @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
+@Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Input() activePlayerSession: any = null;
   @Output() playerDone = new EventEmitter<ComponentType>();
 

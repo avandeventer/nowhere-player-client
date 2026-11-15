@@ -25,8 +25,6 @@ export class GameService {
     activePlayerSession: any | null;
     storiesToWritePerRound: number | null;
     storiesToPlayPerRound: number | null;
-    adventureMap: any | null;
-    stories: any[] | null;
     gameMode: string | null;
   }> {
     const gameDocRef = doc(this.firestore, `gameSessions/${gameCode}`);
@@ -37,8 +35,6 @@ export class GameService {
         activePlayerSession: data?.activePlayerSession ?? null,
         storiesToWritePerRound: data?.storiesToWritePerRound ?? null,
         storiesToPlayPerRound: data?.storiesToPlayPerRound ?? null,
-        adventureMap: data?.adventureMap ?? null,
-        stories: data?.stories ?? null,
         gameMode: data?.gameMode ?? null,
       }))
     );
@@ -88,7 +84,7 @@ export class GameService {
     return this.http.get<OutcomeType>(`${environment.nowhereBackendUrl}/collaborativeText/outcomeType?gameCode=${gameCode}&playerId=${playerId}`);
   }
 
-  getGameSessionDisplay(gameCode: string): Observable<GameSessionDisplay> {
+getGameSessionDisplay(gameCode: string): Observable<GameSessionDisplay> {
     const parameter = "?gameCode=" + gameCode;
     return this.http.get<GameSessionDisplay>(environment.nowhereBackendUrl + HttpConstants.DISPLAY_PATH + parameter) as Observable<GameSessionDisplay>;
   }
