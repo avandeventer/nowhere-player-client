@@ -9,6 +9,7 @@ import { CollaborativeTextPhase, TextSubmission, TextAddition } from 'src/assets
 import { PlayerVote } from 'src/assets/player-vote';
 import { GameSessionDisplay } from 'src/assets/game-session-display';
 import { CollaborativeTextPhaseInfo } from 'src/assets/collaborative-text-phase-info';
+import { ActiveGameStateSession } from 'src/assets/active-game-state-session';
 import { GameBoard } from 'src/assets/game-board';
 import { OutcomeType } from 'src/assets/outcome-type';
 import { Trait } from 'src/assets/trait';
@@ -23,6 +24,8 @@ export class GameService {
   listenForGameStateChanges(gameCode: string): Observable<{
     gameState: string | null;
     activePlayerSession: any | null;
+    activeGameStateSession: ActiveGameStateSession | null;
+    roundNumber: number | null;
     storiesToWritePerRound: number | null;
     storiesToPlayPerRound: number | null;
     gameMode: string | null;
@@ -33,6 +36,8 @@ export class GameService {
       map((data: any) => ({
         gameState: data?.gameState ?? null,
         activePlayerSession: data?.activePlayerSession ?? null,
+        activeGameStateSession: data?.activeGameStateSession ?? null,
+        roundNumber: data?.roundNumber ?? null,
         storiesToWritePerRound: data?.storiesToWritePerRound ?? null,
         storiesToPlayPerRound: data?.storiesToPlayPerRound ?? null,
         gameMode: data?.gameMode ?? null,
@@ -52,10 +57,6 @@ export class GameService {
   }
 
   // Collaborative Text Methods
-  getCollaborativeTextPhase(gameCode: string): Observable<CollaborativeTextPhase> {
-    return this.http.get<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText?gameCode=${gameCode}`);
-  }
-
   submitTextAddition(gameCode: string, textAddition: TextAddition): Observable<CollaborativeTextPhase> {
     return this.http.post<CollaborativeTextPhase>(`${environment.nowhereBackendUrl}/collaborativeText?gameCode=${gameCode}`, textAddition);
   }

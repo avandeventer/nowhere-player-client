@@ -1,4 +1,5 @@
 ﻿import { Component, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ActiveGameStateSession, hasSubmittedInPhase } from '../assets/active-game-state-session';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { GameService } from '../services/game-session.service';
 import { Player } from '../assets/player';
 import { GameState } from '../assets/game-state';
-import { CollaborativeTextPhase, TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
+import { TextSubmission, TextAddition } from '../assets/collaborative-text-phase';
 import { CollaborativeTextPhaseInfo, CollaborativeMode, PhaseType } from '../assets/collaborative-text-phase-info';
 import { Header, OutcomeType } from '../assets/outcome-type';
 import { Story } from '../assets/story';
@@ -50,8 +51,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   @Input() gameState: GameState = GameState.INIT;
   @Input() player: Player = new Player();
   @Input() collaborativeTextPhases: any = null;
-@Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
+  @Input() phaseInfo: CollaborativeTextPhaseInfo | null = null;
   @Input() activePlayerSession: any = null;
+  @Input() activeGameStateSession: ActiveGameStateSession | null = null;
+  @Input() roundNumber = 0;
   @Output() playerDone = new EventEmitter<ComponentType>();
   // The player whose story/epilogue the current player is writing for (falls back to the current player)
   @Output() assignedPlayerLoaded = new EventEmitter<Player>();
@@ -61,7 +64,6 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
   additionTextControl = new FormControl('', [Validators.required, Validators.minLength(1)]);
 
   // Component state
-  collaborativePhase: CollaborativeTextPhase | null = null;
   availableSubmissions: TextSubmission[] = [];
   selectedSubmission: TextSubmission | null = null;
   isLoading = false;
@@ -118,7 +120,7 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     this.updatePhaseInfoFromInput();
     this.loadPlayerOutcomeType();
     // this.checkStreamlinedMode();
-    this.loadCollaborativePhase();
+    this.syncSubmittedFromSession();
     this.loadPlayerRepercussionTypes();
     if (this.activePlayerSession?.contributionPhaseActive) {
       this.contributionPhaseActive = true;
@@ -192,6 +194,10 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     // Update phase info when input changes
     if (this.phaseInfo) {
       this.updatePhaseInfoFromInput();
+    }
+
+    if (changes['activeGameStateSession'] || changes['roundNumber'] || changes['phaseInfo'] || changes['gameState']) {
+      this.syncSubmittedFromSession();
     }
     
     // When collaborative text phases change, check if submissions actually changed
@@ -551,53 +557,35 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     return this.collaborativeMode === CollaborativeMode.SHARE_TEXT && !this.isWriteEpiloguesPhase();
   }
 
-  private loadCollaborativePhase() {
-    this.isLoading = true;
-    this.gameService.getCollaborativeTextPhase(this.gameCode).subscribe({
-      next: (phase) => {
-        this.collaborativePhase = phase;
-        this.checkIfPlayerHasSubmitted();
-        
-        if (this.isSimpleMode) {
-          // For simple mode (WHAT_DO_WE_FEAR, WHAT_ARE_WE_CAPABLE_OF), don't show other submissions
-          this.availableSubmissions = [];
-          this.maximumSubmissionsReached = false;
-        } else {
-          // For collaborative mode, only load available submissions if player has already submitted
-          if (this.hasSubmitted) {
-            this.updateAvailableSubmissions(); // false = use existing collaborativePhase data
-          }
-        }
-        
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading collaborative phase:', error);
-        this.isLoading = false;
-      }
-    });
+  /**
+   * Picks up a submission this player already made in the current phase and round (e.g. before a
+   * reload) from activeGameStateSession.submittedPlayers, which the backend records on submit.
+   * A submission made from this screen sets hasSubmitted itself in onSubmitNewText.
+   */
+  private syncSubmittedFromSession() {
+    const phaseId = this.phaseInfo?.phaseId?.toString();
+    if (this.hasSubmitted || !phaseId || !this.player?.authorId) return;
+    if (!hasSubmittedInPhase(this.activeGameStateSession, phaseId, this.roundNumber, this.player.authorId)) return;
+
+    this.hasSubmitted = true;
+    this.showNewSubmission = false;
+    // In collaborative mode the player moves on to adding to others' submissions; a submit from this
+    // screen (isLoading) loads those itself
+    if (!this.isSimpleMode && !this.isLoading) {
+      this.updateAvailableSubmissions();
+    }
   }
 
+  // usePhasesData: called because the Firestore listener saw this phase's submissions change
   private updateAvailableSubmissions(usePhasesData: boolean = false, showNewSubmissions: boolean = false) {
-    // If using phases data, extract the phase first
     if (usePhasesData) {
-      if (!this.collaborativeTextPhases) return;
-
-      const phaseId = this.collaborativePhase?.phaseId;
-      if (!phaseId) return;
-
-      const phase = this.collaborativeTextPhases[phaseId];
+      const phaseId = this.phaseInfo?.phaseId?.toString();
+      const phase = phaseId ? this.collaborativeTextPhases?.[phaseId] : null;
       if (!phase || !phase.submissions) return;
-
-      // Update the collaborative phase data
-      this.collaborativePhase = phase;
 
       if (!this.hasSubmitted && !this.contributionPhaseActive) {
         return;
       }
-    } else {
-      // Using existing collaborativePhase data
-      if (!this.collaborativePhase) return;
     }
 
     // Calculate how many submissions we need (2 - current count)
@@ -618,17 +606,6 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
     });
   }
 
-  private checkIfPlayerHasSubmitted() {
-    if (!this.collaborativePhase) return;
-
-    // Check if player has already submitted in this phase
-    this.hasSubmitted = this.collaborativePhase.submissions.some(
-      submission => submission.authorId === this.player.authorId
-    );
-
-    // If player has submitted, show the addition interface
-    this.showNewSubmission = !this.hasSubmitted;
-  }
 
 
   private mergeNewSubmissions(newSubmissions: TextSubmission[]) {
@@ -854,15 +831,14 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
     this.isLoading = true;
     this.gameService.submitTextAddition(this.gameCode, textAddition).subscribe({
-      next: (phase) => {
-        this.collaborativePhase = phase;
+      next: () => {
         this.hasSubmitted = true;
         this.showNewSubmission = false;
         this.newTextControl.reset();
         this.selectedOutcomeType = this.isSimpleMode ? this.selectedOutcomeType : null; // Clear selection after submission in collaborative mode
         this.availableSubmissions = [];
         this.maximumSubmissionsReached = false;
-        this.updateAvailableSubmissions(false, true); // false = use existing collaborativePhase data, true = show new submissions immediately
+        this.updateAvailableSubmissions(false, true); // true = show new submissions immediately
         this.isLoading = false;
         // if (this.isSimpleMode) {
         //   this.loadOutcomeTypes();
@@ -960,15 +936,14 @@ export class CollaborativeTextComponent implements OnInit, OnChanges {
 
     this.isLoading = true;
     this.gameService.submitTextAddition(this.gameCode, textAddition).subscribe({
-      next: (phase) => {
+      next: () => {
         this.maximumSubmissionsReached = false;
-        this.collaborativePhase = phase;
         this.additionTextControl.reset();
         this.selectedSubmission = null;
         this.availableSubmissions = [];
         this.repercussionTextOn = false;  
 
-        this.updateAvailableSubmissions(false, true); // false = use existing collaborativePhase data, true = show new submissions immediately
+        this.updateAvailableSubmissions(false, true); // true = show new submissions immediately
         this.isLoading = false;
         onComplete?.();
       },

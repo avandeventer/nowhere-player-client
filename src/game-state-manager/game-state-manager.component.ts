@@ -8,6 +8,7 @@ import { WritePromptComponent } from 'src/write-prompt/write-prompt.component';
 import { Player } from 'src/assets/player';
 import { WriteOutcomesComponent } from 'src/write-options/write-outcomes.component';
 import { ActivePlayerSession } from 'src/assets/active-player-session';
+import { ActiveGameStateSession } from 'src/assets/active-game-state-session';
 import { AdventureComponent } from 'src/adventure/adventure.component';
 import { HttpConstants } from 'src/assets/http-constants';
 import { environment } from 'src/environments/environment';
@@ -78,6 +79,8 @@ export class GameStateManagerComponent implements OnInit, OnDestroy {
   gameState: GameState = null as unknown as GameState;
   @Output() gameStateChanged = new EventEmitter<GameState>();
   activePlayerSession: ActivePlayerSession = new ActivePlayerSession();
+  activeGameStateSession: ActiveGameStateSession | null = null;
+  roundNumber = 0;
   storiesToWritePerRound: number = 1;
   storiesToPlayPerRound: number = 1;
   // Loaded once at startup (GET /display): the welcome screen's map name and the world-information drawer
@@ -109,6 +112,8 @@ collaborativeTextPhases: any = null;
 }
 
       this.activePlayerSession = newState.activePlayerSession as unknown as ActivePlayerSession;
+      this.activeGameStateSession = newState.activeGameStateSession;
+      this.roundNumber = newState.roundNumber ?? 0;
       this.storiesToWritePerRound = newState.storiesToWritePerRound as unknown as number;
       this.storiesToPlayPerRound = newState.storiesToPlayPerRound as unknown as number;
       this.isDungeonMode = newState.gameMode === 'DUNGEON_MODE';
